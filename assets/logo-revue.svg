@@ -1,19 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="790" height="320" viewBox="0 0 790 320" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1468" height="334" viewBox="0 0 1468 334" role="img" aria-labelledby="title desc">
   <title id="title">revüe logo</title>
   <desc id="desc">Lowercase revüe wordmark with a larger smiling coral ü and a small aqua check badge on the top-right of the final e.</desc>
-  <rect width="790" height="320" fill="#FFFFFF"/>
-  <g transform="translate(40 35)">
-    <text x="0" y="210" font-family="Inter, Avenir Next, Nunito Sans, Arial, sans-serif" font-size="205" font-weight="850" letter-spacing="-11" fill="#062456">rev</text>
-    <g transform="translate(325 0)">
-      <circle cx="84" cy="38" r="22" fill="#FF5747"/>
-      <circle cx="176" cy="38" r="22" fill="#FF5747"/>
-      <path d="M46 92 L46 152 C46 214 88 250 130 250 C172 250 214 214 214 152 L214 92"
-            fill="none" stroke="#FF5747" stroke-width="52" stroke-linecap="round"/>
+  <rect width="1468" height="334" fill="#FFFFFF"/>
+  <g transform="translate(92 18)">
+    <text x="0" y="268" transform="scale(1.22 1)" font-family="Avenir Next Rounded, Avenir Next, Nunito Sans, Arial Rounded MT Bold, Arial, sans-serif" font-size="285" font-weight="760" letter-spacing="-8" fill="#062456">rev</text>
+    <g transform="translate(610 0)">
+      <circle cx="96" cy="34" r="30" fill="#FF5747"/>
+      <circle cx="224" cy="34" r="30" fill="#FF5747"/>
+      <path d="M48 126 L48 178 C48 244 102 280 160 280 C218 280 272 244 272 178 L272 126"
+            fill="none" stroke="#FF5747" stroke-width="60" stroke-linecap="round"/>
     </g>
-    <text x="578" y="210" font-family="Inter, Avenir Next, Nunito Sans, Arial, sans-serif" font-size="205" font-weight="850" letter-spacing="-11" fill="#062456">e</text>
-    <g transform="translate(660 64)">
-      <circle cx="36" cy="36" r="36" fill="#25C7C3"/>
-      <path d="M18 37 L30 49 L56 20" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="970" y="268" font-family="Avenir Next Rounded, Avenir Next, Nunito Sans, Arial Rounded MT Bold, Arial, sans-serif" font-size="285" font-weight="760" letter-spacing="-8" fill="#062456">e</text>
+    <g transform="translate(1140 22)">
+      <circle cx="44" cy="44" r="44" fill="#25C7C3"/>
+      <path d="M23 46 L38 61 L67 26" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
     </g>
   </g>
 </svg>
