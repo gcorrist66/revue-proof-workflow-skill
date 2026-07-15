@@ -1,16 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="790" height="320" viewBox="0 0 790 320" role="img" aria-labelledby="title desc">
   <title id="title">revüe logo</title>
   <desc id="desc">Lowercase revüe wordmark with a larger smiling coral ü and a small aqua check tucked onto the top of the final e.</desc>
-  <rect width="1200" height="340" fill="#FFFFFF"/>
-  <g transform="translate(86 52)">
+  <rect width="790" height="320" fill="#FFFFFF"/>
+  <g transform="translate(40 35)">
     <text x="0" y="210" font-family="Inter, Avenir Next, Nunito Sans, Arial, sans-serif" font-size="205" font-weight="850" letter-spacing="-11" fill="#062456">rev</text>
-    <g transform="translate(405 0)">
+    <g transform="translate(325 0)">
       <circle cx="84" cy="38" r="22" fill="#FF5747"/>
       <circle cx="176" cy="38" r="22" fill="#FF5747"/>
       <path d="M46 92 L46 152 C46 214 88 250 130 250 C172 250 214 214 214 152 L214 92"
             fill="none" stroke="#FF5747" stroke-width="52" stroke-linecap="round"/>
     </g>
-    <text x="658" y="210" font-family="Inter, Avenir Next, Nunito Sans, Arial, sans-serif" font-size="205" font-weight="850" letter-spacing="-11" fill="#062456">e</text>
-    <path d="M756 106 L776 127 L818 78" fill="none" stroke="#25C7C3" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="578" y="210" font-family="Inter, Avenir Next, Nunito Sans, Arial, sans-serif" font-size="205" font-weight="850" letter-spacing="-11" fill="#062456">e</text>
+    <path d="M676 106 L696 127 L738 78" fill="none" stroke="#25C7C3" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 </svg>
