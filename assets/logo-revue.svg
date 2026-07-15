@@ -4,14 +4,14 @@
   <rect width="1468" height="334" fill="#FFFFFF"/>
   <g transform="translate(92 18)">
     <text x="0" y="268" transform="scale(1.22 1)" font-family="Avenir Next Rounded, Avenir Next, Nunito Sans, Arial Rounded MT Bold, Arial, sans-serif" font-size="285" font-weight="760" letter-spacing="-8" fill="#062456">rev</text>
-    <g transform="translate(610 0)">
+    <g transform="translate(570 0)">
       <circle cx="96" cy="34" r="30" fill="#FF5747"/>
       <circle cx="224" cy="34" r="30" fill="#FF5747"/>
       <path d="M48 126 L48 178 C48 244 102 280 160 280 C218 280 272 244 272 178 L272 126"
             fill="none" stroke="#FF5747" stroke-width="60" stroke-linecap="round"/>
     </g>
-    <text x="970" y="268" font-family="Avenir Next Rounded, Avenir Next, Nunito Sans, Arial Rounded MT Bold, Arial, sans-serif" font-size="285" font-weight="760" letter-spacing="-8" fill="#062456">e</text>
-    <g transform="translate(1140 22)">
+    <text x="855" y="268" font-family="Avenir Next Rounded, Avenir Next, Nunito Sans, Arial Rounded MT Bold, Arial, sans-serif" font-size="285" font-weight="760" letter-spacing="-8" fill="#062456">e</text>
+    <g transform="translate(1025 22)">
       <circle cx="44" cy="44" r="44" fill="#25C7C3"/>
       <path d="M23 46 L38 61 L67 26" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
     </g>
