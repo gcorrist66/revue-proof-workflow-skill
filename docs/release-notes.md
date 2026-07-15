@@ -26,3 +26,12 @@ For the next revüe version, treat the Homebrew-installed `v3ga` Vega service as
 - Local dashboard/API: `http://localhost:8099`
 
 Do not confuse this with the HiveRunner manual-runtime `Vega` agent workspace. That HiveRunner copy may still contain useful creative-director language, but it is not the same source as the OpenClaw/Doge-discovered Vega service.
+
+## v0.2.0 direction
+
+Added v3ga/Vega-inspired workflow guidance:
+
+- Anti-generic review pass.
+- Lightweight run-state / blackboard template.
+- Vega pattern reference for platform-build work.
+- Clear distinction between useful workflow patterns and heavyweight runtime features.

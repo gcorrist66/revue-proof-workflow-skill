@@ -14,7 +14,8 @@ Use this skill to convert messy work into a clear, verified handoff. Favor concr
 3. Separate facts from assumptions. Label assumptions explicitly.
 4. Define the exact deliverable format and proof required before claiming success.
 5. Surface approval gates before making external, destructive, paid, or public changes.
-6. Produce a final verdict: `ship`, `ship with changes`, `caution`, or `block`.
+6. Run an anti-generic pass when the work involves design, copy, product shaping, or stakeholder-facing output.
+7. Produce a final verdict: `ship`, `ship with changes`, `caution`, or `block`.
 
 Do not claim verification unless evidence exists. If the evidence is unavailable, say what is missing and what would prove it.
 
@@ -67,6 +68,8 @@ Turn the request into a working contract:
 
 Read `references/workflow-contract.md` when the task is broad, multi-step, or likely to drift.
 
+For creative, product, or client-facing work, read `references/anti-generic-review.md` and reject the first obvious answer before recommending direction.
+
 ### 3. Build
 
 Execute only the work inside the contract. Keep changes narrow and reversible. When building product or design work, preserve the user's style and workflow mentality unless the user explicitly changes direction.
@@ -77,6 +80,8 @@ For revüe itself, prefer practical operator surfaces:
 - evidence-backed cards over vague summaries
 - approvals and blockers near the action that needs them
 - persistent handoff artifacts after every meaningful run
+
+When revüe is used for longer work, maintain a simple run state using `assets/run-state-template.json`: current claim, artifacts, evidence, blockers, and verdict. This borrows the useful part of v3ga/Vega's blackboard pattern without requiring a full agent runtime.
 
 ### 4. Prove
 
@@ -90,6 +95,8 @@ Collect evidence proportional to risk:
 For design handoffs, prove the requested source format, editability, preview fidelity, mobile/desktop states, and shareability. A PNG/SVG/package is not equivalent to a Figma file unless the user requested that substitute or the handoff labels it as an interim package.
 
 Use `references/evidence-schema.md` for evidence categories. Use `scripts/validate-evidence.py` to check a handoff draft before presenting it.
+
+For platform-build work, read `references/vega-patterns.md` before proposing revüe changes. Borrow patterns such as role clarity, blackboard claims, workflow events, and observable run history; do not copy heavyweight runtime features unless the user is explicitly building a runtime.
 
 ### 5. Handoff
 
@@ -126,11 +133,14 @@ Read `references/approval-gates.md` before actions that could publish, send, dep
 ## Resource Map
 
 - `references/workflow-contract.md`: scope, assumptions, and proof contract.
+- `references/anti-generic-review.md`: reject obvious AI-generic first answers before choosing a direction.
+- `references/vega-patterns.md`: v3ga/Vega patterns worth borrowing for revüe platform evolution.
 - `references/approval-gates.md`: when to pause for approval.
 - `references/evidence-schema.md`: what counts as proof.
 - `references/board-verdict-schema.md`: ship/caution/block decision rules.
 - `references/design-handoff.md`: Figma/design/client handoff proof checklist.
 - `assets/intake-template.md`: reusable intake form.
+- `assets/run-state-template.json`: lightweight blackboard/run-state artifact.
 - `assets/verification-matrix-template.md`: proof checklist.
 - `assets/handoff-template.md`: final handoff format.
 - `assets/stakeholder-summary-template.md`: concise non-technical reviewer note.
