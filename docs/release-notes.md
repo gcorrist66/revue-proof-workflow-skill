@@ -4,6 +4,9 @@
 
 Initial public-ready package.
 
+- MIT license.
+- Initial revüe logo assets.
+- Brand notes.
 - Proof-first handoff workflow.
 - Mode selector for design, product, implementation, client delivery, and platform build work.
 - Design/Figma handoff reference.

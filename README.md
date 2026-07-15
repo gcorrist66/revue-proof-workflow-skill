@@ -1,6 +1,10 @@
-# revŨe Proof Workflow Skill
+<p align="center">
+  <img src="assets/logo-revue.svg" alt="revüe logo" width="520">
+</p>
 
-revŨe is a proof-first workflow skill for turning messy work into clear handoffs with evidence, assumptions, risks, decisions, and a `ship` / `ship with changes` / `caution` / `block` verdict.
+# revüe Proof Workflow Skill
+
+revüe is a proof-first workflow skill for turning messy work into clear handoffs with evidence, assumptions, risks, decisions, and a `ship` / `ship with changes` / `caution` / `block` verdict.
 
 Use it when an agent needs to review work before it goes to a client, developer, stakeholder, or public audience.
 
@@ -16,7 +20,7 @@ Use it when an agent needs to review work before it goes to a client, developer,
 ## Example prompts
 
 ```text
-Run this through revŨe before I send it to the client.
+Run this through revüe before I send it to the client.
 ```
 
 ```text
@@ -78,6 +82,12 @@ python scripts/validate-evidence.py path/to/handoff.md --mode design-handoff --s
 
 This is an early public version. It is intended for hands-on testing with real workflows. Expect iteration around examples, evals, and stricter validation rules.
 
+## Brand
+
+The `revüe` name and logo are brand assets. The MIT license covers the skill source code and packaged workflow files, but not the right to present a separate product or service as the official revüe project.
+
+See [docs/brand.md](docs/brand.md).
+
 ## License
 
-No license has been selected yet. Until a license is added, all rights are reserved by default.
+MIT. See [LICENSE](LICENSE).
