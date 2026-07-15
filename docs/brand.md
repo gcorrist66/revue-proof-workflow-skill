@@ -14,7 +14,7 @@ The logo uses a lowercase wordmark with the `ü` as the hero character:
 - `ü`: coral, slightly larger than the other letters
 - two dots over the `ü`: eyes
 - bottom curve of the `ü`: smile
-- check accent: aqua, tucked into the top-right of the final `e`
+- check badge: aqua circle with a white check, placed on the top-right of the final `e`
 
 ## Colors
 

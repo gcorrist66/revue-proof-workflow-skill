@@ -1,10 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
   <title id="title">revüe mark</title>
-  <desc id="desc">Smiling coral ü mark with a small aqua check accent.</desc>
+  <desc id="desc">Smiling coral ü mark with a small aqua check badge.</desc>
   <rect width="512" height="512" rx="112" fill="#FFFFFF"/>
   <circle cx="184" cy="112" r="36" fill="#FF5747"/>
   <circle cx="318" cy="112" r="36" fill="#FF5747"/>
   <path d="M118 202 L118 292 C118 376 184 426 250 426 C316 426 382 376 382 292 L382 202"
         fill="none" stroke="#FF5747" stroke-width="82" stroke-linecap="round"/>
-  <path d="M368 126 L394 152 L446 92" fill="none" stroke="#25C7C3" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="406" cy="126" r="56" fill="#25C7C3"/>
+  <path d="M377 128 L397 148 L437 100" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

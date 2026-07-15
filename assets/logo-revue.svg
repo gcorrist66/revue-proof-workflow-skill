@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="790" height="320" viewBox="0 0 790 320" role="img" aria-labelledby="title desc">
   <title id="title">revüe logo</title>
-  <desc id="desc">Lowercase revüe wordmark with a larger smiling coral ü and a small aqua check tucked onto the top of the final e.</desc>
+  <desc id="desc">Lowercase revüe wordmark with a larger smiling coral ü and a small aqua check badge on the top-right of the final e.</desc>
   <rect width="790" height="320" fill="#FFFFFF"/>
   <g transform="translate(40 35)">
     <text x="0" y="210" font-family="Inter, Avenir Next, Nunito Sans, Arial, sans-serif" font-size="205" font-weight="850" letter-spacing="-11" fill="#062456">rev</text>
@@ -11,6 +11,9 @@
             fill="none" stroke="#FF5747" stroke-width="52" stroke-linecap="round"/>
     </g>
     <text x="578" y="210" font-family="Inter, Avenir Next, Nunito Sans, Arial, sans-serif" font-size="205" font-weight="850" letter-spacing="-11" fill="#062456">e</text>
-    <path d="M676 106 L696 127 L738 78" fill="none" stroke="#25C7C3" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(660 64)">
+      <circle cx="36" cy="36" r="36" fill="#25C7C3"/>
+      <path d="M18 37 L30 49 L56 20" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
   </g>
 </svg>
