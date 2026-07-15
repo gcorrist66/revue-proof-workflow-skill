@@ -1,9 +1,9 @@
 ---
 name: revue-proof-workflow
-description: Proof-first workflow skill for turning ambiguous requests, product ideas, design work, site changes, operational tasks, and delivery reviews into structured revŨe handoffs. Use when the user asks to "run this through revŨe", "review this", "make this workflow proof-first", "prepare a handoff", "decide ship/caution/block", "look at Panely/HiveRunner style workflows", needs a design/Figma/client handoff, or wants a practical board-style review with assumptions, exact deliverable proof, risks, approvals, and next actions.
+description: Proof-first workflow skill for turning ambiguous requests, product ideas, design work, site changes, operational tasks, and delivery reviews into structured revüe handoffs. Use when the user asks to "run this through revüe", "review this", "make this workflow proof-first", "prepare a handoff", "decide ship/caution/block", "look at Panely/HiveRunner style workflows", needs a design/Figma/client handoff, or wants a practical board-style review with assumptions, exact deliverable proof, risks, approvals, and next actions.
 ---
 
-# revŨe Proof Workflow
+# revüe Proof Workflow
 
 Use this skill to convert messy work into a clear, verified handoff. Favor concrete evidence, visible assumptions, and a direct decision over abstract planning.
 
@@ -26,7 +26,7 @@ Pick one mode before shaping the work. Infer the mode from the request when poss
 - `product-shaping`: product concepts, platform workflows, feature definitions, roadmap options.
 - `implementation-review`: code, local apps, scripts, technical changes, QA findings.
 - `client-delivery`: artifacts intended for a named client or stakeholder.
-- `platform-build`: revŨe/Panely/HiveRunner-style internal workflow platform work.
+- `platform-build`: revüe/Panely/HiveRunner-style internal workflow platform work.
 
 Mode triggers:
 
@@ -34,7 +34,7 @@ Mode triggers:
 - Use `implementation-review` for code, repo, tests, build, local server, deploy readiness, bug, script, database, or API work.
 - Use `product-shaping` for feature ideas, scope, roadmap, MVP, customer workflow, pricing later, or product strategy.
 - Use `client-delivery` when the recipient is named and the task is mainly about presenting a usable artifact.
-- Use `platform-build` when working on revŨe, Panely, HiveRunner, or the all-in-one workflow platform.
+- Use `platform-build` when working on revüe, Panely, HiveRunner, or the all-in-one workflow platform.
 
 If the user names a specific stakeholder, apply the stakeholder test: can that person use the result without a live explanation?
 
@@ -71,7 +71,7 @@ Read `references/workflow-contract.md` when the task is broad, multi-step, or li
 
 Execute only the work inside the contract. Keep changes narrow and reversible. When building product or design work, preserve the user's style and workflow mentality unless the user explicitly changes direction.
 
-For revŨe itself, prefer practical operator surfaces:
+For revüe itself, prefer practical operator surfaces:
 
 - compact dashboards over marketing pages
 - evidence-backed cards over vague summaries

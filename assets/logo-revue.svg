@@ -1,19 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" role="img" aria-labelledby="title desc">
   <title id="title">revüe logo</title>
-  <desc id="desc">Lowercase revüe wordmark with a larger smiling coral ü and an aqua check badge at the top of the final e.</desc>
+  <desc id="desc">Lowercase revüe wordmark with a larger smiling coral ü and a small aqua check tucked onto the top of the final e.</desc>
   <rect width="1200" height="340" fill="#FFFFFF"/>
-  <g transform="translate(70 58)">
-    <text x="0" y="188" font-family="Inter, Avenir Next, Nunito Sans, Arial, sans-serif" font-size="188" font-weight="800" letter-spacing="-9" fill="#062456">rev</text>
-    <g transform="translate(482 0)">
-      <circle cx="82" cy="30" r="23" fill="#FF5747"/>
-      <circle cx="170" cy="30" r="23" fill="#FF5747"/>
-      <path d="M42 90 L42 152 C42 210 86 244 126 244 C166 244 210 210 210 152 L210 90"
+  <g transform="translate(86 52)">
+    <text x="0" y="210" font-family="Inter, Avenir Next, Nunito Sans, Arial, sans-serif" font-size="205" font-weight="850" letter-spacing="-11" fill="#062456">rev</text>
+    <g transform="translate(405 0)">
+      <circle cx="84" cy="38" r="22" fill="#FF5747"/>
+      <circle cx="176" cy="38" r="22" fill="#FF5747"/>
+      <path d="M46 92 L46 152 C46 214 88 250 130 250 C172 250 214 214 214 152 L214 92"
             fill="none" stroke="#FF5747" stroke-width="52" stroke-linecap="round"/>
     </g>
-    <text x="725" y="188" font-family="Inter, Avenir Next, Nunito Sans, Arial, sans-serif" font-size="188" font-weight="800" letter-spacing="-8" fill="#062456">e</text>
-    <g transform="translate(910 30)">
-      <circle cx="38" cy="38" r="38" fill="#25C7C3"/>
-      <path d="M20 40 L32 53 L58 22" fill="none" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
-    </g>
+    <text x="658" y="210" font-family="Inter, Avenir Next, Nunito Sans, Arial, sans-serif" font-size="205" font-weight="850" letter-spacing="-11" fill="#062456">e</text>
+    <path d="M756 106 L776 127 L818 78" fill="none" stroke="#25C7C3" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 </svg>
