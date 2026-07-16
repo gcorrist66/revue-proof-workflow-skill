@@ -79,6 +79,19 @@ Converge, don't loop. Stops the "caution every run" failure by making revüe a c
   `previousVerdict`, and the assumption-dependent verdict fields.
 - Worked example: `examples/worked-converge-vip.json` (unchanged-since-last-run short-circuit + path to ship).
 
+## v0.6.0
+
+Made it trustworthy to share: the skill now proves its own guarantees.
+
+- `scripts/run-evals.py`: an eval suite (20 cases) that asserts golden reviews across all modes
+  validate and reach the expected verdict, that every failure mode is rejected (dead-end verdict,
+  false ship, thin evidence, missing source, missing freshness marker, bad path owner), and that the
+  fixed bugs stay fixed (plural "screenshots" accepted; "ship with changes" not misread as "ship").
+- `.github/workflows/evals.yml`: CI runs the suite on every push and pull request.
+- New golden fixtures span the modes: `examples/worked-product-shaping.json`,
+  `examples/worked-client-delivery.json` (joining the design and implementation examples).
+- README documents the eval suite and carries the CI status badge.
+
 ## Next investigation
 
 For a future version, inspect the local Vega workflow service as a source of patterns worth borrowing

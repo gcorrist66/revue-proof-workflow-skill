@@ -1,0 +1,27 @@
+{
+  "schema": "revue.review.v1",
+  "runId": "example-client-delivery",
+  "mode": "client-delivery",
+  "dryRun": true,
+  "request": "Review the client update email before it goes out.",
+  "stakeholder": "Client (named recipient)",
+  "inputs": [
+    { "type": "email", "ref": "draft in Gmail", "note": "project status + next steps" }
+  ],
+  "evidence": [
+    { "category": "source", "statement": "Read the full draft this session; captured the subject and body.", "verified": true },
+    { "category": "result", "statement": "Two links referenced in the body are not attached or hyperlinked.", "verified": true },
+    { "category": "limitation", "statement": "Did not verify the recipient's access to the linked dashboard.", "verified": false }
+  ],
+  "pathToShip": [
+    { "item": "Add the two missing links and a one-line summary of what changed", "owner": "agent", "unlocks": "clears missing-links" },
+    { "item": "Confirm the recipient can open the dashboard link", "owner": "human", "unlocks": "clears access risk" }
+  ],
+  "verdict": {
+    "value": "ship with changes",
+    "reason": "Clear and on-message, but two referenced links are missing.",
+    "requiredProof": "Links added and access confirmed.",
+    "nextAction": "Add the links, confirm access, then send."
+  },
+  "trace": [ { "step": "review" } ]
+}

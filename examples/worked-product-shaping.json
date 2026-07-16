@@ -1,0 +1,30 @@
+{
+  "schema": "revue.review.v1",
+  "runId": "example-product-shaping",
+  "mode": "product-shaping",
+  "dryRun": true,
+  "request": "Shape 'saved searches' from a raw idea into a proof-first plan.",
+  "stakeholder": "Product lead",
+  "inputs": [
+    { "type": "note", "ref": "3 support tickets + 1 sales call", "note": "users re-run the same filters weekly" }
+  ],
+  "evidence": [
+    { "category": "source", "statement": "Cited 3 support tickets and 1 sales-call quote, observed this session.", "verified": true },
+    { "category": "result", "statement": "All four sources describe re-running identical filters; none ask for alerts.", "verified": true },
+    { "category": "limitation", "statement": "No usage data yet on how many users re-filter; frequency is assumed.", "verified": false }
+  ],
+  "decisionsNeeded": [
+    "Is alerting in scope for v1, or just saved views?"
+  ],
+  "pathToShip": [
+    { "item": "Write the one-page spec: saved views only, no alerts in v1", "owner": "agent", "unlocks": "scopes v1" },
+    { "item": "Confirm alerting is out of v1 scope", "owner": "human", "unlocks": "locks the boundary" }
+  ],
+  "verdict": {
+    "value": "caution",
+    "reason": "Direction is evidence-backed, but the alerting boundary is an open decision.",
+    "requiredProof": "Confirmed v1 scope boundary.",
+    "nextAction": "Confirm scope, then the spec is ready to write."
+  },
+  "trace": [ { "step": "intake" }, { "step": "shape" } ]
+}
