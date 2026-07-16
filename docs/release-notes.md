@@ -47,6 +47,22 @@ Unified the best of Panely, HiveRunner, and Vega into one skill instead of three
   (`ship with changes`), flat (`caution`), frown (`block`) — with a color-coded badge. See
   `assets/logo-state-*.svg` and `references/board-verdict-schema.md`.
 
+## v0.4.0
+
+Made the rigor self-enforcing so an average agent gets a good review on the first try.
+
+- `references/self-check.md`: a mandatory pre-verdict gate — evidence floor (>= 3 cited observations),
+  freshness guard, exact-deliverable check, verdict consistency, and assumption-dependent verdicts.
+- `references/inspection-checklists.md`: per-mode procedure for how to actually gather evidence, not
+  just what the output should contain.
+- Operating Contract now requires evidence-gathering, the evidence floor, and the self-check before
+  any verdict; forbids "reviewed/verified/works" claims about anything not directly observed.
+- Validators upgraded: `validate-evidence.py` patterns are stem-tolerant (plurals match) and the
+  ship-conflict check is scoped to avoid false positives; both validators now require an evidence
+  freshness marker under `--strict`. `validate-run.py` adds an evidence floor (>= 3, incl. a source and
+  a limitation), a board minimum, and assumption-dependent verdict support.
+- Worked examples for imitation: `examples/worked-design-handoff.md`, `examples/worked-implementation-review.md`.
+
 ## Next investigation
 
 For a future version, inspect the local Vega workflow service as a source of patterns worth borrowing

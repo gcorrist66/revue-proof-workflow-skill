@@ -15,12 +15,19 @@ assumptions, a real review board over a single generic pass, and a direct decisi
 3. Separate facts from assumptions. Label assumptions explicitly.
 4. Define the exact deliverable format and proof required before claiming success.
 5. Surface approval gates before making external, destructive, paid, or public changes.
-6. Run the review board (`references/review-board.md`) for design, product, or stakeholder-facing work:
+6. Gather evidence with `references/inspection-checklists.md` for the active mode. Meet the evidence
+   floor: at least three concrete, cited observations taken from the actual artifact, each with how and
+   when it was captured. If you cannot inspect it, say so and cap the verdict at `caution` or `block`.
+7. Run the review board (`references/review-board.md`) for design, product, or stakeholder-facing work:
    shared inputs, shared non-negotiables, distinct panelist lanes, one synthesized verdict.
-7. Produce a final verdict: `ship`, `ship with changes`, `caution`, or `block`.
+8. Produce a final verdict: `ship`, `ship with changes`, `caution`, or `block`. If the verdict would
+   change under a stated assumption, name the assumption and give both outcomes.
+9. Before presenting, run the self-check (`references/self-check.md`) on your own draft, and run
+   `scripts/validate-evidence.py` (or `scripts/validate-run.py`) if a handoff file exists.
 
 Do not claim verification unless evidence exists. If the evidence is unavailable, say what is missing
-and what would prove it.
+and what would prove it. Never write "reviewed", "verified", or "works" about something you did not
+directly observe this session.
 
 ## Mode Selector
 
@@ -94,7 +101,8 @@ trace, and verdict.
 
 ### 4. Prove
 
-Collect evidence proportional to risk:
+Follow the mode's procedure in `references/inspection-checklists.md` to gather proof step by step, and
+meet the evidence floor before writing a verdict. Collect evidence proportional to risk:
 
 - Local file work: file paths, validation script results, rendered previews, screenshots, or diffs.
 - Website/app work: live route, local route, screenshot, browser check, build/test output, console status.
@@ -135,8 +143,8 @@ Markdown skeleton (`--design` includes the scorecard and stakeholder summary).
 
 ### 6. Review
 
-When asked to review, run the board (`references/review-board.md`) and lead with defects or blockers.
-Use this verdict scale:
+When asked to review, run the board (`references/review-board.md`), then the self-check
+(`references/self-check.md`) before presenting, and lead with defects or blockers. Use this verdict scale:
 
 - `ship`: evidence supports release/use in the exact requested deliverable format.
 - `ship with changes`: safe enough if listed fixes are made.
@@ -153,6 +161,8 @@ draft or preview.
 
 ## Resource Map
 
+- `references/self-check.md`: mandatory pre-verdict gate — evidence floor, freshness, verdict consistency, assumption-dependent verdicts.
+- `references/inspection-checklists.md`: per-mode procedure for how to actually gather the evidence.
 - `references/review-board.md`: the reviewer panelists, shared inputs, and non-negotiables (Panely model).
 - `references/run-contract.md`: schema-versioned run artifact and dry-run gate (HiveRunner model).
 - `references/vega-patterns.md`: Vega/v3ga declarative-spec and timed-trace patterns worth borrowing.
@@ -169,6 +179,8 @@ draft or preview.
 - `assets/handoff-template.md`: final handoff format.
 - `assets/stakeholder-summary-template.md`: concise non-technical reviewer note.
 - `examples/sample-run.revue.yaml`: declarative run spec (Vega-compatible authoring format).
+- `examples/worked-design-handoff.md`: a full worked design review to imitate.
+- `examples/worked-implementation-review.md`: a full worked code/QA review to imitate.
 - `scripts/render-handoff.py`: create a Markdown handoff skeleton (`--design` for the design scorecard).
 - `scripts/render-stakeholder-summary.py`: create a stakeholder-ready summary.
 - `scripts/validate-evidence.py`: check required handoff sections and evidence markers.

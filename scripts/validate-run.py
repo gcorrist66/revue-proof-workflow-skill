@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Validate a revüe run artifact (revue.review.v1) — stdlib only, no dependencies.
 
-Checks required fields, verdict validity, evidence completeness, mode-specific scorecard,
-and (with --strict) the dry-run and ship-consistency rules from references/run-contract.md.
+v0.4.0: adds an evidence floor (>= 3 entries), an evidence freshness marker, a board minimum
+(>= 3 lanes when a board is present), and assumption-dependent verdict support.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 
@@ -22,6 +23,12 @@ VALID_MODES = {
 
 VALID_VERDICTS = {"ship", "ship with changes", "caution", "block"}
 VALID_STATUS = {"pass", "partial", "fail", "not applicable"}
+
+FRESHNESS_PATTERN = re.compile(
+    r"(captured|verified by|as of|this session|screenshot|snapshot|observed|inspected|"
+    r"run at|dated|today|live|exit code|output)",
+    re.IGNORECASE,
+)
 
 DESIGN_SCORECARD_CHECKS = [
     "Exact requested format",
@@ -40,7 +47,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="Enforce dry-run gate rules and ship-vs-scorecard/gate consistency.",
+        help="Enforce dry-run gate rules, ship consistency, evidence freshness, and assumption-dependent verdicts.",
     )
     return parser.parse_args()
 
@@ -74,12 +81,20 @@ def main() -> int:
     if not isinstance(inputs, list) or not inputs:
         failures.append("inputs must be a non-empty list")
 
+    # Evidence floor: at least three concrete observations, including one limitation.
     evidence = data.get("evidence")
-    if not isinstance(evidence, list) or not evidence:
-        failures.append("evidence must be a non-empty list")
+    if not isinstance(evidence, list) or len(evidence) < 3:
+        failures.append("evidence floor: at least 3 evidence entries are required")
     else:
         if not any(e.get("category") == "limitation" for e in evidence):
             failures.append("evidence must include at least one 'limitation' entry")
+        if not any(e.get("category") == "source" for e in evidence):
+            failures.append("evidence must include at least one 'source' entry")
+
+    # Board minimum when a board is present.
+    board = data.get("board")
+    if isinstance(board, list) and 0 < len(board) < 3:
+        failures.append("board present but has fewer than 3 panelist lanes")
 
     verdict = data.get("verdict") or {}
     verdict_value = verdict.get("value")
@@ -103,6 +118,20 @@ def main() -> int:
                     failures.append(f"design scorecard missing check: {check}")
 
     if args.strict:
+        # Freshness: at least one evidence statement carries a capture/recency marker.
+        if isinstance(evidence, list) and not any(
+            FRESHNESS_PATTERN.search(str(e.get("statement", ""))) for e in evidence
+        ):
+            failures.append("evidence lacks a capture/recency marker (how/when it was observed)")
+
+        # Assumption-dependent verdict must name what it flips to.
+        if verdict.get("assumptionDependent"):
+            flips = verdict.get("flipsTo")
+            if flips not in VALID_VERDICTS:
+                failures.append("assumptionDependent verdict must set 'flipsTo' to a valid verdict")
+            if not str(verdict.get("assumption", "")).strip():
+                failures.append("assumptionDependent verdict must name the 'assumption'")
+
         dry_run = data.get("dryRun", True)
         gates = data.get("gates") or []
         if dry_run:
@@ -112,8 +141,7 @@ def main() -> int:
         if verdict_value == "ship":
             if any(row.get("status") == "fail" for row in scorecard):
                 failures.append("ship verdict invalid while a scorecard check is 'fail'")
-            unresolved = [g for g in gates if isinstance(g, str)] if dry_run else []
-            if unresolved:
+            if dry_run and [g for g in gates if isinstance(g, str)]:
                 failures.append("ship verdict invalid while gates are unresolved under dryRun")
 
     if failures:
