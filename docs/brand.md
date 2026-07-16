@@ -17,11 +17,27 @@ Lowercase wordmark with the `ü` as the hero character:
 - Check badge: aqua circle with a white check, on a white halo ring, perched on the top-right
   shoulder of the final `e` (it overlaps the corner of the `e`, not floating beside it).
 
+## Expression system
+
+The mark is also a verdict indicator. The same coral ü changes mouth, and the badge changes color
+and symbol, to signal the review outcome:
+
+- `ship`: full smile, aqua check badge — `assets/logo-state-ship.svg`
+- `ship with changes`: soft smile, aqua check — `assets/logo-state-changes.svg`
+- `caution`: flat mouth, amber `!` badge — `assets/logo-state-caution.svg`
+- `block`: frown, red `x` badge — `assets/logo-state-block.svg`
+
+The face stays coral in every state so the brand reads consistently; the badge carries the
+color-coding. See `assets/logo-states.png` for all four, and `references/board-verdict-schema.md`
+for the verdict definitions.
+
 ## Colors
 
 - Navy: `#062456`
 - Coral: `#FF5747`
 - Aqua: `#25C7C3`
+- Amber (caution badge): `#F2A64D`
+- Red (block badge): `#E5484D`
 - White: `#FFFFFF`
 
 ## Typography

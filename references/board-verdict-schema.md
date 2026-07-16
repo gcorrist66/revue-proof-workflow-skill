@@ -39,3 +39,19 @@ Reason: The mockup is visually directionally correct, but no editable source fil
 Required proof: Figma source link or exported editable package.
 Next action: Create the editable source, then rerun review.
 ```
+
+## Verdict faces
+
+The revüe mark is a verdict indicator: the same coral ü, four expressions, with the check badge
+also color-coding the call. Use the matching face when a run surfaces its verdict (report header,
+status chip, notification).
+
+| Verdict | Face | Badge | Asset |
+| --- | --- | --- | --- |
+| `ship` | full smile | aqua check | `assets/logo-state-ship.svg` |
+| `ship with changes` | soft smile | aqua check | `assets/logo-state-changes.svg` |
+| `caution` | flat mouth | amber `!` | `assets/logo-state-caution.svg` |
+| `block` | frown | red `x` | `assets/logo-state-block.svg` |
+
+The face stays coral in every state (brand consistency); the badge carries the color signal
+(aqua → amber → red). `assets/logo-states.png` shows all four together.

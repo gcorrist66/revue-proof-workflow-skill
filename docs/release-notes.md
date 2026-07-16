@@ -41,6 +41,11 @@ Unified the best of Panely, HiveRunner, and Vega into one skill instead of three
   Erlang-style supervision listed as an explicit "do not borrow").
 - Fixed `scripts/render-handoff.py` to emit Mode (and, with `--design`, a Scorecard and Stakeholder
   Summary) so its output passes `validate-evidence.py --strict`.
+- Redrawn logo: check badge anchored on the final `e` with a white halo; balanced smiling `ü`;
+  matching square app-icon mark.
+- Verdict faces: the mark now expresses the outcome — smile (`ship`), soft smile
+  (`ship with changes`), flat (`caution`), frown (`block`) — with a color-coded badge. See
+  `assets/logo-state-*.svg` and `references/board-verdict-schema.md`.
 
 ## Next investigation
 
