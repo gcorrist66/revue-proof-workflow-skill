@@ -63,6 +63,22 @@ Made the rigor self-enforcing so an average agent gets a good review on the firs
   a limitation), a board minimum, and assumption-dependent verdict support.
 - Worked examples for imitation: `examples/worked-design-handoff.md`, `examples/worked-implementation-review.md`.
 
+## v0.5.0
+
+Converge, don't loop. Stops the "caution every run" failure by making revüe a closer, not a grader.
+
+- `references/converge.md`: triage every finding into fix / prove / decide; do the fix and prove items
+  in the same pass instead of returning them as blockers; batch the human decisions into one minimal
+  block; and pair any non-`ship` verdict with an explicit, owner-tagged path to ship.
+- Do not re-review unchanged work: compare an `inputsFingerprint`; if nothing changed, the verdict
+  stands and the run jumps to the decision block — no token-burning re-grade. Loop guard: the same
+  blocker twice = stop and name the decision that must be made.
+- `validate-run.py`: a non-`ship` verdict now fails validation unless it carries a `pathToShip` or
+  `decisionsNeeded`; `pathToShip` items must name an owner (`agent` or `human`).
+- Schema adds `pathToShip`, `decisionsNeeded`, `changedSinceLastRun`, `inputsFingerprint`,
+  `previousVerdict`, and the assumption-dependent verdict fields.
+- Worked example: `examples/worked-converge-vip.json` (unchanged-since-last-run short-circuit + path to ship).
+
 ## Next investigation
 
 For a future version, inspect the local Vega workflow service as a source of patterns worth borrowing

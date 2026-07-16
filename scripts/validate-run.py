@@ -144,6 +144,16 @@ def main() -> int:
             if dry_run and [g for g in gates if isinstance(g, str)]:
                 failures.append("ship verdict invalid while gates are unresolved under dryRun")
 
+        # Converge: a non-ship verdict must carry a path to ship (or a decision block).
+        if verdict_value and verdict_value != "ship":
+            if not (data.get("pathToShip") or data.get("decisionsNeeded")):
+                failures.append("non-ship verdict requires a non-empty pathToShip or decisionsNeeded")
+
+    # pathToShip items must name an owner (structural, checked always).
+    for item in data.get("pathToShip") or []:
+        if isinstance(item, dict) and item.get("owner") not in {"agent", "human"}:
+            failures.append("pathToShip item owner must be 'agent' or 'human'")
+
     if failures:
         print("FAIL")
         for failure in failures:

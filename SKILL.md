@@ -24,6 +24,11 @@ assumptions, a real review board over a single generic pass, and a direct decisi
    change under a stated assumption, name the assumption and give both outcomes.
 9. Before presenting, run the self-check (`references/self-check.md`) on your own draft, and run
    `scripts/validate-evidence.py` (or `scripts/validate-run.py`) if a handoff file exists.
+10. Converge, don't loop (`references/converge.md`). Triage every finding into fix / prove / decide;
+    do the fix and prove items this pass instead of returning them as blockers; batch the decisions the
+    human must make into one minimal block; and pair any non-`ship` verdict with an explicit path to
+    ship. Do not re-review an artifact that has not changed since its last verdict — say the verdict
+    stands and move to the decision block.
 
 Do not claim verification unless evidence exists. If the evidence is unavailable, say what is missing
 and what would prove it. Never write "reviewed", "verified", or "works" about something you did not
@@ -144,7 +149,9 @@ Markdown skeleton (`--design` includes the scorecard and stakeholder summary).
 ### 6. Review
 
 When asked to review, run the board (`references/review-board.md`), then the self-check
-(`references/self-check.md`) before presenting, and lead with defects or blockers. Use this verdict scale:
+(`references/self-check.md`) before presenting, and lead with defects or blockers. Then converge
+(`references/converge.md`): fix what you can, ask only what you must, and give the path to ship. Use
+this verdict scale:
 
 - `ship`: evidence supports release/use in the exact requested deliverable format.
 - `ship with changes`: safe enough if listed fixes are made.
@@ -161,6 +168,7 @@ draft or preview.
 
 ## Resource Map
 
+- `references/converge.md`: converge on ship — fix/prove/decide triage, path to ship, no re-review of unchanged work, pass budget.
 - `references/self-check.md`: mandatory pre-verdict gate — evidence floor, freshness, verdict consistency, assumption-dependent verdicts.
 - `references/inspection-checklists.md`: per-mode procedure for how to actually gather the evidence.
 - `references/review-board.md`: the reviewer panelists, shared inputs, and non-negotiables (Panely model).

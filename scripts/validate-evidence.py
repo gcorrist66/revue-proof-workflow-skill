@@ -23,7 +23,7 @@ REQUIRED_SECTIONS = [
 ]
 
 VERDICT_PATTERN = re.compile(
-    r"Verdict:\s*(ship|ship with changes|caution|block|pending)\b",
+    r"Verdict:\s*(ship with changes|ship|caution|block|pending)\b",
     re.IGNORECASE,
 )
 

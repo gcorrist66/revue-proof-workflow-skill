@@ -79,7 +79,26 @@
         "value": { "type": "string", "enum": ["ship", "ship with changes", "caution", "block"] },
         "reason": { "type": "string" },
         "requiredProof": { "type": "string" },
-        "nextAction": { "type": "string" }
+        "nextAction": { "type": "string" },
+        "assumptionDependent": { "type": "boolean" },
+        "assumption": { "type": "string" },
+        "flipsTo": { "type": "string", "enum": ["ship", "ship with changes", "caution", "block"] }
+      }
+    },
+    "changedSinceLastRun": { "type": "boolean" },
+    "inputsFingerprint": { "type": "string" },
+    "previousVerdict": { "type": "string" },
+    "decisionsNeeded": { "type": "array", "items": { "type": "string" } },
+    "pathToShip": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["item", "owner"],
+        "properties": {
+          "item": { "type": "string" },
+          "owner": { "type": "string", "enum": ["agent", "human"] },
+          "unlocks": { "type": "string" }
+        }
       }
     },
     "trace": {

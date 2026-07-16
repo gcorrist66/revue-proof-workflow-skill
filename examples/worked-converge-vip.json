@@ -1,0 +1,54 @@
+{
+  "schema": "revue.review.v1",
+  "runId": "vip-lake-travis-converge-2026-07-16",
+  "mode": "design-handoff",
+  "dryRun": true,
+  "request": "Get the VIP Lake Travis landing concept to ship — fix what you can, ask only what you must.",
+  "stakeholder": "Client (marina owner / decision maker)",
+  "inputs": [
+    { "type": "figma", "ref": "figma.com/design/Fo4xu4pgSqpgyxXkEtvpj6", "note": "page 1E1E1E, three desktop frames" }
+  ],
+  "previousVerdict": "caution",
+  "changedSinceLastRun": false,
+  "inputsFingerprint": "3 desktop frames (Desktop 1440 + 2 unnamed); lineup 3-boat vs 2-boat; no mobile frame",
+  "evidence": [
+    { "category": "source", "statement": "Same three desktop frames as the prior run, unchanged (fingerprint match), inspected this session.", "verified": true },
+    { "category": "result", "statement": "The prior blockers persist: no mobile frame, 3-boat vs 2-boat lineup conflict, placeholder testimonials, two unnamed frames.", "verified": true },
+    { "category": "limitation", "statement": "The agent cannot edit the Figma file directly, so fixes are delivered as ready-to-apply specs and copy rather than committed to the file.", "verified": false }
+  ],
+  "decisionsNeeded": [
+    "Boat lineup + pricing: 2-boat (Berkshire Tritoon $435 / Sea-Doo GTI 130 $330) or 3-boat (Tritoon $435 / Pontoon $335 / Sea-Doo $330)?",
+    "Is mobile in scope this round, or desktop-only?",
+    "Real testimonials/logos available, or approve clearly-labeled placeholders?"
+  ],
+  "pathToShip": [
+    { "item": "Deliver 3 real-sounding testimonial copy options (labeled as drafts) to drop in", "owner": "agent", "unlocks": "clears the placeholder-testimonials flag" },
+    { "item": "Write the mobile layout spec from the chosen desktop frame, ready to build", "owner": "agent", "unlocks": "removes the mobile-build unknown once a frame is chosen" },
+    { "item": "Pick one canonical desktop frame and name it; drop the two duplicates", "owner": "human", "unlocks": "clears 'no final frame' + developer-clarity" },
+    { "item": "Confirm the boat lineup and pricing", "owner": "human", "unlocks": "clears the cross-frame lineup conflict" },
+    { "item": "Confirm whether mobile is in scope this round", "owner": "human", "unlocks": "if in scope, agent's mobile spec becomes a build task" }
+  ],
+  "scorecard": [
+    { "check": "Exact requested format", "status": "pass", "evidence": "Native, editable Figma file" },
+    { "check": "Source editability", "status": "partial", "evidence": "Visibly native; layer structure not opened" },
+    { "check": "Desktop/mobile states", "status": "fail", "evidence": "Three desktop frames; no mobile/tablet" },
+    { "check": "Preview fidelity", "status": "pass", "evidence": "Frames render cleanly at desktop dimensions" },
+    { "check": "Brand fit", "status": "pass", "evidence": "Navy/coral/aqua on lake imagery; consistent 15% hook" },
+    { "check": "Stakeholder access", "status": "partial", "evidence": "Open locally; client share link not verified" },
+    { "check": "Developer clarity", "status": "partial", "evidence": "Two of three frames unnamed; no final designated" }
+  ],
+  "verdict": {
+    "value": "caution",
+    "reason": "Unchanged since the last run, so the board was not re-run. Three decisions gate ship; the rest is fixable.",
+    "assumptionDependent": true,
+    "assumption": "mobile is in scope this round",
+    "flipsTo": "ship with changes",
+    "requiredProof": "One named final desktop frame, confirmed lineup + pricing, and (if in scope) a mobile frame.",
+    "nextAction": "Answer the 3 decisions. Then it is one build pass to ship with changes, and ship on client approval of lineup + pricing."
+  },
+  "trace": [
+    { "step": "change-check", "durationMs": 0 },
+    { "step": "triage", "durationMs": 0 },
+    { "step": "path-to-ship", "durationMs": 0 }
+  ]
+}

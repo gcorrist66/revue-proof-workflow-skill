@@ -66,6 +66,17 @@
     { "check": "Stakeholder access", "status": "partial", "evidence": "Open locally; client share link not verified" },
     { "check": "Developer clarity", "status": "partial", "evidence": "Two of three frames unnamed; no final designated" }
   ],
+  "decisionsNeeded": [
+    "Boat lineup + pricing: 2-boat or 3-boat, prices approved?",
+    "Is mobile in scope this round, or desktop-only?",
+    "Real testimonials available, or approve labeled placeholders?"
+  ],
+  "pathToShip": [
+    { "item": "Consolidate to one named canonical desktop frame; drop duplicates", "owner": "human", "unlocks": "clears 'no final frame'" },
+    { "item": "Draft real testimonial copy options to replace placeholders", "owner": "agent", "unlocks": "clears honesty flag" },
+    { "item": "Confirm boat lineup + pricing", "owner": "human", "unlocks": "clears lineup conflict" },
+    { "item": "Confirm mobile scope; if in scope, build the mobile frame from the spec", "owner": "human", "unlocks": "clears missing-state" }
+  ],
   "verdict": {
     "value": "caution",
     "reason": "Strong desktop concept, but no mobile state exists and the three frames disagree on the boat lineup, so there is no single buildable source of truth.",
