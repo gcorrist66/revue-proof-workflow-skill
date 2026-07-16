@@ -1,11 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
   <title id="title">revüe mark</title>
-  <desc id="desc">Smiling coral ü mark with a small aqua check badge.</desc>
-  <rect width="512" height="512" rx="112" fill="#FFFFFF"/>
-  <circle cx="184" cy="112" r="36" fill="#FF5747"/>
-  <circle cx="318" cy="112" r="36" fill="#FF5747"/>
-  <path d="M118 202 L118 292 C118 376 184 426 250 426 C316 426 382 376 382 292 L382 202"
-        fill="none" stroke="#FF5747" stroke-width="82" stroke-linecap="round"/>
-  <circle cx="406" cy="126" r="56" fill="#25C7C3"/>
-  <path d="M377 128 L397 148 L437 100" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <desc id="desc">Smiling coral ü on a white rounded tile with an aqua check badge perched on the top-right.</desc>
+  <rect width="512" height="512" rx="116" fill="#FFFFFF"/>
+  <circle cx="198" cy="176" r="38" fill="#FF5747"/>
+  <circle cx="300" cy="176" r="38" fill="#FF5747"/>
+  <path d="M140 268 L140 322 C140 398 196 440 256 440 C316 440 372 398 372 322 L372 268"
+        fill="none" stroke="#FF5747" stroke-width="84" stroke-linecap="round"/>
+  <g transform="translate(360 64)">
+    <circle cx="60" cy="60" r="64" fill="#FFFFFF"/>
+    <circle cx="60" cy="60" r="50" fill="#25C7C3"/>
+    <path d="M36 62 L53 79 L86 41" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>

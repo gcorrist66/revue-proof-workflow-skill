@@ -1,21 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1468" height="334" viewBox="0 0 1468 334" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="360" viewBox="0 0 1420 360" role="img" aria-labelledby="title desc">
   <title id="title">revüe logo</title>
-  <desc id="desc">Lowercase revüe wordmark with a larger smiling coral ü and a small aqua check badge on the top-right of the final e.</desc>
-  <rect width="1468" height="334" fill="#FFFFFF"/>
-  <g transform="translate(92 18)">
-    <text x="0" y="268" font-family="Avenir Next Rounded, Avenir Next, Nunito Sans, Arial Rounded MT Bold, Arial, sans-serif" font-size="285" font-weight="760" fill="#062456">r</text>
-    <text x="130" y="268" font-family="Avenir Next Rounded, Avenir Next, Nunito Sans, Arial Rounded MT Bold, Arial, sans-serif" font-size="285" font-weight="760" fill="#062456">e</text>
-    <text x="315" y="268" font-family="Avenir Next Rounded, Avenir Next, Nunito Sans, Arial Rounded MT Bold, Arial, sans-serif" font-size="285" font-weight="760" fill="#062456">v</text>
+  <desc id="desc">Lowercase revüe wordmark in navy; the coral ü is a smiling face; an aqua check badge is perched on the top-right shoulder of the final e.</desc>
+  <g transform="translate(104 30)" font-family="Avenir Next Rounded, Avenir Next, Nunito, Quicksand, Arial Rounded MT Bold, Arial, sans-serif" font-size="262" font-weight="760" fill="#062456">
+    <text x="0" y="250">r</text>
+    <text x="132" y="250">e</text>
+    <text x="322" y="250">v</text>
     <g transform="translate(500 0)">
-      <circle cx="96" cy="34" r="30" fill="#FF5747"/>
-      <circle cx="224" cy="34" r="30" fill="#FF5747"/>
-      <path d="M48 126 L48 178 C48 244 102 280 160 280 C218 280 272 244 272 178 L272 126"
-            fill="none" stroke="#FF5747" stroke-width="60" stroke-linecap="round"/>
+      <circle cx="96" cy="44" r="33" fill="#FF5747"/>
+      <circle cx="220" cy="44" r="33" fill="#FF5747"/>
+      <path d="M44 134 L44 184 C44 252 100 290 162 290 C224 290 280 252 280 184 L280 134"
+            fill="none" stroke="#FF5747" stroke-width="62" stroke-linecap="round"/>
     </g>
-    <text x="830" y="268" font-family="Avenir Next Rounded, Avenir Next, Nunito Sans, Arial Rounded MT Bold, Arial, sans-serif" font-size="285" font-weight="760" fill="#062456">e</text>
-    <g transform="translate(1000 22)">
-      <circle cx="44" cy="44" r="44" fill="#25C7C3"/>
-      <path d="M23 46 L38 61 L67 26" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="812" y="250">e</text>
+    <g transform="translate(922 -14)">
+      <circle cx="58" cy="58" r="62" fill="#FFFFFF"/>
+      <circle cx="58" cy="58" r="50" fill="#25C7C3"/>
+      <path d="M34 60 L51 77 L84 39" fill="none" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
     </g>
   </g>
 </svg>

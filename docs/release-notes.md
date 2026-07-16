@@ -25,9 +25,26 @@ Added v3ga/Vega-inspired workflow guidance:
 - Vega pattern reference for platform-build work.
 - Clear distinction between useful workflow patterns and heavyweight runtime features.
 
-## Next investigation: Vega / v3ga
+## v0.3.0
 
-For the next revüe version, inspect the local Vega workflow service as a source of
-patterns worth borrowing (role clarity, blackboard claims, observable run history).
-Keep environment-specific paths, service endpoints, and internal project codenames out
-of this public repo; record them only in local, untracked notes.
+Unified the best of Panely, HiveRunner, and Vega into one skill instead of three tools.
+
+- Review board (`references/review-board.md`): reviewer panelists with shared inputs and
+  non-negotiables (honesty, evidence, exact-deliverable, anti-generic, approval-gate), converging on
+  one verdict. Sourced from the Panely panelist model.
+- Run contract (`references/run-contract.md`, `assets/revue-run.schema.json`): schema-versioned
+  `revue.review.v1` result artifact and a dry-run validation gate. Sourced from the HiveRunner
+  external-runner contract.
+- Declarative run spec (`examples/sample-run.revue.yaml`) shaped for Vega `validate`/`run` compatibility.
+- `scripts/validate-run.py`: stdlib validator for the run artifact, with strict dry-run/ship rules.
+- Rewrote `references/vega-patterns.md` to reflect the real Vega (YAML DSL, typed/timed event stream,
+  Erlang-style supervision listed as an explicit "do not borrow").
+- Fixed `scripts/render-handoff.py` to emit Mode (and, with `--design`, a Scorecard and Stakeholder
+  Summary) so its output passes `validate-evidence.py --strict`.
+
+## Next investigation
+
+For a future version, inspect the local Vega workflow service as a source of patterns worth borrowing
+(role clarity, blackboard claims, observable run history). Keep environment-specific paths, service
+endpoints, and internal project codenames out of this public repo; record them only in local,
+untracked notes.

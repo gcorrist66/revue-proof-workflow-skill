@@ -1,0 +1,22 @@
+# Sample revüe run spec.
+# Authoring format for a repeatable review. Intentionally close to a Vega team.vega.yaml
+# so `vega validate` / `vega run` can consume it. revüe stays the review layer; Vega is optional.
+schema: revue.run.v1
+mode: design-handoff
+request: "Decide if the VIP Lake Travis landing concept is ready to send to the client."
+stakeholder: "Client (marina owner)"
+inputs:
+  - type: figma
+    ref: "figma.com/design/Fo4xu4pgSqpgyxXkEtvpj6"
+    note: "3 desktop frames, page 1E1E1E"
+constraints:
+  brand: "navy / coral / aqua on lake imagery"
+  format_requested: figma
+proof_required:
+  - exact requested format
+  - mobile states
+  - editable source
+gates:
+  - send-to-client
+board: [critique, aggressive, conservative, proof, stakeholder, synthesis]
+verdict_scale: [ship, ship with changes, caution, block]

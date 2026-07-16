@@ -8,13 +8,14 @@ Pronunciation: `reh-view`, like `review`.
 
 ## Logo direction
 
-The logo uses a lowercase wordmark with the `ü` as the hero character:
+Lowercase wordmark with the `ü` as the hero character:
 
-- `r`, `e`, `v`, and final `e`: deep navy
-- `ü`: coral, slightly larger than the other letters
-- two dots over the `ü`: eyes
-- bottom curve of the `ü`: smile
-- check badge: aqua circle with a white check, placed on the top-right of the final `e`
+- `r`, `e`, `v`, and final `e`: deep navy.
+- `ü`: coral, larger than the other letters.
+- Two dots over the `ü`: eyes.
+- Bottom curve of the `ü`: a smile.
+- Check badge: aqua circle with a white check, on a white halo ring, perched on the top-right
+  shoulder of the final `e` (it overlaps the corner of the `e`, not floating beside it).
 
 ## Colors
 
@@ -23,11 +24,21 @@ The logo uses a lowercase wordmark with the `ü` as the hero character:
 - Aqua: `#25C7C3`
 - White: `#FFFFFF`
 
+## Typography
+
+The wordmark is set in a rounded geometric sans. The packaged SVGs use a fallback stack
+(Avenir Next Rounded → Nunito → Quicksand → Arial Rounded MT Bold → Arial). Avenir Next Rounded is
+a licensed font: it renders locally on macOS, but do NOT outline it into this public repo. For a
+distributable, portable wordmark, lock the type to a libre rounded typeface (for example Quicksand,
+Baloo 2, or Fredoka) and outline that to vector paths.
+
 ## Usage
 
-- Use `assets/logo-revue.svg` for the full wordmark.
-- Use `assets/logo-mark.svg` for favicon, avatar, or square app icon usage.
+- `assets/logo-revue.svg` — full wordmark.
+- `assets/logo-mark.svg` — favicon, avatar, or square app icon.
 
 ## Trademark / brand note
 
-The MIT license covers the skill source code and packaged workflow files. The `revüe` name, logo, and brand assets should not be used to present a separate product or service as the official revüe project without permission.
+The MIT license covers the skill source code and packaged workflow files. The `revüe` name, logo, and
+brand assets should not be used to present a separate product or service as the official revüe project
+without permission.

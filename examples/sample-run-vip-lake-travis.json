@@ -1,0 +1,81 @@
+{
+  "schema": "revue.review.v1",
+  "runId": "vip-lake-travis-figma-2026-07-16",
+  "mode": "design-handoff",
+  "dryRun": true,
+  "request": "Decide whether the VIP Lake Travis 'Weekdays on the Water' landing concept is ready to send to the client.",
+  "stakeholder": "Client (marina owner / decision maker)",
+  "inputs": [
+    {
+      "type": "figma",
+      "ref": "figma.com/design/Fo4xu4pgSqpgyxXkEtvpj6",
+      "note": "Page '1E1E1E'; three frames: 'Desktop 1440 — Summer' (3 boat cards) and two unnamed desktop variants (2 boat cards)."
+    }
+  ],
+  "constraints": {
+    "brand": "navy + coral + aqua on lake imagery",
+    "format_requested": "figma",
+    "offer": "Save 15% on Weekday/Thursday rentals"
+  },
+  "proofRequired": ["exact requested format", "mobile states", "editable source", "single final frame"],
+  "gates": ["send-to-client"],
+  "board": [
+    {
+      "panelist": "critique",
+      "findings": "Strengths worth protecting: a clear single-promise hero ('Your Best Summer Day Is One Click Away'), a legible booking funnel (value strip -> boat picker with prices -> social proof -> FAQ -> closing CTA), and a consistent 15% Weekday/Thursday hook. Weaknesses by area: HERO carries a rating card that competes with the primary CTA; HIERARCHY is even-weighted so nothing pulls the eye to 'book'; MOAT (why VIP vs. any rental) is never stated; PROOF section uses placeholder testimonial text; MOBILE fold does not exist. Punch-list: name one final frame; make the reserve CTA the single loudest element in the hero; add a one-line 'why VIP' under the H1; replace filler testimonials with real or clearly-labeled placeholders; standardize boat card count and naming.",
+      "evidence": ["Zoomed captures of all three frames at ~9% canvas zoom on page 1E1E1E"]
+    },
+    {
+      "panelist": "aggressive",
+      "findings": "Sharper POV without breaking the premium/honesty bar: lead the hero with loss aversion — 'Summer is 12 weekends. Don't spend one on the dock.' — and make the boat picker the hero instead of a mid-page section, so the first scroll is 'pick your boat + see the price.' Hold the line: no fabricated urgency counters, no invented review counts; the 15% offer stays the only scarcity lever because it is real.",
+      "evidence": ["Hero and boat-card structure observed in Frame 1 and Frame 2"]
+    },
+    {
+      "panelist": "conservative",
+      "findings": "Lowest-objection version a cautious marina owner could not reject: keep the current calm structure, lead with trust (local, well-maintained fleet, easy booking), state prices plainly, and keep the closing reservation CTA. This is the safest path and is close to Frame 1 today; risk is that 'safe' stays generic unless the 'why VIP' line and real proof are added.",
+      "evidence": ["Frame 1 'Lake days should feel easy' value strip and FAQ block"]
+    },
+    {
+      "panelist": "proof",
+      "findings": "Exact requested format (Figma) is present and editable — pass. But required states fail: three desktop frames, no mobile/tablet. Cross-frame inconsistency: Frame 1 lists three boats (Tritoon $435 / Pontoon $335 / Sea-Doo $330); Frames 2-3 list two (Berkshire Tritoon $435 / Sea-Doo GTI 130 $330). No single frame is designated final. Testimonial copy is unverified filler.",
+      "evidence": ["Pricing and boat names read from zoomed captures of each frame"]
+    },
+    {
+      "panelist": "stakeholder",
+      "findings": "Can the client decide from this without a walkthrough? Partially. They can react to the desktop look, but cannot approve a build: there is no phone view, and they would not know which of three frames is 'the' design or which boat lineup is real. Ask them exactly two things: which lineup/pricing is correct, and whether mobile is in scope this round.",
+      "evidence": ["Two-boat vs three-boat divergence across frames; absence of mobile frame"]
+    },
+    {
+      "panelist": "synthesis",
+      "findings": "Do first (ranked): 1) pick one canonical desktop frame; 2) confirm boat lineup + pricing with the client; 3) design the matching mobile frame; 4) replace placeholder testimonials. Highest-leverage single move: collapse to one final desktop frame — it unblocks mobile, copy, and client sign-off at once. Verdict: caution — strong, near-ready concept, but a required state is missing and there is no single source-of-truth frame.",
+      "evidence": ["Aggregated board findings above"]
+    }
+  ],
+  "evidence": [
+    { "category": "source", "statement": "Native Figma design file, logged in, page '1E1E1E', three desktop frames.", "verified": true },
+    { "category": "result", "statement": "Frame 1 = 3 boat cards (Tritoon $435 / Pontoon $335 / Sea-Doo $330); Frames 2-3 = 2 boat cards (Berkshire Tritoon $435 / Sea-Doo GTI 130 $330).", "verified": true },
+    { "category": "result", "statement": "No mobile or tablet frame exists on the reviewed page.", "verified": true },
+    { "category": "limitation", "statement": "Layer/component editability and client share-link permissions inspected visually only, not opened in the layers panel.", "verified": false }
+  ],
+  "scorecard": [
+    { "check": "Exact requested format", "status": "pass", "evidence": "Native, editable Figma file (not an export)" },
+    { "check": "Source editability", "status": "partial", "evidence": "Visibly native; layer structure not opened" },
+    { "check": "Desktop/mobile states", "status": "fail", "evidence": "Three desktop frames; no mobile/tablet" },
+    { "check": "Preview fidelity", "status": "pass", "evidence": "All frames render cleanly at desktop dimensions" },
+    { "check": "Brand fit", "status": "pass", "evidence": "Navy/coral/aqua on lake imagery; consistent 15% hook" },
+    { "check": "Stakeholder access", "status": "partial", "evidence": "Open locally; client share link not verified" },
+    { "check": "Developer clarity", "status": "partial", "evidence": "Two of three frames unnamed; no final designated" }
+  ],
+  "verdict": {
+    "value": "caution",
+    "reason": "Strong desktop concept, but no mobile state exists and the three frames disagree on the boat lineup, so there is no single buildable source of truth.",
+    "requiredProof": "One named final desktop frame, a matching mobile frame, confirmed boat lineup + pricing, and real (or labeled) testimonial copy.",
+    "nextAction": "Collapse to one final desktop frame, confirm lineup/pricing with the client, build the mobile frame, then re-run revüe targeting 'ship with changes'."
+  },
+  "trace": [
+    { "step": "intake", "durationMs": 0 },
+    { "step": "board", "durationMs": 0 },
+    { "step": "prove", "durationMs": 0 },
+    { "step": "verdict", "durationMs": 0 }
+  ]
+}
