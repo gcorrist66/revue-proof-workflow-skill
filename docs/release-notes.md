@@ -1,5 +1,47 @@
 # Release Notes
 
+## v1.0.0
+
+Turned revüe from a reviewer into a guided creative-production skill with a failsafe at every seam.
+Adds four pillars on top of the v0.6.0 review engine; every pillar is self-enforcing (blocks or caps
+the verdict, never just advises), and every pre-v1.0 run artifact stays valid.
+
+- **Pillar 1 — required creative brief** (`references/creative-brief.md`): before any
+  creative-production work, `assets/intake-template.md`'s four sections (deliverable + format,
+  sources incl. "handoff page read?", design-system lock, Hard NOs) must be complete. A missing field
+  blocks generation and returns one batched request, not a drip of questions.
+- **Pillar 2 — options + reject-refine** (`references/options-and-refine.md`): creative generation
+  returns 2–3 distinct, lock-compliant concepts, never one default direction. Rejecting a concept
+  requires keep/kill/change feedback, which is folded into the brief before the next round —
+  convergence target is ≤ 3 rounds, matching `references/converge.md`'s pass budget.
+- **Pillar 3 — design-system lock + output audit (scaffolding)**
+  (`references/design-system-lock.md`, `references/output-audit.md`, `scripts/validate-output.py`):
+  a machine-checkable color/typography/Hard-NO lock, and a first working audit script that extracts
+  colors from an HTML/CSS/SVG deliverable and scans for Hard-NO text, exiting non-zero on a violation.
+  This is the non-adversarial first pass — evasion resistance (obfuscated text, CSS variables, encoded
+  Hard NOs) is explicitly out of scope for v1.0; see `HANDOFF-TO-FABLE.md`.
+- **Pillar 4 — model routing** (`references/model-routing.md`): `fast` (Haiku 4.5) for every gate and
+  validator, `standard` (Sonnet 5) for creative generation and board synthesis, `deep` (Fable 5) for
+  ambiguous judgment, `deep-coding` (Opus 4.8) for heavy coding. `scripts/validate-run.py` rejects a
+  run where a known gate step is tagged anything other than `fast`.
+- Schema (`assets/revue-run.schema.json`): adds `produces` (`review` | `creative-production`, default
+  `review`), `brief`, `designSystemLock`, `options`, `optionFeedback`, `outputAudit`, and per-step
+  `modelTier`/`model` on `trace` entries.
+- `scripts/validate-run.py`: for `"produces": "creative-production"` runs, requires a complete brief
+  (batched into one failure line), 2–3 distinct lock-compliant options, and (under `--strict`, before a
+  `ship` verdict) `outputAudit.pass == true`. Runs without `produces`, or tagged `review`, are
+  unaffected — every pre-v1.0 golden fixture still validates unchanged.
+- `SKILL.md`: Operating Contract now runs the brief gate, options gate, output audit, and model
+  routing at the right points in the pipeline; Mode Selector notes the review-vs-creative-production
+  track; new Model Routing section; Resource Map updated.
+- New fixtures: `examples/worked-creative-production.json` (full brief → options → output-audit →
+  `ship` golden, the first `ship`-verdict golden in the suite), `examples/lock-fixture.json`,
+  `examples/deliverable-pass.html`, `examples/deliverable-fail.html`.
+- `scripts/run-evals.py`: 14 new cases (34 total) — the creative-production golden, plus rejections for
+  an incomplete brief, too few/too many options, a non-lock-compliant option, duplicate concepts, a
+  failing or missing output audit before ship, a mistagged gate step, and an unknown model tier; plus
+  `scripts/validate-output.py` pass/fail smoke tests.
+
 ## v0.1.0
 
 Initial public-ready package.

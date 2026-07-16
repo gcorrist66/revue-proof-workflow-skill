@@ -3,6 +3,13 @@
 
 v0.4.0: adds an evidence floor (>= 3 entries), an evidence freshness marker, a board minimum
 (>= 3 lanes when a board is present), and assumption-dependent verdict support.
+
+v1.0.0: adds the creative-production gates. Runs tagged "produces": "creative-production" must carry
+a complete brief (references/creative-brief.md), 2-3 distinct lock-compliant options
+(references/options-and-refine.md), and (before a 'ship' verdict, under --strict) a passing output
+audit (references/output-audit.md). Also validates that every trace step's modelTier is a known value,
+and that known gate/validator steps are tagged 'fast' (references/model-routing.md). Runs without a
+'produces' field, or tagged 'review', are unaffected — this keeps every pre-v1.0 run artifact valid.
 """
 
 from __future__ import annotations
@@ -39,6 +46,22 @@ DESIGN_SCORECARD_CHECKS = [
     "Stakeholder access",
     "Developer clarity",
 ]
+
+VALID_PRODUCES = {"review", "creative-production"}
+VALID_MODEL_TIERS = {"fast", "standard", "deep", "deep-coding"}
+
+# Step names that are self-enforcing gates/validators — references/model-routing.md requires these
+# run at the 'fast' tier whenever a modelTier is recorded for them.
+GATE_STEPS = {
+    "brief-gate",
+    "design-system-lock-check",
+    "options-lock-check",
+    "output-audit",
+    "self-check",
+    "validate-run",
+    "validate-output",
+    "validate-evidence",
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -96,6 +119,71 @@ def main() -> int:
     if isinstance(board, list) and 0 < len(board) < 3:
         failures.append("board present but has fewer than 3 panelist lanes")
 
+    # v1.0.0: creative-production gates (brief completeness + options rule). A run with no 'produces'
+    # field, or 'produces': 'review', is unaffected — this is what keeps pre-v1.0 runs valid.
+    produces = data.get("produces", "review")
+    if produces not in VALID_PRODUCES:
+        failures.append(f"produces must be one of {sorted(VALID_PRODUCES)}")
+
+    if produces == "creative-production":
+        brief = data.get("brief") or {}
+        missing: list[str] = []
+        if not str(brief.get("deliverable", "")).strip():
+            missing.append("deliverable")
+        if not str(brief.get("format", "")).strip():
+            missing.append("format")
+        if not isinstance(brief.get("sources"), list) or not brief.get("sources"):
+            missing.append("sources")
+        if brief.get("handoffPageRead") is not True:
+            missing.append("sources.handoffPageRead (must be true — read the target handoff page first)")
+        if not str(brief.get("designSystemLock", "")).strip():
+            missing.append("designSystemLock")
+        if "hardNos" not in brief or not isinstance(brief.get("hardNos"), list):
+            missing.append("hardNos (list required; an empty list is fine if none apply)")
+        if missing:
+            # One batched failure, not one per field — this is the same batching
+            # references/creative-brief.md asks the agent to do by hand.
+            failures.append("brief incomplete — missing: " + ", ".join(missing))
+
+        lock = data.get("designSystemLock")
+        if not isinstance(lock, dict) or not lock.get("colors"):
+            failures.append("designSystemLock: missing or has no 'colors'")
+
+        options = data.get("options")
+        if not isinstance(options, list) or not (2 <= len(options) <= 3):
+            found = len(options) if isinstance(options, list) else 0
+            failures.append(f"creative generation requires 2-3 options (found {found})")
+        else:
+            bad_shape = any(
+                not isinstance(opt, dict)
+                or not all(str(opt.get(k, "")).strip() for k in ("id", "summary", "distinctionAxis"))
+                for opt in options
+            )
+            if bad_shape:
+                failures.append("each option requires id, summary, and distinctionAxis")
+            else:
+                if any(opt.get("lockCompliant") is not True for opt in options):
+                    failures.append("every presented option must have lockCompliant == true")
+                axes = [opt.get("distinctionAxis") for opt in options]
+                if len(set(axes)) != len(axes):
+                    failures.append("options are not distinct: duplicate distinctionAxis")
+
+    # v1.0.0: gate/validator steps must run at the 'fast' model tier (references/model-routing.md).
+    for step in data.get("trace") or []:
+        if not isinstance(step, dict):
+            continue
+        tier = step.get("modelTier")
+        if tier is None:
+            continue
+        if tier not in VALID_MODEL_TIERS:
+            failures.append(
+                f"trace step {step.get('step')!r} modelTier must be one of {sorted(VALID_MODEL_TIERS)}"
+            )
+        elif step.get("step") in GATE_STEPS and tier != "fast":
+            failures.append(
+                f"gate step {step.get('step')!r} must be tagged modelTier 'fast', got {tier!r}"
+            )
+
     verdict = data.get("verdict") or {}
     verdict_value = verdict.get("value")
     if verdict_value not in VALID_VERDICTS:
@@ -143,6 +231,10 @@ def main() -> int:
                 failures.append("ship verdict invalid while a scorecard check is 'fail'")
             if dry_run and [g for g in gates if isinstance(g, str)]:
                 failures.append("ship verdict invalid while gates are unresolved under dryRun")
+            if produces == "creative-production":
+                audit = data.get("outputAudit")
+                if not isinstance(audit, dict) or audit.get("pass") is not True:
+                    failures.append("ship verdict requires outputAudit.pass == true (references/output-audit.md)")
 
         # Converge: a non-ship verdict must carry a path to ship (or a decision block).
         if verdict_value and verdict_value != "ship":

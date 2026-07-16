@@ -13,6 +13,12 @@
       "type": "string",
       "enum": ["design-handoff", "product-shaping", "implementation-review", "client-delivery", "platform-build"]
     },
+    "produces": {
+      "type": "string",
+      "enum": ["review", "creative-production"],
+      "default": "review",
+      "description": "'review' checks existing work (default). 'creative-production' means revüe is generating something new, which triggers the brief, options, and output-audit gates."
+    },
     "dryRun": { "type": "boolean", "default": true },
     "request": { "type": "string", "minLength": 1 },
     "stakeholder": { "type": "string", "minLength": 1 },
@@ -32,6 +38,67 @@
     "constraints": { "type": "object" },
     "proofRequired": { "type": "array", "items": { "type": "string" } },
     "gates": { "type": "array", "items": { "type": "string" } },
+    "brief": {
+      "type": "object",
+      "description": "Required creative brief for 'produces': 'creative-production' runs (references/creative-brief.md). scripts/validate-run.py enforces these as a batched completeness gate.",
+      "required": ["deliverable", "format", "sources", "handoffPageRead", "designSystemLock", "hardNos"],
+      "properties": {
+        "deliverable": { "type": "string", "minLength": 1 },
+        "format": { "type": "string", "minLength": 1 },
+        "sources": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "handoffPageRead": { "type": "boolean" },
+        "designSystemLock": { "type": "string", "description": "Reference/path to the lock (assets/*.lock.json or the run's top-level designSystemLock object)." },
+        "hardNos": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "designSystemLock": {
+      "type": "object",
+      "description": "The machine-checkable lock (references/design-system-lock.md) the deliverable is audited against.",
+      "properties": {
+        "colors": { "type": "array", "items": { "type": "string" } },
+        "typography": { "type": "array", "items": { "type": "string" } },
+        "hardNos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["pattern", "why"],
+            "properties": {
+              "pattern": { "type": "string" },
+              "why": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "options": {
+      "type": "array",
+      "description": "2-3 distinct, lock-compliant creative concepts (references/options-and-refine.md).",
+      "minItems": 2,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "summary", "distinctionAxis", "lockCompliant"],
+        "properties": {
+          "id": { "type": "string" },
+          "summary": { "type": "string" },
+          "distinctionAxis": { "type": "string", "description": "What makes this concept genuinely different from the others, not just relabeled." },
+          "lockCompliant": { "type": "boolean" }
+        }
+      }
+    },
+    "optionFeedback": {
+      "type": "array",
+      "description": "Reject-refine feedback per option, folded into the brief before the next round (references/options-and-refine.md).",
+      "items": {
+        "type": "object",
+        "required": ["optionId", "decision"],
+        "properties": {
+          "optionId": { "type": "string" },
+          "decision": { "type": "string", "enum": ["keep", "kill", "change"] },
+          "note": { "type": "string" }
+        }
+      }
+    },
     "board": {
       "type": "array",
       "items": {
@@ -72,6 +139,19 @@
         }
       }
     },
+    "outputAudit": {
+      "type": "object",
+      "description": "Result of scripts/validate-output.py against the design-system lock (references/output-audit.md). Required (and must be pass: true) before a 'ship' verdict on a creative-production run.",
+      "required": ["pass"],
+      "properties": {
+        "deliverablePath": { "type": "string" },
+        "lockPath": { "type": "string" },
+        "colorsFound": { "type": "array", "items": { "type": "string" } },
+        "colorsOutOfLock": { "type": "array", "items": { "type": "string" } },
+        "hardNoHits": { "type": "array", "items": { "type": "string" } },
+        "pass": { "type": "boolean" }
+      }
+    },
     "verdict": {
       "type": "object",
       "required": ["value", "reason"],
@@ -108,7 +188,13 @@
         "required": ["step"],
         "properties": {
           "step": { "type": "string" },
-          "durationMs": { "type": "number" }
+          "durationMs": { "type": "number" },
+          "modelTier": {
+            "type": "string",
+            "enum": ["fast", "standard", "deep", "deep-coding"],
+            "description": "references/model-routing.md. Gate/validator steps (brief-gate, design-system-lock-check, options-lock-check, output-audit, self-check, validate-run, validate-output, validate-evidence) must be 'fast'."
+          },
+          "model": { "type": "string", "description": "Model string actually used, e.g. claude-haiku-4-5-20251001." }
         }
       }
     }

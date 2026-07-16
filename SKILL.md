@@ -11,20 +11,35 @@ assumptions, a real review board over a single generic pass, and a direct decisi
 ## Operating Contract
 
 1. Restate the intended outcome in one sentence.
-2. Identify the mode and stage.
+2. Identify the mode and stage, and whether the run is a **review** of existing work or **creative
+   production** (revüe generating something new). Tag `"produces": "creative-production"`
+   (`references/run-contract.md`) for the latter.
 3. Separate facts from assumptions. Label assumptions explicitly.
 4. Define the exact deliverable format and proof required before claiming success.
-5. Surface approval gates before making external, destructive, paid, or public changes.
-6. Gather evidence with `references/inspection-checklists.md` for the active mode. Meet the evidence
+5. For creative-production work, run the required brief gate (`references/creative-brief.md`,
+   `assets/intake-template.md`) before generating anything. If a required field is missing, stop and
+   return one batched request for exactly what's missing — never start on the parts that are ready and
+   drip-feed questions about the rest.
+6. Surface approval gates before making external, destructive, paid, or public changes.
+7. Gather evidence with `references/inspection-checklists.md` for the active mode. Meet the evidence
    floor: at least three concrete, cited observations taken from the actual artifact, each with how and
    when it was captured. If you cannot inspect it, say so and cap the verdict at `caution` or `block`.
-7. Run the review board (`references/review-board.md`) for design, product, or stakeholder-facing work:
+8. Run the review board (`references/review-board.md`) for design, product, or stakeholder-facing work:
    shared inputs, shared non-negotiables, distinct panelist lanes, one synthesized verdict.
-8. Produce a final verdict: `ship`, `ship with changes`, `caution`, or `block`. If the verdict would
-   change under a stated assumption, name the assumption and give both outcomes.
-9. Before presenting, run the self-check (`references/self-check.md`) on your own draft, and run
-   `scripts/validate-evidence.py` (or `scripts/validate-run.py`) if a handoff file exists.
-10. Converge, don't loop (`references/converge.md`). Triage every finding into fix / prove / decide;
+9. For creative-production work, generate 2–3 distinct, lock-compliant concepts
+   (`references/options-and-refine.md`) — never a single default direction. Fold reject feedback
+   (keep/kill/change) into the brief before generating the next round.
+10. For creative-production work, run the output audit (`references/output-audit.md`,
+    `scripts/validate-output.py`) against the design-system lock (`references/design-system-lock.md`)
+    before any `ship` verdict.
+11. Route each step to a model tier (`references/model-routing.md`): gates and validators always run
+    `fast`; creative generation and board synthesis run `standard`; genuinely ambiguous judgment
+    escalates to `deep`; heavy coding escalates to `deep-coding`.
+12. Produce a final verdict: `ship`, `ship with changes`, `caution`, or `block`. If the verdict would
+    change under a stated assumption, name the assumption and give both outcomes.
+13. Before presenting, run the self-check (`references/self-check.md`) on your own draft, and run
+    `scripts/validate-evidence.py` (or `scripts/validate-run.py`) if a handoff file exists.
+14. Converge, don't loop (`references/converge.md`). Triage every finding into fix / prove / decide;
     do the fix and prove items this pass instead of returning them as blockers; batch the decisions the
     human must make into one minimal block; and pair any non-`ship` verdict with an explicit path to
     ship. Do not re-review an artifact that has not changed since its last verdict — say the verdict
@@ -56,6 +71,10 @@ Mode triggers:
 If the user names a specific stakeholder, apply the stakeholder test: can that person use the result
 without a live explanation?
 
+Every mode above runs in one of two tracks: **review** (default) — checking work that already exists —
+or **creative production** — revüe designing or building something new. Creative-production work always
+starts with the brief gate (`references/creative-brief.md`) regardless of which mode it runs under.
+
 ## Workflow
 
 ### 1. Intake
@@ -71,6 +90,10 @@ Capture the job in this shape:
 
 Use `assets/intake-template.md` when the user needs a reusable intake artifact. For a repeatable run,
 declare it as a spec using `examples/sample-run.revue.yaml`.
+
+For creative-production requests, intake IS the brief gate: fill in `assets/intake-template.md`'s four
+required sections and do not proceed to Shape until `references/creative-brief.md`'s completeness check
+passes. A missing field blocks with one batched request, not a partial start.
 
 ### 2. Shape
 
@@ -92,6 +115,11 @@ For creative, product, or client-facing work, read `references/review-board.md` 
 
 Execute only the work inside the contract. Keep changes narrow and reversible. When building product or
 design work, preserve the user's style and workflow mentality unless the user explicitly changes direction.
+
+For creative-production work, generate 2–3 distinct, lock-compliant concepts
+(`references/options-and-refine.md`) rather than one default direction. When a concept is rejected,
+require keep/kill/change feedback and fold it into the brief before generating the next round — never
+regenerate from memory of the conversation alone.
 
 For revüe itself, prefer practical operator surfaces:
 
@@ -122,6 +150,12 @@ Use `references/evidence-schema.md` for evidence categories. Use `scripts/valida
 a Markdown handoff, or serialize the review as a `revue.review.v1` artifact
 (`references/run-contract.md`) and check it with `scripts/validate-run.py`. Validation is a gate, not an
 afterthought: a review can always be dry-run validated before any external action.
+
+For creative-production work, run the output audit before any `ship` verdict:
+`python3 scripts/validate-output.py <deliverable> --lock <lock.json>` checks the deliverable's actual
+colors and text against the design-system lock (`references/design-system-lock.md`,
+`references/output-audit.md`). `scripts/validate-run.py --strict` refuses a `ship` verdict on a
+`"produces": "creative-production"` run unless `outputAudit.pass` is `true`.
 
 For platform-build work, read `references/vega-patterns.md` before proposing revüe changes. Borrow
 patterns such as the review board (Panely), the schema-versioned run contract with a dry-run gate
@@ -166,6 +200,14 @@ Read `references/approval-gates.md` before actions that could publish, send, dep
 overwrite, message another person, or alter external systems. If approval is missing, stop at a prepared
 draft or preview.
 
+## Model Routing
+
+Read `references/model-routing.md` to pick the model tier for each step: `fast` (Haiku 4.5) for every
+gate and validator, `standard` (Sonnet 5) for creative generation and board synthesis, `deep` (Fable 5)
+for genuinely ambiguous judgment calls, and `deep-coding` (Opus 4.8) for heavy coding work. Gates and
+validators must run `fast` without exception — `scripts/validate-run.py` rejects a run where a known
+gate step is tagged anything else.
+
 ## Resource Map
 
 - `references/converge.md`: converge on ship — fix/prove/decide triage, path to ship, no re-review of unchanged work, pass budget.
@@ -180,16 +222,24 @@ draft or preview.
 - `references/evidence-schema.md`: what counts as proof.
 - `references/board-verdict-schema.md`: ship/caution/block decision rules.
 - `references/design-handoff.md`: Figma/design/client handoff proof checklist.
-- `assets/intake-template.md`: reusable intake form.
+- `references/creative-brief.md`: Pillar 1 — the required, blocking creative brief for any creative-production run.
+- `references/options-and-refine.md`: Pillar 2 — 2–3 distinct lock-compliant concepts, and the keep/kill/change reject-refine loop.
+- `references/design-system-lock.md`: Pillar 3 (scaffolding) — the machine-checkable color/type/Hard-NO lock format.
+- `references/output-audit.md`: Pillar 3 (scaffolding) — auditing a finished deliverable against the lock before `ship`.
+- `references/model-routing.md`: Pillar 4 — fast/standard/deep/deep-coding model tiers and which steps run at each.
+- `assets/intake-template.md`: reusable intake form; now doubles as the required creative brief for creative-production work.
 - `assets/run-state-template.json`: lightweight blackboard/run-state artifact.
-- `assets/revue-run.schema.json`: JSON schema for the `revue.review.v1` run artifact.
+- `assets/revue-run.schema.json`: JSON schema for the `revue.review.v1` run artifact, including `brief`, `options`, `designSystemLock`, `outputAudit`, and per-step `modelTier`.
 - `assets/verification-matrix-template.md`: proof checklist.
 - `assets/handoff-template.md`: final handoff format.
 - `assets/stakeholder-summary-template.md`: concise non-technical reviewer note.
 - `examples/sample-run.revue.yaml`: declarative run spec (Vega-compatible authoring format).
 - `examples/worked-design-handoff.md`: a full worked design review to imitate.
 - `examples/worked-implementation-review.md`: a full worked code/QA review to imitate.
+- `examples/worked-creative-production.json`: a full worked creative-production run (brief → options → output audit → ship) to imitate.
+- `examples/lock-fixture.json`, `examples/deliverable-pass.html`, `examples/deliverable-fail.html`: fixtures for `scripts/validate-output.py`.
 - `scripts/render-handoff.py`: create a Markdown handoff skeleton (`--design` for the design scorecard).
 - `scripts/render-stakeholder-summary.py`: create a stakeholder-ready summary.
 - `scripts/validate-evidence.py`: check required handoff sections and evidence markers.
-- `scripts/validate-run.py`: validate a `revue.review.v1` run artifact against the schema and gate rules.
+- `scripts/validate-run.py`: validate a `revue.review.v1` run artifact against the schema and gate rules, including the brief/options/output-audit gates for creative-production runs.
+- `scripts/validate-output.py`: check an HTML/CSS/SVG deliverable's colors and text against a design-system lock; exits non-zero on a violation.

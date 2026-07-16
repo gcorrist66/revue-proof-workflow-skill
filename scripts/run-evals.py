@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 EX = ROOT / "examples"
 VR = ROOT / "scripts" / "validate-run.py"
 VE = ROOT / "scripts" / "validate-evidence.py"
+VO = ROOT / "scripts" / "validate-output.py"
 
 cases: list[tuple[str, bool]] = []
 
@@ -53,6 +54,10 @@ def ve_file(path: Path, extra: list[str]) -> tuple[int, str]:
     return _run([str(VE), str(path), "--strict", *extra])
 
 
+def vo_run(deliverable: str, lock: str) -> tuple[int, str]:
+    return _run([str(VO), str(EX / deliverable), "--lock", str(EX / lock), "--json"])
+
+
 def load(name: str) -> dict:
     return json.loads((EX / name).read_text(encoding="utf-8"))
 
@@ -68,6 +73,7 @@ GOLDEN_JSON = {
     "worked-converge-vip.json": "caution",
     "worked-product-shaping.json": "caution",
     "worked-client-delivery.json": "ship with changes",
+    "worked-creative-production.json": "ship",
 }
 for name, expected in GOLDEN_JSON.items():
     rc, _ = vr_file(name)
@@ -111,6 +117,53 @@ rc, out = vr_obj(d); check("reject: evidence with no freshness marker", rc == 1 
 
 d = copy.deepcopy(base); d["pathToShip"][0]["owner"] = "robot"
 rc, out = vr_obj(d); check("reject: path-to-ship item with a bad owner", rc == 1 and "owner" in out.lower())
+
+# ---- v1.0.0: creative-production gates (Pillar 1 brief, Pillar 2 options, Pillar 3 output audit,
+# Pillar 4 model routing) — negatives built off the new creative-production golden ----
+cp_base = load("worked-creative-production.json")
+
+d = copy.deepcopy(cp_base); del d["brief"]["hardNos"]; d["brief"]["handoffPageRead"] = False
+rc, out = vr_obj(d)
+check(
+    "reject: incomplete brief batches every missing field in one failure",
+    rc == 1 and "brief incomplete" in out.lower() and "hardnos" in out.lower() and "handoffpageread" in out.lower(),
+)
+
+d = copy.deepcopy(cp_base); d["options"] = d["options"][:1]
+rc, out = vr_obj(d); check("reject: fewer than 2 options for creative generation", rc == 1 and "2-3 options" in out.lower())
+
+d = copy.deepcopy(cp_base); d["options"].append(copy.deepcopy(d["options"][0]))
+rc, out = vr_obj(d); check("reject: more than 3 options for creative generation", rc == 1 and "2-3 options" in out.lower())
+
+d = copy.deepcopy(cp_base); d["options"][1]["lockCompliant"] = False
+rc, out = vr_obj(d); check("reject: a presented option that is not lock-compliant", rc == 1 and "lockcompliant" in out.lower())
+
+d = copy.deepcopy(cp_base); d["options"][1]["distinctionAxis"] = d["options"][0]["distinctionAxis"]
+rc, out = vr_obj(d); check("reject: options are not actually distinct", rc == 1 and "distinct" in out.lower())
+
+d = copy.deepcopy(cp_base); d["outputAudit"]["pass"] = False
+rc, out = vr_obj(d); check("reject: ship verdict with a failing output audit", rc == 1 and "outputaudit" in out.lower())
+
+d = copy.deepcopy(cp_base); del d["outputAudit"]
+rc, out = vr_obj(d); check("reject: ship verdict with no output audit at all", rc == 1 and "outputaudit" in out.lower())
+
+d = copy.deepcopy(cp_base); d["trace"][0]["modelTier"] = "deep"
+rc, out = vr_obj(d); check("reject: gate step (brief-gate) not tagged fast", rc == 1 and "fast" in out.lower())
+
+d = copy.deepcopy(cp_base); d["trace"][0]["modelTier"] = "leisurely"
+rc, out = vr_obj(d); check("reject: unknown modelTier value", rc == 1 and "modeltier" in out.lower())
+
+# ---- output audit (scripts/validate-output.py) smoke tests ----
+rc, out = vo_run("deliverable-pass.html", "lock-fixture.json")
+check("output-audit: in-lock, no-Hard-NO deliverable passes", rc == 0 and json.loads(out)["pass"] is True)
+
+rc, out = vo_run("deliverable-fail.html", "lock-fixture.json")
+obj = json.loads(out) if out.strip().startswith("{") else {}
+check("output-audit: out-of-lock color caught", rc == 1 and "#111111" in obj.get("colorsOutOfLock", []))
+check(
+    "output-audit: both Hard-NO patterns caught",
+    set(obj.get("hardNoHits", [])) == {"lorem ipsum", "click here"},
+)
 
 # ---- regression guards: the bugs we fixed must stay fixed ----
 design = (EX / "worked-design-handoff.md").read_text(encoding="utf-8")

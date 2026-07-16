@@ -1,0 +1,74 @@
+{
+  "schema": "revue.review.v1",
+  "runId": "example-creative-production-ship",
+  "mode": "design-handoff",
+  "dryRun": true,
+  "produces": "creative-production",
+  "request": "Design the VIP Marina 'Weekdays on the Water' landing page from a brand-new brief.",
+  "stakeholder": "Client (marina owner)",
+  "inputs": [
+    { "type": "note", "ref": "client brief call + existing brand deck", "note": "navy/coral/aqua, 15% weekday offer" }
+  ],
+  "constraints": { "brand": "navy/coral/aqua", "format_requested": "html" },
+  "brief": {
+    "deliverable": "Single-file HTML/CSS landing page, desktop + mobile",
+    "format": "html",
+    "sources": ["client brief call notes", "existing brand deck", "marina.com/rentals (current site)"],
+    "handoffPageRead": true,
+    "designSystemLock": "examples/lock-fixture.json",
+    "hardNos": ["lorem ipsum", "click here"]
+  },
+  "designSystemLock": {
+    "colors": ["#062456", "#FF5747", "#25C7C3", "#FFFFFF"],
+    "typography": ["Quicksand", "Arial"],
+    "hardNos": [
+      { "pattern": "lorem ipsum", "why": "placeholder text must never ship" },
+      { "pattern": "click here", "why": "brand voice: never generic link text" }
+    ]
+  },
+  "options": [
+    { "id": "concept-a", "summary": "Trust-first: local fleet, plain pricing, calm structure.", "distinctionAxis": "trust vs. urgency", "lockCompliant": true },
+    { "id": "concept-b", "summary": "Loss-aversion hero: 'Summer is 12 weekends' with the boat picker promoted to the hero.", "distinctionAxis": "urgency-led hero", "lockCompliant": true },
+    { "id": "concept-c", "summary": "Boat-picker-first: pricing and picker above the fold, trust signals below.", "distinctionAxis": "information order (picker before trust)", "lockCompliant": true }
+  ],
+  "optionFeedback": [
+    { "optionId": "concept-a", "decision": "keep", "note": "keep the plain pricing table" },
+    { "optionId": "concept-b", "decision": "change", "note": "keep the loss-aversion line, drop the picker-as-hero framing" },
+    { "optionId": "concept-c", "decision": "kill", "note": "picker-first reads as a rental marketplace, not VIP" }
+  ],
+  "evidence": [
+    { "category": "source", "statement": "Read the client brief call notes and the current marina.com/rentals page this session before drafting.", "verified": true },
+    { "category": "action", "statement": "Ran scripts/validate-output.py against outputs/vip-marina-landing.html and examples/lock-fixture.json this session.", "verified": true },
+    { "category": "result", "statement": "Output audit: 4 colors found, all in lock; no Hard-NO hits.", "verified": true },
+    { "category": "limitation", "statement": "Spacing/grid and logo-usage lock fields are not machine-checked in v1.0; verified by eye only.", "verified": false }
+  ],
+  "scorecard": [
+    { "check": "Exact requested format", "status": "pass", "evidence": "Single HTML file at outputs/vip-marina-landing.html" },
+    { "check": "Source editability", "status": "pass", "evidence": "Plain HTML/CSS, fully editable" },
+    { "check": "Desktop/mobile states", "status": "pass", "evidence": "Both breakpoints present, screenshotted this session" },
+    { "check": "Preview fidelity", "status": "pass", "evidence": "Rendered locally, screenshot matches source" },
+    { "check": "Brand fit", "status": "pass", "evidence": "Output audit: all colors in lock" },
+    { "check": "Stakeholder access", "status": "pass", "evidence": "File path shared, opens in any browser" },
+    { "check": "Developer clarity", "status": "pass", "evidence": "Single file, commented sections" }
+  ],
+  "outputAudit": {
+    "deliverablePath": "outputs/vip-marina-landing.html",
+    "lockPath": "examples/lock-fixture.json",
+    "colorsFound": ["#062456", "#25c7c3", "#ff5747", "#ffffff"],
+    "colorsOutOfLock": [],
+    "hardNoHits": [],
+    "pass": true
+  },
+  "verdict": {
+    "value": "ship",
+    "reason": "Brief was complete before generation, three distinct lock-compliant concepts were shown, concept B (revised per keep/kill/change feedback) was built, and the output audit passed clean.",
+    "requiredProof": "Output audit pass + full design scorecard.",
+    "nextAction": "Send outputs/vip-marina-landing.html to the client."
+  },
+  "trace": [
+    { "step": "brief-gate", "modelTier": "fast", "durationMs": 0 },
+    { "step": "options-generation", "modelTier": "standard", "durationMs": 0 },
+    { "step": "output-audit", "modelTier": "fast", "durationMs": 0 },
+    { "step": "self-check", "modelTier": "fast", "durationMs": 0 }
+  ]
+}
