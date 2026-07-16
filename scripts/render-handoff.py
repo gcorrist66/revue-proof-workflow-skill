@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a revŨe handoff Markdown skeleton."""
+"""Render a revüe handoff Markdown skeleton."""
 
 from __future__ import annotations
 
@@ -11,8 +11,8 @@ VALID_VERDICTS = ("ship", "ship with changes", "caution", "block", "pending")
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Render a revŨe handoff.")
-    parser.add_argument("--title", default="revŨe Handoff")
+    parser = argparse.ArgumentParser(description="Render a revüe handoff.")
+    parser.add_argument("--title", default="revüe Handoff")
     parser.add_argument("--outcome", default="")
     parser.add_argument("--verdict", default="pending", choices=VALID_VERDICTS)
     parser.add_argument("--reason", default="")

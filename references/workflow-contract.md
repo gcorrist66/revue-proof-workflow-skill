@@ -6,8 +6,8 @@ Use this reference when the request has more than one step, more than one stakeh
 
 - Outcome: the useful end state in one sentence.
 - Stage: intake, shape, build, prove, handoff, or review.
-- Scope in: what revŨe is responsible for.
-- Scope out: what revŨe will not do without a new request.
+- Scope in: what revüe is responsible for.
+- Scope out: what revüe will not do without a new request.
 - Inputs: files, URLs, screenshots, notes, credentials, tools, or prior artifacts.
 - Constraints: brand, tone, deadline, budget, technical stack, approvals, and hard boundaries.
 - Assumptions: claims that are plausible but not yet proven.
@@ -26,7 +26,7 @@ Keep the work operational:
 
 ## Completion Standard
 
-A revŨe run is complete only when it has one of these:
+A revüe run is complete only when it has one of these:
 
 - a verified handoff with evidence
 - a prepared draft awaiting approval

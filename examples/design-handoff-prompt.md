@@ -1,7 +1,7 @@
 # Example: Design Handoff Review
 
 ```text
-Run this Figma landing-page mockup through revŨe. Tell me whether it is ready to send to the client, what proof exists, what is missing, and what the next action should be.
+Run this Figma landing-page mockup through revüe. Tell me whether it is ready to send to the client, what proof exists, what is missing, and what the next action should be.
 ```
 
 Expected behavior:

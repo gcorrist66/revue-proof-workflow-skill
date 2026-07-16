@@ -16,17 +16,6 @@ Initial public-ready package.
 - Handoff, intake, verification, and stakeholder-summary templates.
 - Handoff validation script.
 
-## Next investigation: Vega / v3ga
-
-For the next revüe version, treat the Homebrew-installed `v3ga` Vega service as the primary source to inspect:
-
-- Binary: `/opt/homebrew/Cellar/vega/0.7.13/bin/vega`
-- PATH symlink: `/opt/homebrew/bin/vega`
-- LaunchAgent: `/Users/corristonconsulting/Library/LaunchAgents/dev.v3ga.vega.plist`
-- Local dashboard/API: `http://localhost:8099`
-
-Do not confuse this with the HiveRunner manual-runtime `Vega` agent workspace. That HiveRunner copy may still contain useful creative-director language, but it is not the same source as the OpenClaw/Doge-discovered Vega service.
-
 ## v0.2.0 direction
 
 Added v3ga/Vega-inspired workflow guidance:
@@ -35,3 +24,10 @@ Added v3ga/Vega-inspired workflow guidance:
 - Lightweight run-state / blackboard template.
 - Vega pattern reference for platform-build work.
 - Clear distinction between useful workflow patterns and heavyweight runtime features.
+
+## Next investigation: Vega / v3ga
+
+For the next revüe version, inspect the local Vega workflow service as a source of
+patterns worth borrowing (role clarity, blackboard claims, observable run history).
+Keep environment-specific paths, service endpoints, and internal project codenames out
+of this public repo; record them only in local, untracked notes.

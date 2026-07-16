@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate that a revŨe handoff contains required proof sections and evidence."""
+"""Validate that a revüe handoff contains required proof sections and evidence."""
 
 from __future__ import annotations
 
@@ -51,7 +51,7 @@ DESIGN_SCORECARD_CHECKS = [
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Validate a revŨe handoff Markdown file.")
+    parser = argparse.ArgumentParser(description="Validate a revüe handoff Markdown file.")
     parser.add_argument("handoff", type=Path)
     parser.add_argument(
         "--mode",
@@ -151,7 +151,7 @@ def main() -> int:
             print(f"- {failure}")
         return 1
 
-    print("PASS: revŨe handoff contains required sections, verdict, and mode-appropriate evidence.")
+    print("PASS: revüe handoff contains required sections, verdict, and mode-appropriate evidence.")
     return 0
 
 

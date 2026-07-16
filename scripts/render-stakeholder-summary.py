@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a concise revŨe stakeholder summary."""
+"""Render a concise revüe stakeholder summary."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ import argparse
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Render a stakeholder-ready revŨe summary.")
+    parser = argparse.ArgumentParser(description="Render a stakeholder-ready revüe summary.")
     parser.add_argument("--title", default="Stakeholder Summary")
     parser.add_argument("--ready", default="")
     parser.add_argument("--review", default="")
