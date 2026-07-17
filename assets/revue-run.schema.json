@@ -41,14 +41,45 @@
     "brief": {
       "type": "object",
       "description": "Required creative brief for 'produces': 'creative-production' runs (references/creative-brief.md). scripts/validate-run.py enforces these as a batched completeness gate.",
-      "required": ["deliverable", "format", "sources", "handoffPageRead", "designSystemLock", "hardNos"],
+      "required": ["deliverable", "format", "tier", "sources", "handoffPageRead", "designSystemLock", "hardNos"],
       "properties": {
         "deliverable": { "type": "string", "minLength": 1 },
         "format": { "type": "string", "minLength": 1 },
+        "tier": {
+          "type": "string",
+          "enum": ["Standard", "Premium", "Custom"],
+          "description": "references/creative-brief.md cascade: sets the craft bar (references/elevate.md for Premium), the model tier (references/model-routing.md), and the audit bar (scripts/validate-output.py --tier)."
+        },
         "sources": { "type": "array", "minItems": 1, "items": { "type": "string" } },
         "handoffPageRead": { "type": "boolean" },
         "designSystemLock": { "type": "string", "description": "Reference/path to the lock (assets/*.lock.json or the run's top-level designSystemLock object)." },
-        "hardNos": { "type": "array", "items": { "type": "string" } }
+        "hardNos": { "type": "array", "items": { "type": "string" } },
+        "structure": {
+          "type": "object",
+          "description": "Optional structure spec for references/brief-conformance.md. When present, scripts/validate-conformance.py's result is required (as the run's top-level 'conformance') before a 'ship' verdict.",
+          "properties": {
+            "requiredSections": { "type": "array", "items": { "type": "string" } },
+            "sectionOrder": { "type": "boolean" },
+            "forbiddenElements": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["pattern", "why"],
+                "properties": { "pattern": { "type": "string" }, "why": { "type": "string" } }
+              }
+            },
+            "requiredPlaceholders": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "tierSignoff": {
+      "type": "object",
+      "description": "Required before a 'ship' verdict when brief.tier is 'Custom' — Custom is human-led, not autonomously graded (references/creative-brief.md).",
+      "required": ["by"],
+      "properties": {
+        "by": { "type": "string", "minLength": 1 },
+        "note": { "type": "string" }
       }
     },
     "designSystemLock": {
@@ -149,6 +180,35 @@
         "colorsFound": { "type": "array", "items": { "type": "string" } },
         "colorsOutOfLock": { "type": "array", "items": { "type": "string" } },
         "hardNoHits": { "type": "array", "items": { "type": "string" } },
+        "elevateChecks": {
+          "type": "array",
+          "description": "Present only when audited with --tier premium (references/elevate.md).",
+          "items": {
+            "type": "object",
+            "required": ["check", "status"],
+            "properties": {
+              "check": { "type": "string" },
+              "status": { "type": "string", "enum": ["pass", "fail"] },
+              "detail": { "type": "string" }
+            }
+          }
+        },
+        "elevatePass": { "type": "boolean", "description": "Required true before 'ship' when brief.tier is 'Premium'." },
+        "pass": { "type": "boolean" }
+      }
+    },
+    "conformance": {
+      "type": "object",
+      "description": "Result of scripts/validate-conformance.py against the brief's structure spec (references/brief-conformance.md). Required (and must be pass: true) before a 'ship' verdict, only when brief.structure is declared.",
+      "required": ["pass"],
+      "properties": {
+        "deliverablePath": { "type": "string" },
+        "structurePath": { "type": "string" },
+        "sectionsFound": { "type": "array", "items": { "type": "string" } },
+        "missingSections": { "type": "array", "items": { "type": "string" } },
+        "orderViolations": { "type": "array", "items": { "type": "string" } },
+        "forbiddenHits": { "type": "array", "items": { "type": "string" } },
+        "missingPlaceholders": { "type": "array", "items": { "type": "string" } },
         "pass": { "type": "boolean" }
       }
     },

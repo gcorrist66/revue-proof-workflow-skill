@@ -1,0 +1,9 @@
+{
+  "colors": ["#062456", "#FF5747", "#25C7C3", "#FFFFFF"],
+  "typography": ["Fraunces", "Quicksand", "Arial"],
+  "hardNos": [
+    { "pattern": "lorem ipsum", "why": "placeholder text must never ship" },
+    { "pattern": "click here", "why": "brand voice: never generic link text" }
+  ],
+  "claims": []
+}

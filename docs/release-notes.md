@@ -1,5 +1,66 @@
 # Release Notes
 
+## v1.1.0
+
+Adds site tiers, the Premium craft layer, and brief-conformance on top of the v1.0 creative-production
+pipeline. Every new gate is self-enforcing (blocks or caps the verdict, never just advises), and every
+pre-v1.1 run artifact stays valid — the new required brief field (`tier`) only gates
+`"produces": "creative-production"` runs, exactly like every other v1.0 brief field.
+
+**Provenance note.** The task's named craft exemplars (`vip-flagship-page.html`, `vip-instance-real.html`)
+and the referenced `revue-v1.0-build-handoff.md` were not present in this repo or the session's uploads.
+The Premium craft rules were built from the task's own distilled description; the worked Premium
+exemplar (`examples/premium-exemplar.html`) is a reconstruction built to satisfy every rule, not a copy
+of an original. The Standard exemplar reuses the existing, real `examples/dogfood/winner.html` rather
+than fabricating a redundant one. See `HANDOFF-TO-FABLE-v1.1.md`.
+
+- **Tier field and cascade** (`references/creative-brief.md`): the brief now has five required,
+  blocking fields — `deliverable + format`, **`tier`** (`Standard` / `Premium` / `Custom`), `sources`,
+  `designSystemLock`, `hardNos`. Tier sets three things at once: the craft bar (Standard = lock
+  compliance is the whole bar; Premium = lock compliance plus `references/elevate.md`; Custom =
+  human-directed, no template), the model tier (Standard/Premium creative generation run `standard`/
+  `deep`; Custom is human-led), and the audit bar (Standard/Premium both require `outputAudit.pass`;
+  Premium additionally requires `outputAudit.elevatePass`; Custom requires a `tierSignoff` naming a
+  human). `assets/intake-template.md` gets a new required Tier section.
+- **Elevate layer** (`references/elevate.md`): the Premium craft bar distilled into six rules —
+  full-bleed cinematic hero with a legibility scrim, a serif-display + sans-body type system, editorial
+  restraint and negative space, a repeating signature motif, legibility-over-imagery, and
+  desktop+mobile+sticky-bar. Four of the six are machine-checked (see below); restraint, the signature
+  motif, and true legibility judgment stay a human/board call, documented as such rather than faked.
+- **Elevate heuristics in `scripts/validate-output.py`** (`--tier {standard,premium,custom}`, default
+  `standard`): for Premium, checks for a full-bleed hero section with imagery, a scrim/overlay/gradient/
+  text-shadow over that imagery, 2+ distinct declared type families, and a `position: sticky`/`fixed`
+  action bar. Folds into `outputAudit.elevateChecks` + `outputAudit.elevatePass`, and into overall
+  `pass`. `--tier standard` (the default) never runs these — Standard-tier work isn't held to a bar it
+  wasn't briefed for. Pattern heuristics, not adversarially hardened — documented as scaffolding in
+  `references/output-audit.md` and `references/elevate.md`, same as the rest of Pillar 3 started.
+- **Brief-conformance** (`references/brief-conformance.md`, `scripts/validate-conformance.py`): checks
+  a deliverable against an optional `brief.structure` spec — required sections present (via a
+  `data-section="name"` or `<section id="name">` convention) and, if declared, in order; forbidden
+  markup patterns absent; required placeholders present verbatim (proving a not-yet-known value stayed
+  an honest placeholder instead of a silent guess). Non-adversarial first version, matching how
+  `scripts/validate-output.py` started before it was hardened.
+- **Tier-sets-audit-bar, enforced** (`scripts/validate-run.py`): a `ship` verdict on a Premium-tier run
+  requires `outputAudit.elevatePass == true` — a deliverable that only clears the Standard bar is
+  flagged, not shipped, with that exact wording in the failure. Custom requires a top-level
+  `tierSignoff.by`. When `brief.structure` is declared, `ship` also requires a passing top-level
+  `conformance` object. Premium also requires the `options-generation` trace step to be tagged
+  `modelTier: "deep"` (`references/model-routing.md`'s tier-routing rule, structurally enforced).
+  `conformance-check` joins the steps that must be tagged `fast`.
+- Schema (`assets/revue-run.schema.json`): `brief.tier` (required enum) and optional `brief.structure`;
+  new top-level `conformance` and `tierSignoff` objects; `outputAudit.elevateChecks`/`elevatePass`.
+- New fixtures: `examples/premium-exemplar.html` + `examples/premium-lock.json` +
+  `examples/premium-structure.json`, `examples/worked-premium-production.json` (the first Premium-tier
+  `ship` golden), `examples/structure-fixture.json`, `examples/conformance-pass.html`,
+  `examples/conformance-fail.html`. `examples/worked-creative-production.json` and
+  `examples/dogfood/run.json` gain `brief.tier: "Standard"` (now a required field).
+- `scripts/run-evals.py`: **80 cases total** — the 58 pre-v1.1 cases unchanged, plus 22 new: the
+  Premium golden, brief missing/invalid tier, Premium ship without elevatePass (two forms), Custom ship
+  without tierSignoff (and the matching accept case with one), Premium options-generation mistagged,
+  conformance declared-but-failing/never-run, the elevate heuristics firing correctly on the Premium
+  exemplar and correctly flagging a Standard-only deliverable audited at `--tier premium`, and six
+  `validate-conformance.py` pass/fail/detail cases.
+
 ## v1.0.0
 
 Turned revüe from a reviewer into a guided creative-production skill with a failsafe at every seam.

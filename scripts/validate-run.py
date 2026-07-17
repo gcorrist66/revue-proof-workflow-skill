@@ -10,6 +10,13 @@ a complete brief (references/creative-brief.md), 2-3 distinct lock-compliant opt
 audit (references/output-audit.md). Also validates that every trace step's modelTier is a known value,
 and that known gate/validator steps are tagged 'fast' (references/model-routing.md). Runs without a
 'produces' field, or tagged 'review', are unaffected — this keeps every pre-v1.0 run artifact valid.
+
+v1.1.0: brief.tier (Standard/Premium/Custom) joins the batched brief-completeness check. Before a
+'ship' verdict (--strict): a Premium-tier run requires outputAudit.elevatePass == true — a deliverable
+that only clears the Standard bar is flagged, not shipped; a Custom-tier run requires a top-level
+tierSignoff naming a human. When the brief declares a 'structure' spec (references/brief-conformance.md),
+a 'ship' verdict also requires a passing top-level 'conformance' object. 'conformance-check' joins the
+fast-tagged gate steps.
 """
 
 from __future__ import annotations
@@ -49,6 +56,7 @@ DESIGN_SCORECARD_CHECKS = [
 
 VALID_PRODUCES = {"review", "creative-production"}
 VALID_MODEL_TIERS = {"fast", "standard", "deep", "deep-coding"}
+VALID_SITE_TIERS = {"Standard", "Premium", "Custom"}
 
 # Step names that are self-enforcing gates/validators — references/model-routing.md requires these
 # run at the 'fast' tier whenever a modelTier is recorded for them.
@@ -57,6 +65,7 @@ GATE_STEPS = {
     "design-system-lock-check",
     "options-lock-check",
     "output-audit",
+    "conformance-check",
     "self-check",
     "validate-run",
     "validate-output",
@@ -143,6 +152,8 @@ def main() -> int:
             missing.append("deliverable")
         if not str(brief.get("format", "")).strip():
             missing.append("format")
+        if brief.get("tier") not in VALID_SITE_TIERS:
+            missing.append(f"tier (must be one of {sorted(VALID_SITE_TIERS)})")
         if not isinstance(brief.get("sources"), list) or not brief.get("sources"):
             missing.append("sources")
         if brief.get("handoffPageRead") is not True:
@@ -184,6 +195,9 @@ def main() -> int:
                     failures.append("options are not distinct: duplicate distinctionAxis")
 
     # v1.0.0: gate/validator steps must run at the 'fast' model tier (references/model-routing.md).
+    # v1.1.0: Premium tier routes creative generation to 'deep' (the elevate bar is the kind of
+    # ambiguous, expensive-to-get-wrong judgment references/model-routing.md reserves for that tier).
+    site_tier = (data.get("brief") or {}).get("tier")
     for step in data.get("trace") or []:
         if not isinstance(step, dict):
             continue
@@ -197,6 +211,11 @@ def main() -> int:
         elif step.get("step") in GATE_STEPS and tier != "fast":
             failures.append(
                 f"gate step {step.get('step')!r} must be tagged modelTier 'fast', got {tier!r}"
+            )
+        elif step.get("step") == "options-generation" and site_tier == "Premium" and tier != "deep":
+            failures.append(
+                "options-generation must be tagged modelTier 'deep' for Premium tier "
+                f"(references/model-routing.md), got {tier!r}"
             )
 
     verdict = data.get("verdict") or {}
@@ -261,6 +280,35 @@ def main() -> int:
                         "outputAudit is internally inconsistent: pass == true but violations are listed "
                         "— re-run scripts/validate-output.py"
                     )
+
+                # Tier sets the audit bar (references/creative-brief.md cascade). A Premium-declared
+                # deliverable that only clears the Standard bar is flagged, not shipped.
+                tier = (data.get("brief") or {}).get("tier")
+                if tier == "Premium":
+                    elevate_pass = isinstance(audit, dict) and audit.get("elevatePass") is True
+                    if not elevate_pass:
+                        failures.append(
+                            "ship verdict requires outputAudit.elevatePass == true for Premium tier "
+                            "(references/elevate.md) — this deliverable meets only the Standard bar; "
+                            "re-run scripts/validate-output.py --tier premium"
+                        )
+                elif tier == "Custom":
+                    signoff = data.get("tierSignoff")
+                    if not isinstance(signoff, dict) or not str(signoff.get("by", "")).strip():
+                        failures.append(
+                            "ship verdict requires a top-level tierSignoff.by for Custom tier "
+                            "(references/creative-brief.md) — Custom is human-led, not autonomously graded"
+                        )
+
+                # Brief-conformance (references/brief-conformance.md) is required before ship only when
+                # the brief actually declared a structure spec — not every brief needs one.
+                if isinstance(brief, dict) and isinstance(brief.get("structure"), dict):
+                    conformance = data.get("conformance")
+                    if not isinstance(conformance, dict) or conformance.get("pass") is not True:
+                        failures.append(
+                            "ship verdict requires conformance.pass == true because brief.structure is "
+                            "declared (references/brief-conformance.md) — re-run scripts/validate-conformance.py"
+                        )
 
         # Converge: a non-ship verdict must carry a path to ship (or a decision block).
         if verdict_value and verdict_value != "ship":

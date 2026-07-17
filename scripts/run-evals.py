@@ -26,6 +26,7 @@ EX = ROOT / "examples"
 VR = ROOT / "scripts" / "validate-run.py"
 VE = ROOT / "scripts" / "validate-evidence.py"
 VO = ROOT / "scripts" / "validate-output.py"
+VC = ROOT / "scripts" / "validate-conformance.py"
 
 cases: list[tuple[str, bool]] = []
 
@@ -74,6 +75,7 @@ GOLDEN_JSON = {
     "worked-product-shaping.json": "caution",
     "worked-client-delivery.json": "ship with changes",
     "worked-creative-production.json": "ship",
+    "worked-premium-production.json": "ship",
 }
 for name, expected in GOLDEN_JSON.items():
     rc, _ = vr_file(name)
@@ -306,6 +308,104 @@ check(
     "dogfood: verdict is 'ship with changes' (no browser preview, no ship)",
     json.loads((DOG / "run.json").read_text(encoding="utf-8"))["verdict"]["value"] == "ship with changes",
 )
+
+# ---- v1.1.0: tier gate (Standard/Premium/Custom), elevate, and brief-conformance ----
+prem_base = load("worked-premium-production.json")
+
+d = copy.deepcopy(prem_base); del d["brief"]["tier"]
+rc, out = vr_obj(d)
+check("reject: brief missing tier batches into the incomplete-brief failure", rc == 1 and "tier" in out.lower())
+
+d = copy.deepcopy(prem_base); d["brief"]["tier"] = "Enterprise"
+rc, out = vr_obj(d)
+check("reject: brief.tier must be one of Standard/Premium/Custom", rc == 1 and "tier" in out.lower())
+
+d = copy.deepcopy(prem_base); d["outputAudit"]["elevatePass"] = False
+rc, out = vr_obj(d)
+check(
+    "reject: Premium ship requires elevatePass — meets only the Standard bar",
+    rc == 1 and "elevatepass" in out.lower() and "standard bar" in out.lower(),
+)
+
+d = copy.deepcopy(prem_base); del d["outputAudit"]["elevateChecks"]; del d["outputAudit"]["elevatePass"]
+rc, out = vr_obj(d)
+check("reject: Premium ship with no elevate checks run at all", rc == 1 and "elevatepass" in out.lower())
+
+d = copy.deepcopy(prem_base); d["brief"]["tier"] = "Custom"; d["trace"][1]["modelTier"] = "standard"
+rc, out = vr_obj(d)
+check(
+    "reject: Custom tier ship with no tierSignoff",
+    rc == 1 and "tiersignoff" in out.lower(),
+)
+
+d = copy.deepcopy(prem_base); d["trace"][1]["modelTier"] = "standard"
+rc, out = vr_obj(d)
+check(
+    "reject: Premium tier options-generation not tagged deep",
+    rc == 1 and "options-generation" in out.lower() and "deep" in out.lower(),
+)
+
+d = copy.deepcopy(prem_base)
+d["conformance"]["pass"] = False
+rc, out = vr_obj(d)
+check(
+    "reject: declared brief.structure but conformance fails",
+    rc == 1 and "conformance" in out.lower(),
+)
+
+d = copy.deepcopy(prem_base); del d["conformance"]
+rc, out = vr_obj(d)
+check(
+    "reject: declared brief.structure but conformance never ran",
+    rc == 1 and "conformance" in out.lower(),
+)
+
+# A Custom-tier run WITH a proper human sign-off must be allowed to ship.
+d = copy.deepcopy(prem_base)
+d["brief"]["tier"] = "Custom"
+d["trace"][1]["modelTier"] = "standard"
+d["tierSignoff"] = {"by": "Gary Corriston", "note": "approved the bespoke direction directly"}
+rc, out = vr_obj(d)
+check("accept: Custom tier ship with a proper human tierSignoff", rc == 0)
+
+# ---- v1.1.0: output-audit --tier premium — the elevate heuristics fire correctly ----
+rc, out = _run([str(VO), str(EX / "premium-exemplar.html"), "--lock", str(EX / "premium-lock.json"),
+                "--tier", "premium", "--json"])
+prem_audit = json.loads(out)
+check("premium exemplar: base lock/font/Hard-NO audit passes", not prem_audit["colorsOutOfLock"] and not prem_audit["fontsOutOfLock"])
+check("premium exemplar: all four elevate checks pass", rc == 0 and prem_audit["elevatePass"] is True)
+
+rc, out = _run([str(VO), str(EX / "deliverable-pass.html"), "--lock", str(EX / "lock-fixture.json"),
+                "--tier", "premium", "--json"])
+standard_only = json.loads(out)
+check(
+    "red team: Standard-bar-only deliverable flagged when audited at --tier premium",
+    rc == 1 and standard_only["pass"] is False and standard_only["elevatePass"] is False
+    and not standard_only["colorsOutOfLock"],  # proves it's the elevate bar failing, not the base lock
+)
+check(
+    "premium heuristic: no hero marker -> full-bleed hero + scrim both fail",
+    {c["check"] for c in standard_only["elevateChecks"] if c["status"] == "fail"}
+    >= {"full-bleed hero section", "legibility scrim over hero imagery", "sticky action bar"},
+)
+
+# Same file at --tier standard (default) is unaffected — no elevate bar was ever asked for.
+rc, out = _run([str(VO), str(EX / "deliverable-pass.html"), "--lock", str(EX / "lock-fixture.json"), "--json"])
+check("standard tier: same deliverable passes clean with no elevateChecks", rc == 0 and "elevateChecks" not in json.loads(out))
+
+# ---- v1.1.0: brief-conformance (scripts/validate-conformance.py) ----
+rc, out = _run([str(VC), str(EX / "conformance-pass.html"), "--structure", str(EX / "structure-fixture.json"), "--json"])
+check("conformance: sections present, ordered, no forbidden elements, placeholder intact -> pass", rc == 0 and json.loads(out)["pass"] is True)
+
+rc, out = _run([str(VC), str(EX / "conformance-fail.html"), "--structure", str(EX / "structure-fixture.json"), "--json"])
+conf_fail = json.loads(out)
+check("conformance: missing section caught", rc == 1 and "proof" in conf_fail["missingSections"])
+check("conformance: order violation caught", bool(conf_fail["orderViolations"]))
+check("conformance: forbidden element (banned custom header) caught", "class=\"custom-header\"" in conf_fail["forbiddenHits"])
+check("conformance: missing required placeholder caught (guessed value instead)", "[CLIENT_PHONE]" in conf_fail["missingPlaceholders"])
+
+rc, out = _run([str(VC), str(EX / "premium-exemplar.html"), "--structure", str(EX / "premium-structure.json"), "--json"])
+check("conformance: premium exemplar's real sections conform to its own structure spec", rc == 0 and json.loads(out)["pass"] is True)
 
 # ---- regression guards: the bugs we fixed must stay fixed ----
 design = (EX / "worked-design-handoff.md").read_text(encoding="utf-8")

@@ -17,9 +17,10 @@ assumptions, a real review board over a single generic pass, and a direct decisi
 3. Separate facts from assumptions. Label assumptions explicitly.
 4. Define the exact deliverable format and proof required before claiming success.
 5. For creative-production work, run the required brief gate (`references/creative-brief.md`,
-   `assets/intake-template.md`) before generating anything. If a required field is missing, stop and
-   return one batched request for exactly what's missing — never start on the parts that are ready and
-   drip-feed questions about the rest.
+   `assets/intake-template.md`) before generating anything — including **tier** (`Standard` /
+   `Premium` / `Custom`), which sets the craft bar, routes the model, and sets the audit bar. If a
+   required field is missing, stop and return one batched request for exactly what's missing — never
+   start on the parts that are ready and drip-feed questions about the rest.
 6. Surface approval gates before making external, destructive, paid, or public changes.
 7. Gather evidence with `references/inspection-checklists.md` for the active mode. Meet the evidence
    floor: at least three concrete, cited observations taken from the actual artifact, each with how and
@@ -27,14 +28,18 @@ assumptions, a real review board over a single generic pass, and a direct decisi
 8. Run the review board (`references/review-board.md`) for design, product, or stakeholder-facing work:
    shared inputs, shared non-negotiables, distinct panelist lanes, one synthesized verdict.
 9. For creative-production work, generate 2–3 distinct, lock-compliant concepts
-   (`references/options-and-refine.md`) — never a single default direction. Fold reject feedback
-   (keep/kill/change) into the brief before generating the next round.
+   (`references/options-and-refine.md`) — never a single default direction. For Premium tier, every
+   concept must also be checked against the elevate bar (`references/elevate.md`) before it is shown.
+   Fold reject feedback (keep/kill/change) into the brief before generating the next round.
 10. For creative-production work, run the output audit (`references/output-audit.md`,
-    `scripts/validate-output.py`) against the design-system lock (`references/design-system-lock.md`)
-    before any `ship` verdict.
+    `scripts/validate-output.py --tier <site tier>`) against the design-system lock
+    (`references/design-system-lock.md`) before any `ship` verdict — Premium tier requires
+    `elevatePass` too. If the brief declared a structure spec, also run brief-conformance
+    (`references/brief-conformance.md`, `scripts/validate-conformance.py`).
 11. Route each step to a model tier (`references/model-routing.md`): gates and validators always run
-    `fast`; creative generation and board synthesis run `standard`; genuinely ambiguous judgment
-    escalates to `deep`; heavy coding escalates to `deep-coding`.
+    `fast`; creative generation and board synthesis run `standard`, escalating to `deep` for Premium
+    tier; genuinely ambiguous judgment escalates to `deep`; heavy coding escalates to `deep-coding`;
+    Custom tier is human-led — the model may draft, but a human signs off (`tierSignoff`) before ship.
 12. Produce a final verdict: `ship`, `ship with changes`, `caution`, or `block`. If the verdict would
     change under a stated assumption, name the assumption and give both outcomes.
 13. Before presenting, run the self-check (`references/self-check.md`) on your own draft, and run
@@ -75,6 +80,10 @@ Every mode above runs in one of two tracks: **review** (default) — checking wo
 or **creative production** — revüe designing or building something new. Creative-production work always
 starts with the brief gate (`references/creative-brief.md`) regardless of which mode it runs under.
 
+Every creative-production run also carries a **site tier** — `Standard`, `Premium`, or `Custom` — set
+in the brief. Tier is orthogonal to mode: a `design-handoff` or `client-delivery` run can be any tier.
+See `references/creative-brief.md`'s tier cascade table for what each tier changes.
+
 ## Workflow
 
 ### 1. Intake
@@ -91,9 +100,9 @@ Capture the job in this shape:
 Use `assets/intake-template.md` when the user needs a reusable intake artifact. For a repeatable run,
 declare it as a spec using `examples/sample-run.revue.yaml`.
 
-For creative-production requests, intake IS the brief gate: fill in `assets/intake-template.md`'s four
-required sections and do not proceed to Shape until `references/creative-brief.md`'s completeness check
-passes. A missing field blocks with one batched request, not a partial start.
+For creative-production requests, intake IS the brief gate: fill in `assets/intake-template.md`'s five
+required sections (including tier) and do not proceed to Shape until `references/creative-brief.md`'s
+completeness check passes. A missing field blocks with one batched request, not a partial start.
 
 ### 2. Shape
 
@@ -119,7 +128,9 @@ design work, preserve the user's style and workflow mentality unless the user ex
 For creative-production work, generate 2–3 distinct, lock-compliant concepts
 (`references/options-and-refine.md`) rather than one default direction. When a concept is rejected,
 require keep/kill/change feedback and fold it into the brief before generating the next round — never
-regenerate from memory of the conversation alone.
+regenerate from memory of the conversation alone. For Premium tier, generation runs at `deep` model
+tier and every concept is also checked against the elevate craft bar (`references/elevate.md`) before
+it is shown — a concept that only clears Standard does not get presented as a Premium option.
 
 For revüe itself, prefer practical operator surfaces:
 
@@ -152,10 +163,14 @@ a Markdown handoff, or serialize the review as a `revue.review.v1` artifact
 afterthought: a review can always be dry-run validated before any external action.
 
 For creative-production work, run the output audit before any `ship` verdict:
-`python3 scripts/validate-output.py <deliverable> --lock <lock.json>` checks the deliverable's actual
-colors and text against the design-system lock (`references/design-system-lock.md`,
-`references/output-audit.md`). `scripts/validate-run.py --strict` refuses a `ship` verdict on a
-`"produces": "creative-production"` run unless `outputAudit.pass` is `true`.
+`python3 scripts/validate-output.py <deliverable> --lock <lock.json> --tier <site tier>` checks the
+deliverable's actual colors, fonts, and text against the design-system lock
+(`references/design-system-lock.md`, `references/output-audit.md`), plus the elevate craft heuristics
+for Premium (`references/elevate.md`). `scripts/validate-run.py --strict` refuses a `ship` verdict on a
+`"produces": "creative-production"` run unless `outputAudit.pass` is `true`; Premium additionally
+requires `outputAudit.elevatePass`, and Custom requires a `tierSignoff` naming a human. If the brief
+declared a structure spec, also run `python3 scripts/validate-conformance.py <deliverable> --structure
+<structure.json>` (`references/brief-conformance.md`) — required before `ship` whenever declared.
 
 For platform-build work, read `references/vega-patterns.md` before proposing revüe changes. Borrow
 patterns such as the review board (Panely), the schema-versioned run contract with a dry-run gate
@@ -206,7 +221,9 @@ Read `references/model-routing.md` to pick the model tier for each step: `fast` 
 gate and validator, `standard` (Sonnet 5) for creative generation and board synthesis, `deep` (Fable 5)
 for genuinely ambiguous judgment calls, and `deep-coding` (Opus 4.8) for heavy coding work. Gates and
 validators must run `fast` without exception — `scripts/validate-run.py` rejects a run where a known
-gate step is tagged anything else.
+gate step is tagged anything else. Site tier also routes creative generation specifically: `Standard`
+stays `standard`, `Premium` escalates to `deep` (enforced — `scripts/validate-run.py` rejects a Premium
+run whose `options-generation` step isn't tagged `deep`), and `Custom` is human-led.
 
 ## Resource Map
 
@@ -222,28 +239,34 @@ gate step is tagged anything else.
 - `references/evidence-schema.md`: what counts as proof.
 - `references/board-verdict-schema.md`: ship/caution/block decision rules.
 - `references/design-handoff.md`: Figma/design/client handoff proof checklist.
-- `references/creative-brief.md`: Pillar 1 — the required, blocking creative brief for any creative-production run.
+- `references/creative-brief.md`: Pillar 1 — the required, blocking creative brief for any creative-production run, including the tier cascade (Standard/Premium/Custom → craft bar, model routing, audit bar).
 - `references/options-and-refine.md`: Pillar 2 — 2–3 distinct lock-compliant concepts, and the keep/kill/change reject-refine loop.
 - `references/design-system-lock.md`: Pillar 3 — the machine-checkable color/type/Hard-NO/claims lock format.
-- `references/output-audit.md`: Pillar 3 — the evasion-resistant, fail-closed audit of a finished deliverable against the lock before `ship`.
-- `references/model-routing.md`: Pillar 4 — fast/standard/deep/deep-coding model tiers and which steps run at each.
-- `assets/intake-template.md`: reusable intake form; now doubles as the required creative brief for creative-production work.
+- `references/output-audit.md`: Pillar 3 — the evasion-resistant, fail-closed audit of a finished deliverable against the lock before `ship`, plus the Premium elevate heuristics (`--tier premium`).
+- `references/elevate.md`: the Premium craft bar — full-bleed hero + legibility scrim, display type system, editorial restraint, repeating signature motif, desktop+mobile+sticky bar. What's machine-checked vs. judged.
+- `references/brief-conformance.md`: structure check — required sections present and ordered, forbidden elements absent, required placeholders present — against the brief's declared `structure` spec.
+- `references/model-routing.md`: Pillar 4 — fast/standard/deep/deep-coding model tiers and which steps run at each, plus site-tier routing (Standard → standard, Premium → deep, Custom → human-led).
+- `assets/intake-template.md`: reusable intake form; now doubles as the required creative brief (five fields, including tier) for creative-production work.
 - `assets/run-state-template.json`: lightweight blackboard/run-state artifact.
-- `assets/revue-run.schema.json`: JSON schema for the `revue.review.v1` run artifact, including `brief`, `options`, `designSystemLock`, `outputAudit`, and per-step `modelTier`.
+- `assets/revue-run.schema.json`: JSON schema for the `revue.review.v1` run artifact, including `brief` (with `tier` and optional `structure`), `options`, `designSystemLock`, `outputAudit` (with `elevateChecks`/`elevatePass`), `conformance`, `tierSignoff`, and per-step `modelTier`.
 - `assets/verification-matrix-template.md`: proof checklist.
 - `assets/handoff-template.md`: final handoff format.
 - `assets/stakeholder-summary-template.md`: concise non-technical reviewer note.
 - `examples/sample-run.revue.yaml`: declarative run spec (Vega-compatible authoring format).
 - `examples/worked-design-handoff.md`: a full worked design review to imitate.
 - `examples/worked-implementation-review.md`: a full worked code/QA review to imitate.
-- `examples/worked-creative-production.json`: a full worked creative-production run (brief → options → output audit → ship) to imitate.
+- `examples/worked-creative-production.json`: a full worked creative-production run (brief → options → output audit → ship) to imitate — Standard tier.
+- `examples/worked-premium-production.json`: the Premium-tier worked exemplar — brief with `tier: "Premium"`, three concepts with only the Premium-bar one kept, `outputAudit.elevatePass: true`, a passing `conformance` result, `ship`. Paired with `examples/premium-exemplar.html` and `examples/premium-lock.json`.
+- `examples/dogfood/run.json` + `examples/dogfood/winner.html`: the Standard-tier worked exemplar (clean, functional, on-brand, no elevate layer) — see Pillar 3 dogfood notes below.
 - `examples/lock-fixture.json`, `examples/deliverable-pass.html`, `examples/deliverable-fail.html`: fixtures for `scripts/validate-output.py`.
-- `examples/redteam-*.html`: red-team fixtures — deliverables that actively try to sneak past the output audit; the eval suite proves each is rejected. `examples/redteam-original-failure.html` is the exact failure class v1.0 exists to prevent.
+- `examples/structure-fixture.json`, `examples/conformance-pass.html`, `examples/conformance-fail.html`: fixtures for `scripts/validate-conformance.py`.
+- `examples/redteam-*.html`: red-team fixtures — deliverables that actively try to sneak past the output audit; the eval suite proves each is rejected. `examples/redteam-original-failure.html` is the exact failure class v1.0 exists to prevent, and doubles as the off-palette anti-pattern `references/elevate.md` points to.
 - `examples/dogfood/`: a real end-to-end v1.0 pipeline run on revüe's own brand — brief gate blocked then completed, three concepts, audit-rejected draft, audited winner, `ship with changes` run artifact.
 - `scripts/render-handoff.py`: create a Markdown handoff skeleton (`--design` for the design scorecard).
 - `scripts/render-stakeholder-summary.py`: create a stakeholder-ready summary.
 - `scripts/validate-evidence.py`: check required handoff sections and evidence markers.
-- `scripts/validate-run.py`: validate a `revue.review.v1` run artifact against the schema and gate rules, including the brief/options/output-audit gates for creative-production runs.
-- `scripts/validate-output.py`: evasion-resistant, fail-closed audit of an HTML/CSS/SVG deliverable against a design-system lock — colors in any syntax, fonts, obfuscated Hard NOs, fabricated-metric claims, and unverifiable content; exits non-zero on a violation.
+- `scripts/validate-run.py`: validate a `revue.review.v1` run artifact against the schema and gate rules, including the brief/options/output-audit gates for creative-production runs and the tier cascade (Premium elevatePass, Custom tierSignoff, brief-conformance).
+- `scripts/validate-output.py`: evasion-resistant, fail-closed audit of an HTML/CSS/SVG deliverable against a design-system lock — colors in any syntax, fonts, obfuscated Hard NOs, fabricated-metric claims, and unverifiable content; `--tier premium` adds the elevate craft heuristics; exits non-zero on a violation.
+- `scripts/validate-conformance.py`: check a deliverable against the brief's declared structure spec — required sections present and ordered, forbidden elements absent, required placeholders present; exits non-zero on a violation.
 - `scripts/make-installer.py`: generate the self-contained `apply-revue-v<version>.sh` installer, which recreates the tree and refuses to finish unless the full eval suite passes inside it.
 - `docs/v1.0-acceptance-report.md`: the six v1.0 acceptance criteria, each mapped to the eval case that proves it.

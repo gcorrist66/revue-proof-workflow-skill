@@ -87,3 +87,6 @@ does not parse the Markdown authoring format directly in v1.0.
 - Captured in `references/creative-brief.md`, checked per-concept in
   `references/options-and-refine.md`, enforced on the finished deliverable in
   `references/output-audit.md` via `scripts/validate-output.py`.
+- The lock is tier-agnostic — Standard and Premium deliverables are held to the same colors/typography/
+  Hard-NOs/claims. Premium adds a separate, additional craft bar on top (`references/elevate.md`), not
+  a different lock. Structure (sections present/ordered) is also separate — `references/brief-conformance.md`.

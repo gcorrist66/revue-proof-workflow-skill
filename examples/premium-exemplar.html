@@ -1,0 +1,127 @@
+<!doctype html>
+<!-- PREMIUM EXEMPLAR (references/elevate.md): reconstructed worked example for the Premium craft bar,
+     built because the named exemplar (vip-flagship-page.html) was not available in this repo or the
+     session's uploads — see HANDOFF-TO-FABLE-v1.1.md. Every rule below is one elevate.md names:
+       - full-bleed cinematic hero with a legibility scrim (data-section="hero", gradient overlay)
+       - display type system: Fraunces (serif display) for headings, Quicksand (sans) for body
+       - editorial restraint: one message per section, generous negative space, no stacked CTAs
+       - repeating signature motif: the coordinate line + wake-pin mark, in the header and footer
+       - legibility-over-imagery: every CTA sits on a solid or scrim-backed surface, never bare imagery
+       - desktop + mobile + sticky action bar
+     All colors resolve to examples/premium-lock.json; verify with:
+       python3 scripts/validate-output.py examples/premium-exemplar.html --lock examples/premium-lock.json --tier premium -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VIP Lake Travis — Weekdays on the Water</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #FFFFFF; color: #062456;
+    font-family: Quicksand, Arial, sans-serif;
+  }
+  h1, h2 { font-family: 'Fraunces', serif; font-weight: 600; margin: 0; }
+
+  .masthead {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 40px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .wake-pin { display: inline-flex; align-items: center; gap: 8px; }
+  .wake-pin .pin { width: 8px; height: 8px; border-radius: 50%; background: #FF5747; }
+  .wake-pin .wake { width: 36px; height: 1px; background: #062456; opacity: 0.4; }
+
+  .hero {
+    position: relative;
+    min-height: 88vh;
+    display: flex; align-items: flex-end;
+    padding: 0 40px 96px;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http://www.w3.org/2000/svg%27%20viewBox%3D%270%200%201600%20900%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23062456%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%2325C7C3%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%271600%27%20height%3D%27900%27%20fill%3D%27url%28%23g%29%27/%3E%3C/svg%3E");
+    background-size: cover; background-position: center;
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(6,36,86,0) 35%, rgba(6,36,86,0.72) 100%);
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 640px; color: #FFFFFF; }
+  .hero h1 { font-size: 64px; line-height: 1.05; margin-bottom: 20px; }
+  .hero p { font-size: 19px; margin: 0 0 32px; max-width: 480px; }
+  .hero .cta {
+    display: inline-block; background: #FF5747; color: #FFFFFF;
+    padding: 16px 36px; border-radius: 999px; text-decoration: none; font-weight: 700;
+  }
+
+  section { padding: 96px 40px; max-width: 880px; margin: 0 auto; }
+  .offer h2, .proof h2 { font-size: 34px; margin-bottom: 24px; }
+  .offer p, .proof p { font-size: 17px; line-height: 1.6; max-width: 560px; }
+
+  .cta-band {
+    background: #062456; color: #FFFFFF; text-align: center; padding: 88px 40px;
+  }
+  .cta-band .cta {
+    display: inline-block; background: #FFFFFF; color: #062456;
+    padding: 16px 36px; border-radius: 999px; text-decoration: none; font-weight: 700; margin-top: 24px;
+  }
+
+  .sticky-bar {
+    position: sticky; bottom: 0; left: 0; right: 0;
+    background: #FFFFFF; border-top: 1px solid rgba(6,36,86,0.15);
+    padding: 14px 40px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .sticky-bar .cta {
+    background: #FF5747; color: #FFFFFF; padding: 10px 24px;
+    border-radius: 999px; text-decoration: none; font-weight: 700;
+  }
+
+  footer.masthead { border-top: 1px solid rgba(6,36,86,0.1); }
+
+  @media (max-width: 640px) {
+    .hero { min-height: 72vh; padding: 0 24px 64px; }
+    .hero h1 { font-size: 40px; }
+    section { padding: 56px 24px; }
+    .masthead { padding: 16px 24px; flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+  <header class="masthead" data-section="masthead">
+    <span class="wake-pin"><span class="pin"></span><span class="wake"></span> 30.3078&deg; N, 97.9528&deg; W</span>
+    <span>Lake Travis, TX</span>
+  </header>
+
+  <section class="hero" data-section="hero">
+    <div class="hero-content">
+      <h1>Your Best Summer Day Is One Click Away</h1>
+      <p>A private fleet, a still lake at first light, and nothing else on the schedule.</p>
+      <a class="cta" href="#reserve">Reserve Your Weekday</a>
+    </div>
+  </section>
+
+  <section class="offer" data-section="offer">
+    <h2>Save 15% on Weekday/Thursday Rentals</h2>
+    <p>Book any weekday and the lake is nearly yours. No lines at the dock, no waiting on a slip —
+       just the fleet, the water, and the crew that maintains it daily.</p>
+  </section>
+
+  <section class="proof" data-section="proof">
+    <h2>Locally Operated, Well-Maintained</h2>
+    <p>Every boat is inspected before it leaves the dock. The crew that services the fleet is the
+       same crew that greets you at check-in.</p>
+  </section>
+
+  <div class="cta-band" data-section="cta">
+    <h2>Reserve Your Weekday on the Water</h2>
+    <a class="cta" href="#reserve">Check Availability</a>
+  </div>
+
+  <div class="sticky-bar">
+    <span class="wake-pin"><span class="pin"></span><span class="wake"></span> Weekdays: 15% off</span>
+    <a class="cta" href="#reserve">Reserve Now</a>
+  </div>
+
+  <footer class="masthead">
+    <span class="wake-pin"><span class="pin"></span><span class="wake"></span> VIP Lake Travis</span>
+    <span>30.3078&deg; N, 97.9528&deg; W</span>
+  </footer>
+</body>
+</html>

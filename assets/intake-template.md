@@ -1,7 +1,7 @@
 # revüe Intake
 
 For creative-production work — revüe designing or building something new, not reviewing an existing
-artifact — the four sections marked **(required, blocks build)** are the creative brief. Do not start
+artifact — the five sections marked **(required, blocks build)** are the creative brief. Do not start
 generating until every one is filled in; see `references/creative-brief.md` for the completeness gate.
 Pure review work can skip straight past them to Inputs.
 
@@ -16,6 +16,18 @@ Pure review work can skip straight past them to Inputs.
 Exact deliverable type and file format (e.g., "Figma file, 3 desktop + 3 mobile frames", "single-file
 HTML/CSS landing page", "PNG export set"). Name the format the stakeholder will actually receive — "a
 landing page" is not a deliverable.
+
+
+## Tier (required, blocks build)
+
+Standard / Premium / Custom. This sets the craft bar, routes the model, and sets the audit bar — see
+`references/creative-brief.md`'s tier cascade table. Never default this silently; ask if it isn't stated.
+
+- **Standard**: clean, functional, on-brand. The design-system lock is the whole bar.
+- **Premium**: pulls in `references/elevate.md` — full-bleed hero + legibility scrim, display type
+  system, editorial restraint, a repeating signature motif, desktop+mobile+sticky bar.
+- **Custom**: human-led. No prescribed template; the lock and Hard NOs still apply, but the craft
+  direction and final sign-off come from a named human, not an autonomous pass.
 
 
 ## Sources (required, blocks build)

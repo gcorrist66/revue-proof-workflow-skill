@@ -38,6 +38,21 @@ escalating the model.
 | Heavy coding build (new subsystem, multi-file refactor, schema migration) | `deep-coding` | Coding weight, not judgment weight. |
 | Ordinary implementation (small fix, single-file change, test addition) | `standard` | Bounded, low-ambiguity coding. |
 
+## Site tier also routes the model
+
+`brief.tier` (`references/creative-brief.md`) is a second routing input, layered on top of the step
+map above, specifically for creative generation and its synthesis:
+
+| Tier | Creative-generation tier | Why |
+| --- | --- | --- |
+| `Standard` | `standard` | Ordinary creative judgment — the step map default. |
+| `Premium` | `deep` | The elevate bar (`references/elevate.md`) is exactly the "genuinely ambiguous, first-of-kind, expensive to get wrong" judgment this tier exists for — a full-bleed editorial hero with a signature motif is not a mechanical pattern-fill. |
+| `Custom` | human-led | The model may draft, but a human makes the final creative call and signs off (`tierSignoff`) — this is not an autonomous-tier decision at all. |
+
+Gates and validators (brief-gate, output-audit, conformance-check, self-check, and the rest) stay
+`fast` regardless of site tier — tier changes what is being judged, never whether the judging is
+mechanical.
+
 ## Escalation, not default-to-biggest
 
 Start at the tier the step maps to. Escalate one tier only when a concrete signal shows up — the
@@ -59,12 +74,16 @@ Tag every step in the run's `trace` with the tier it ran at (`assets/revue-run.s
 ## Self-enforcement
 
 `scripts/validate-run.py` rejects a run if a known gate/validator step (`brief-gate`,
-`design-system-lock-check`, `options-lock-check`, `output-audit`, `self-check`, `validate-run`,
-`validate-output`, `validate-evidence`) is tagged with any `modelTier` other than `fast`.
+`design-system-lock-check`, `options-lock-check`, `output-audit`, `conformance-check`, `self-check`,
+`validate-run`, `validate-output`, `validate-evidence`) is tagged with any `modelTier` other than
+`fast`. It also rejects a run where `brief.tier` is `Premium` but the `options-generation` trace step
+is tagged anything other than `deep`. Custom-tier routing is enforced indirectly: `ship` requires a
+`tierSignoff` naming a human (`references/creative-brief.md`), since "human-led" isn't a `modelTier`
+value a trace step can carry.
 
 ## Relationship to the rest of revüe
 
 - Applies across every mode and every pillar — this is routing, not a new gate of its own.
 - The gates it pins to `fast` are exactly the ones defined in `references/creative-brief.md`,
   `references/options-and-refine.md`, `references/design-system-lock.md`,
-  `references/output-audit.md`, and `references/self-check.md`.
+  `references/output-audit.md`, `references/brief-conformance.md`, and `references/self-check.md`.

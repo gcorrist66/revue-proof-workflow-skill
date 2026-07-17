@@ -15,6 +15,7 @@
   "brief": {
     "deliverable": "Single-file HTML promo one-pager for revüe, desktop + mobile breakpoints",
     "format": "html",
+    "tier": "Standard",
     "sources": ["docs/brand.md", "assets/logo-revue.svg", "README.md"],
     "handoffPageRead": true,
     "designSystemLock": "examples/dogfood/revue-lock.json",

@@ -22,6 +22,10 @@ revision; re-run after any fix.
 python3 scripts/validate-output.py <deliverable> [more files...] --lock <lock.json> --json
 ```
 
+Add `--tier premium` when `brief.tier` is `Premium` to also run the elevate heuristics
+(`references/elevate.md`) and fold them into `pass`. `--tier standard` (the default) never adds them —
+Standard-tier work is not held to a bar it wasn't briefed for.
+
 Pass every file the deliverable is made of (the HTML plus any local CSS). The audit:
 
 1. Extracts every color the deliverable can express: hex (`#abc`, `#aabbcc`, `#aabbccdd`, and legacy
@@ -104,3 +108,6 @@ suite is green, the evasion coverage above is live, not aspirational.
 - Gates the `ship` verdict alongside `references/board-verdict-schema.md` and
   `references/self-check.md`.
 - Runs at `fast` tier (`references/model-routing.md`) — it is a script invocation, not a judgment call.
+- For Premium-tier work, also runs the elevate heuristics (`references/elevate.md`) via `--tier
+  premium`; `outputAudit.elevatePass` is required `true` before `ship`. Structure (section presence and
+  order) is a separate check — see `references/brief-conformance.md`.

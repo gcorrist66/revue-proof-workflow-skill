@@ -23,6 +23,14 @@ Known remaining limits (documented in references/output-audit.md): no raster pix
 embedded photo/logo PNG is noted but not color-audited), no JS execution (computed styles built by
 running code are not resolved; literal values inside scripts ARE scanned), no PDF parsing.
 
+v1.1: `--tier premium` adds the elevate heuristics (references/elevate.md) — a full-bleed hero section
+must exist, hero imagery must carry a legibility scrim, at least two distinct type families must be
+declared (display + body), and a sticky action bar must be present. These are pattern heuristics, not
+adversarially hardened (references/output-audit.md notes the gap); they fold into `pass` only when
+`--tier premium` is passed, so `--tier standard` (the default) behaves exactly as before. Editorial
+restraint/negative space and a repeating signature motif are NOT machine-checked — they stay a human/
+board judgment call (references/elevate.md).
+
 Stdlib only. Exit 0 = pass, 1 = violation(s), 2 = usage/input error.
 """
 
@@ -149,6 +157,21 @@ TAG_PATTERN = re.compile(r"<[^>]+>")
 WS_PATTERN = re.compile(r"\s+")
 
 BINARY_MAGICS = (b"%PDF", b"\x89PNG", b"\xff\xd8\xff", b"GIF8", b"PK\x03\x04", b"RIFF", b"\x00\x00\x01\x00")
+
+# --------------------------------------------------------------------------- elevate (Pillar: Premium)
+
+# Heuristic patterns for references/elevate.md's machine-checkable rules. Not evasion-hardened — see
+# the module docstring's v1.1 note and references/output-audit.md.
+HERO_MARKER_PATTERN = re.compile(r'(?:class|id|data-section)\s*=\s*"[^"]*\bhero\b[^"]*"', re.IGNORECASE)
+BG_IMAGE_PATTERN = re.compile(r'background(?:-image)?\s*:\s*[^;}]*url\(', re.IGNORECASE)
+IMG_TAG_PATTERN = re.compile(r"<img\b", re.IGNORECASE)
+SCRIM_PATTERN = re.compile(
+    r"(rgba\(\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*,\s*0*\.\d+\s*\)|linear-gradient\(|radial-gradient\("
+    r"|\bscrim\b|\boverlay\b|text-shadow\s*:)",
+    re.IGNORECASE,
+)
+STICKY_PATTERN = re.compile(r"position\s*:\s*(?:sticky|fixed)\b", re.IGNORECASE)
+HERO_WINDOW_CHARS = 2000  # heuristic scope: text following a hero marker, in lieu of real DOM bounds
 
 # Common Cyrillic/Greek homoglyphs folded to ASCII (post-casefold, so lowercase forms only).
 CONFUSABLES = str.maketrans({
@@ -447,6 +470,94 @@ def near_miss(color: str, lock_colors: list[str], tolerance: int = 24) -> str | 
     return best
 
 
+def check_elevate(text: str, fonts_found: set[str], lock_typography: list[str]) -> tuple[list[dict], bool]:
+    """references/elevate.md's machine-checkable Premium bar. Returns (checks, elevatePass).
+
+    Only the pattern-detectable rules are checked here: a full-bleed hero, a legibility scrim over any
+    hero imagery, a two-family (display + body) type system, and a sticky action bar. Editorial
+    restraint/negative space and a repeating signature motif are qualitative — they are not checked
+    here and stay a human/board call (references/elevate.md)."""
+    checks: list[dict] = []
+
+    hero_match = HERO_MARKER_PATTERN.search(text)
+    if not hero_match:
+        checks.append({
+            "check": "full-bleed hero section",
+            "status": "fail",
+            "detail": "no hero section marker found (expected data-section=\"hero\" or a class/id containing 'hero')",
+        })
+        checks.append({
+            "check": "legibility scrim over hero imagery",
+            "status": "fail",
+            "detail": "cannot evaluate — no hero section was found",
+        })
+    else:
+        window = text[hero_match.start(): hero_match.start() + HERO_WINDOW_CHARS]
+        has_imagery = bool(BG_IMAGE_PATTERN.search(window) or IMG_TAG_PATTERN.search(window))
+        if not has_imagery:
+            checks.append({
+                "check": "full-bleed hero section",
+                "status": "fail",
+                "detail": "hero section found, but no background image or <img> detected within it",
+            })
+            checks.append({
+                "check": "legibility scrim over hero imagery",
+                "status": "fail",
+                "detail": "cannot evaluate — hero has no detected imagery",
+            })
+        else:
+            checks.append({
+                "check": "full-bleed hero section",
+                "status": "pass",
+                "detail": "hero section with background image or <img> detected",
+            })
+            if SCRIM_PATTERN.search(window):
+                checks.append({
+                    "check": "legibility scrim over hero imagery",
+                    "status": "pass",
+                    "detail": "scrim/overlay/gradient/text-shadow detected near hero imagery",
+                })
+            else:
+                checks.append({
+                    "check": "legibility scrim over hero imagery",
+                    "status": "fail",
+                    "detail": "hero has imagery but no scrim, overlay, gradient, or text-shadow was "
+                              "detected — text/CTAs may sit directly on a bright or busy region",
+                })
+
+    distinct_families = {f for f in fonts_found if f.casefold() not in GENERIC_FONT_FAMILIES}
+    if len(distinct_families) >= 2:
+        checks.append({
+            "check": "display type system (2+ distinct type families)",
+            "status": "pass",
+            "detail": f"{len(distinct_families)} distinct families declared: {sorted(distinct_families)}",
+        })
+    else:
+        checks.append({
+            "check": "display type system (2+ distinct type families)",
+            "status": "fail",
+            "detail": f"only {len(distinct_families)} distinct family declared "
+                      f"({sorted(distinct_families)}) — Premium expects a serif display + sans body pairing",
+        })
+
+    if STICKY_PATTERN.search(text):
+        checks.append({
+            "check": "sticky action bar",
+            "status": "pass",
+            "detail": "position: sticky/fixed detected",
+        })
+    else:
+        checks.append({
+            "check": "sticky action bar",
+            "status": "fail",
+            "detail": "no position: sticky/fixed element found — Premium requires a persistent "
+                      "booking/CTA bar",
+        })
+
+    elevate_pass = all(c["status"] == "pass" for c in checks)
+    return checks, elevate_pass
+
+
 # --------------------------------------------------------------------------- lock + main
 
 def load_lock(path: Path) -> dict:
@@ -458,7 +569,7 @@ def load_lock(path: Path) -> dict:
     return data
 
 
-def audit_deliverable(paths: list[Path], lock: dict) -> dict:
+def audit_deliverable(paths: list[Path], lock: dict, tier: str = "standard") -> dict:
     colors_found: set[str] = set()
     fonts_found: set[str] = set()
     hard_no_hits: dict[str, dict] = {}
@@ -466,6 +577,7 @@ def audit_deliverable(paths: list[Path], lock: dict) -> dict:
     claims_bad: list[str] = []
     unverifiable: list[str] = []
     notes: list[str] = []
+    combined_text_parts: list[str] = []
 
     for path in paths:
         raw_bytes = path.read_bytes()
@@ -477,6 +589,7 @@ def audit_deliverable(paths: list[Path], lock: dict) -> dict:
             continue
         text = raw_bytes.decode("utf-8", errors="replace")
         is_css = path.suffix.lower() == ".css" or "<" not in text
+        combined_text_parts.append(text)
 
         if EXTERNAL_STYLESHEET_PATTERN.search(text) or CSS_IMPORT_PATTERN.search(text):
             unverifiable.append(
@@ -538,7 +651,7 @@ def audit_deliverable(paths: list[Path], lock: dict) -> dict:
     claims_bad = dedup(claims_bad)
     passed = not colors_out and not hard_no_hits and not claims_bad and not fonts_out and not unverifiable
 
-    return {
+    result = {
         "deliverablePath": str(paths[0]) if len(paths) == 1 else [str(p) for p in paths],
         "colorsFound": sorted(colors_found),
         "colorsOutOfLock": colors_out,
@@ -554,6 +667,16 @@ def audit_deliverable(paths: list[Path], lock: dict) -> dict:
         "pass": passed,
     }
 
+    if tier == "premium":
+        elevate_checks, elevate_pass = check_elevate(
+            "\n".join(combined_text_parts), fonts_found, lock["typography"]
+        )
+        result["elevateChecks"] = elevate_checks
+        result["elevatePass"] = elevate_pass
+        result["pass"] = passed and elevate_pass
+
+    return result
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -562,6 +685,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("deliverable", type=Path, nargs="+",
                         help="Path(s) to HTML/CSS/SVG deliverable files (pass linked CSS too).")
     parser.add_argument("--lock", type=Path, required=True, help="Path to a lock JSON file.")
+    parser.add_argument(
+        "--tier",
+        choices=["standard", "premium", "custom"],
+        default="standard",
+        help="Site tier (references/creative-brief.md). 'premium' adds the elevate heuristics "
+             "(references/elevate.md) and folds them into pass/fail. Default: standard.",
+    )
     parser.add_argument("--json", action="store_true",
                         help="Print the outputAudit object as JSON instead of a human report.")
     return parser.parse_args()
@@ -582,7 +712,7 @@ def main() -> int:
         print(f"FAIL: invalid lock JSON: {exc}")
         return 2
 
-    audit = audit_deliverable(args.deliverable, lock)
+    audit = audit_deliverable(args.deliverable, lock, tier=args.tier)
     audit["lockPath"] = str(args.lock)
 
     if args.json:
@@ -590,10 +720,11 @@ def main() -> int:
         return 0 if audit["pass"] else 1
 
     if audit["pass"]:
+        suffix = " (Premium elevate checks all pass)" if args.tier == "premium" else ""
         print(
             f"PASS: {', '.join(str(p) for p in args.deliverable)} — "
             f"{len(audit['colorsFound'])} colors found, all in lock; no Hard-NO hits; "
-            "no unverified claims."
+            f"no unverified claims{suffix}."
         )
         return 0
 
@@ -613,6 +744,9 @@ def main() -> int:
         print(f"- unverifiable: {reason}")
     for note in audit["notes"]:
         print(f"- note: {note}")
+    for c in audit.get("elevateChecks", []):
+        if c["status"] != "pass":
+            print(f"- Premium elevate check failed: {c['check']} — {c['detail']}")
     return 1
 
 

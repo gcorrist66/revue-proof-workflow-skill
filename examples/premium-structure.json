@@ -1,0 +1,6 @@
+{
+  "requiredSections": ["hero", "offer", "proof", "cta"],
+  "sectionOrder": true,
+  "forbiddenElements": [],
+  "requiredPlaceholders": []
+}

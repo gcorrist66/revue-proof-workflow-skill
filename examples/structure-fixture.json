@@ -1,0 +1,8 @@
+{
+  "requiredSections": ["hero", "offer", "proof", "cta"],
+  "sectionOrder": true,
+  "forbiddenElements": [
+    { "pattern": "class=\"custom-header\"", "why": "brief specifies the default masthead only, no bespoke header" }
+  ],
+  "requiredPlaceholders": ["[CLIENT_PHONE]"]
+}
