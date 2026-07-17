@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- RED-TEAM FIXTURE (v1.1, failure class 1): a page DECLARED Premium that actually ships
+     clean-template. Every color and font is in lock (it passes the Standard/base audit cleanly) —
+     but there is no display type system, no full-bleed imagery, no legibility scrim, and no sticky
+     action bar. The tier gate must catch what the brand gate cannot: with --tier premium this file's
+     elevatePass must be false, and a ship verdict carrying it must be REJECTED. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VIP Lake Travis — Weekdays on the Water</title>
+<style>
+  body { margin: 0; background: #FFFFFF; color: #062456; font-family: Quicksand, Arial, sans-serif; }
+  .hero { background: #062456; color: #FFFFFF; padding: 64px 24px; text-align: center; }
+  .cta { display: inline-block; background: #FF5747; color: #FFFFFF; padding: 12px 28px;
+         border-radius: 8px; text-decoration: none; font-weight: 700; }
+  section { padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+</style>
+</head>
+<body>
+  <section class="hero" data-section="hero">
+    <h1>Your Best Summer Day Is One Click Away</h1>
+    <p>Save 15% on Weekday/Thursday rentals.</p>
+    <a class="cta" href="#reserve">Reserve Your Boat</a>
+  </section>
+  <section data-section="offer">
+    <h2>Weekday Rates</h2>
+    <p>Book any weekday and the lake is nearly yours.</p>
+  </section>
+  <section data-section="proof">
+    <h2>Locally Operated</h2>
+    <p>Every boat is inspected before it leaves the dock.</p>
+  </section>
+  <section data-section="cta">
+    <h2>Reserve Your Weekday</h2>
+    <a class="cta" href="#reserve">Check Availability</a>
+  </section>
+</body>
+</html>

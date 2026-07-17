@@ -1,0 +1,8 @@
+{
+  "requiredSections": ["hero", "tiers", "proof", "cta"],
+  "sectionOrder": true,
+  "forbiddenElements": [
+    { "pattern": "class=\"custom-header\"", "why": "brief specifies no bespoke masthead — the hero opens the page" }
+  ],
+  "requiredPlaceholders": ["[LAUNCH_DATE]"]
+}

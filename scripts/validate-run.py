@@ -292,12 +292,32 @@ def main() -> int:
                             "(references/elevate.md) — this deliverable meets only the Standard bar; "
                             "re-run scripts/validate-output.py --tier premium"
                         )
+                    else:
+                        # Anti-evasion: elevatePass cannot be asserted bare. It must be backed by the
+                        # elevateChecks list the script emits, with every check passing — a hand-set
+                        # elevatePass with no (or failing) checks is a forgery, not a proof.
+                        checks = audit.get("elevateChecks")
+                        if not isinstance(checks, list) or not checks:
+                            failures.append(
+                                "outputAudit.elevatePass is true but elevateChecks is missing/empty — "
+                                "elevatePass must come from scripts/validate-output.py --tier premium, "
+                                "not be asserted by hand"
+                            )
+                        elif any(c.get("status") != "pass" for c in checks if isinstance(c, dict)):
+                            failures.append(
+                                "outputAudit is internally inconsistent: elevatePass == true but an "
+                                "elevate check is not 'pass' — re-run scripts/validate-output.py --tier premium"
+                            )
                 elif tier == "Custom":
                     signoff = data.get("tierSignoff")
-                    if not isinstance(signoff, dict) or not str(signoff.get("by", "")).strip():
+                    by = str((signoff or {}).get("by", "")).strip() if isinstance(signoff, dict) else ""
+                    # Placeholder-ish signoffs are not signoffs: Custom is human-led, and the record
+                    # must name an actual human.
+                    if not by or by.casefold() in {"n/a", "na", "none", "nobody", "tbd", "todo", "-", "--", "x", "unknown", "auto", "agent", "self"}:
                         failures.append(
-                            "ship verdict requires a top-level tierSignoff.by for Custom tier "
-                            "(references/creative-brief.md) — Custom is human-led, not autonomously graded"
+                            "ship verdict requires a top-level tierSignoff.by naming a real human for "
+                            "Custom tier (references/creative-brief.md) — a placeholder like 'N/A' or "
+                            "'TBD' is not a signoff"
                         )
 
                 # Brief-conformance (references/brief-conformance.md) is required before ship only when
@@ -308,6 +328,17 @@ def main() -> int:
                         failures.append(
                             "ship verdict requires conformance.pass == true because brief.structure is "
                             "declared (references/brief-conformance.md) — re-run scripts/validate-conformance.py"
+                        )
+                    elif any(
+                        conformance.get(k)
+                        for k in ("missingSections", "orderViolations", "forbiddenHits",
+                                  "missingPlaceholders", "stubSections", "hiddenPlaceholders")
+                    ):
+                        # Anti-evasion: a hand-edited conformance object that flips pass to true while
+                        # still listing violations is internally inconsistent.
+                        failures.append(
+                            "conformance is internally inconsistent: pass == true but violations are "
+                            "listed — re-run scripts/validate-conformance.py"
                         )
 
         # Converge: a non-ship verdict must carry a path to ship (or a decision block).

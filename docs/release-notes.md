@@ -12,7 +12,7 @@ and the referenced `revue-v1.0-build-handoff.md` were not present in this repo o
 The Premium craft rules were built from the task's own distilled description; the worked Premium
 exemplar (`examples/premium-exemplar.html`) is a reconstruction built to satisfy every rule, not a copy
 of an original. The Standard exemplar reuses the existing, real `examples/dogfood/winner.html` rather
-than fabricating a redundant one. See `HANDOFF-TO-FABLE-v1.1.md`.
+than fabricating a redundant one. See the provenance note in `docs/v1.1-acceptance-report.md`.
 
 - **Tier field and cascade** (`references/creative-brief.md`): the brief now has five required,
   blocking fields — `deliverable + format`, **`tier`** (`Standard` / `Premium` / `Custom`), `sources`,
@@ -28,25 +28,35 @@ than fabricating a redundant one. See `HANDOFF-TO-FABLE-v1.1.md`.
   desktop+mobile+sticky-bar. Four of the six are machine-checked (see below); restraint, the signature
   motif, and true legibility judgment stay a human/board call, documented as such rather than faked.
 - **Elevate heuristics in `scripts/validate-output.py`** (`--tier {standard,premium,custom}`, default
-  `standard`): for Premium, checks for a full-bleed hero section with imagery, a scrim/overlay/gradient/
-  text-shadow over that imagery, 2+ distinct declared type families, and a `position: sticky`/`fixed`
-  action bar. Folds into `outputAudit.elevateChecks` + `outputAudit.elevatePass`, and into overall
-  `pass`. `--tier standard` (the default) never runs these — Standard-tier work isn't held to a bar it
-  wasn't briefed for. Pattern heuristics, not adversarially hardened — documented as scaffolding in
-  `references/output-audit.md` and `references/elevate.md`, same as the rest of Pillar 3 started.
+  `standard`) — **hardened, scope-aware, fail-closed**: the hero is judged by its own section span plus
+  the CSS rules whose selectors reference it (comments stripped first), and must carry imagery, a
+  full-bleed treatment (`cover`/viewport-relative height), and a scrim in that same scope — a hidden
+  hero, a 1px image, or a scrim declared in an unrelated rule all fail. The type system must be a real
+  pairing — a serif-generic display stack attached to headings plus a sans-serif body stack; two
+  unrelated sans fonts do not pass. The sticky action bar must be a visible, bottom-anchored element
+  that actually contains a CTA — a sticky masthead or decorative fixed strip does not pass. Folds into
+  `outputAudit.elevateChecks` + `outputAudit.elevatePass`, and into overall `pass`. `--tier standard`
+  (the default) never runs these — Standard-tier work isn't held to a bar it wasn't briefed for.
 - **Brief-conformance** (`references/brief-conformance.md`, `scripts/validate-conformance.py`): checks
   a deliverable against an optional `brief.structure` spec — required sections present (via a
   `data-section="name"` or `<section id="name">` convention) and, if declared, in order; forbidden
   markup patterns absent; required placeholders present verbatim (proving a not-yet-known value stayed
-  an honest placeholder instead of a silent guess). Non-adversarial first version, matching how
-  `scripts/validate-output.py` started before it was hardened.
+  an honest placeholder instead of a silent guess). **Hardened and evasion-resistant**: comments are
+  stripped before anything counts; a required section faked as an empty stub or hidden with CSS fails
+  as a stub; banned markup is matched on normalized and squashed forms plus class/id-token matching
+  (quoting, spacing, case, attribute order, and multi-class values don't dodge a ban); and a required
+  placeholder must be *visibly* present — one buried in a `display:none` container while a guessed
+  value ships is caught by an ancestor-chain scan and named as exactly that dishonesty.
 - **Tier-sets-audit-bar, enforced** (`scripts/validate-run.py`): a `ship` verdict on a Premium-tier run
   requires `outputAudit.elevatePass == true` — a deliverable that only clears the Standard bar is
   flagged, not shipped, with that exact wording in the failure. Custom requires a top-level
-  `tierSignoff.by`. When `brief.structure` is declared, `ship` also requires a passing top-level
-  `conformance` object. Premium also requires the `options-generation` trace step to be tagged
-  `modelTier: "deep"` (`references/model-routing.md`'s tier-routing rule, structurally enforced).
-  `conformance-check` joins the steps that must be tagged `fast`.
+  `tierSignoff.by` **naming a real human** — placeholder signoffs (`N/A`, `TBD`, `agent`, ...) are
+  rejected. When `brief.structure` is declared, `ship` also requires a passing top-level `conformance`
+  object. Premium also requires the `options-generation` trace step to be tagged `modelTier: "deep"`
+  (`references/model-routing.md`'s tier-routing rule, structurally enforced). `conformance-check` joins
+  the steps that must be tagged `fast`. **Forgery-resistant**: `elevatePass` asserted without (or over
+  failing) `elevateChecks`, and a `conformance` object whose `pass` was flipped `true` over listed
+  violations, are both rejected as internally inconsistent — the scripts are the source of truth.
 - Schema (`assets/revue-run.schema.json`): `brief.tier` (required enum) and optional `brief.structure`;
   new top-level `conformance` and `tierSignoff` objects; `outputAudit.elevateChecks`/`elevatePass`.
 - New fixtures: `examples/premium-exemplar.html` + `examples/premium-lock.json` +
@@ -54,12 +64,29 @@ than fabricating a redundant one. See `HANDOFF-TO-FABLE-v1.1.md`.
   `ship` golden), `examples/structure-fixture.json`, `examples/conformance-pass.html`,
   `examples/conformance-fail.html`. `examples/worked-creative-production.json` and
   `examples/dogfood/run.json` gain `brief.tier: "Standard"` (now a required field).
-- `scripts/run-evals.py`: **80 cases total** — the 58 pre-v1.1 cases unchanged, plus 22 new: the
-  Premium golden, brief missing/invalid tier, Premium ship without elevatePass (two forms), Custom ship
-  without tierSignoff (and the matching accept case with one), Premium options-generation mistagged,
-  conformance declared-but-failing/never-run, the elevate heuristics firing correctly on the Premium
-  exemplar and correctly flagging a Standard-only deliverable audited at `--tier premium`, and six
-  `validate-conformance.py` pass/fail/detail cases.
+- `scripts/run-evals.py`: **102 cases total** — the 58 pre-v1.1 cases unchanged, 22 tier/elevate/
+  conformance correctness cases, 15 v1.1 red-team cases, and 7 Premium-dogfood cases.
+- **Red-team fixtures for all three v1.1 failure classes**, each proven REJECTED for the targeted
+  reason: `examples/redteam-premium-clean-template.html` (declared Premium, ships clean-template — base
+  audit clean, all four elevate rules fail, and a `ship` over that audit is rejected as
+  Standard-bar-only), `examples/redteam-premium-gamed.html` (actively games the heuristics with a
+  hidden hero + 1px image, a sticky top masthead, and a two-sans "type system" — every fake fails),
+  `examples/redteam-conformance-evasion.html` (reformatted banned header, empty stub section, hidden
+  placeholder over a guessed phone number, reordered sections — all four caught), and the original
+  off-palette generic clone re-asserted against the brand audit. Plus run-level forgeries: bare
+  `elevatePass`, `elevatePass` over a failing check, flipped `conformance.pass`, and an `N/A`
+  tier signoff — all rejected.
+- **Premium dogfood run** (`examples/dogfood-premium/`): the v1.1 pipeline end to end on a Premium
+  launch page for the tier system itself — brief with `tier: "Premium"` and a structure spec, concepts
+  generated at `deep`, and the tier gate catching the exact target failure: a draft that passed the
+  brand audit AND the conformance check but failed all four elevate rules, rebuilt to earn the tier.
+  The eval suite proves both directions from the same artifact: flipped to `ship` with the real audits
+  it validates; flipped to `ship` over the clean-template draft's audit it is rejected.
+- **Fixed**: the named-color/`var()` false positive — CSS custom properties named after color words
+  (`--navy`, `--coral`) are no longer misread as the CSS named colors `navy`/`coral`, while a real
+  color hidden in a `var()` fallback is still caught. Both directions are eval-guarded.
+- **Acceptance report** (`docs/v1.1-acceptance-report.md`): each v1.1 guarantee (tier bar, conformance,
+  brand) mapped to the eval case(s) that prove it.
 
 ## v1.0.0
 

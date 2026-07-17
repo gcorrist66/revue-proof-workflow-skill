@@ -1,0 +1,303 @@
+{
+  "schema": "revue.review.v1",
+  "runId": "dogfood-revue-premium-v1_1",
+  "mode": "design-handoff",
+  "dryRun": true,
+  "produces": "creative-production",
+  "request": "Design a Premium-tier launch page for revüe v1.1's own tier system, through the full v1.1 pipeline (tier -> elevate -> conformance -> brand).",
+  "stakeholder": "Repo owner",
+  "inputs": [
+    {
+      "type": "file",
+      "ref": "docs/brand.md",
+      "note": "locked palette and logo rules"
+    },
+    {
+      "type": "file",
+      "ref": "references/elevate.md",
+      "note": "the Premium craft bar this page must itself clear"
+    },
+    {
+      "type": "file",
+      "ref": "examples/premium-exemplar.html",
+      "note": "the flagship reference for what Premium looks like"
+    }
+  ],
+  "constraints": {
+    "brand": "revüe navy/coral/aqua",
+    "format_requested": "html"
+  },
+  "brief": {
+    "deliverable": "Single-file HTML Premium launch one-pager, desktop + mobile + sticky action bar",
+    "format": "html",
+    "tier": "Premium",
+    "sources": [
+      "docs/brand.md",
+      "references/elevate.md",
+      "examples/premium-exemplar.html"
+    ],
+    "handoffPageRead": true,
+    "designSystemLock": "examples/dogfood-premium/lock.json",
+    "hardNos": [
+      "lorem ipsum",
+      "click here"
+    ],
+    "structure": {
+      "requiredSections": [
+        "hero",
+        "tiers",
+        "proof",
+        "cta"
+      ],
+      "sectionOrder": true,
+      "forbiddenElements": [
+        {
+          "pattern": "class=\"custom-header\"",
+          "why": "brief specifies no bespoke masthead — the hero opens the page"
+        }
+      ],
+      "requiredPlaceholders": [
+        "[LAUNCH_DATE]"
+      ]
+    }
+  },
+  "designSystemLock": {
+    "colors": [
+      "#062456",
+      "#FF5747",
+      "#25C7C3",
+      "#F2A64D",
+      "#E5484D",
+      "#FFFFFF"
+    ],
+    "typography": [
+      "Fraunces",
+      "Quicksand",
+      "Arial"
+    ],
+    "hardNos": [
+      {
+        "pattern": "lorem ipsum",
+        "why": "placeholder text must never ship"
+      },
+      {
+        "pattern": "click here",
+        "why": "brand voice: never generic link text"
+      }
+    ],
+    "claims": []
+  },
+  "options": [
+    {
+      "id": "concept-a",
+      "summary": "Cinematic tier ladder: full-bleed gradient hero, Fraunces display headlines, tiers as an editorial sequence, sticky notify bar.",
+      "distinctionAxis": "cinematic editorial ladder",
+      "lockCompliant": true
+    },
+    {
+      "id": "concept-b",
+      "summary": "Gate-transcript: the page shows its own audit output as the proof section, terminal-styled band inside the Premium shell.",
+      "distinctionAxis": "self-auditing transcript as proof",
+      "lockCompliant": true
+    },
+    {
+      "id": "concept-c",
+      "summary": "Split flagship-vs-template comparison hero, the two bars shown side by side.",
+      "distinctionAxis": "comparison split hero",
+      "lockCompliant": true
+    }
+  ],
+  "optionFeedback": [
+    {
+      "optionId": "concept-a",
+      "decision": "keep",
+      "note": "the ladder reads Premium on its own; keep as the spine"
+    },
+    {
+      "optionId": "concept-b",
+      "decision": "change",
+      "note": "keep one line of the self-audit idea in the proof section copy, drop the terminal styling"
+    },
+    {
+      "optionId": "concept-c",
+      "decision": "kill",
+      "note": "comparison splits are the generic-marketing trope the anti-generic bar exists to kill"
+    }
+  ],
+  "evidence": [
+    {
+      "category": "source",
+      "statement": "Read docs/brand.md, references/elevate.md, and examples/premium-exemplar.html this session before the brief; the lock adds Fraunces to the revüe palette because Premium requires a serif display face.",
+      "verified": true
+    },
+    {
+      "category": "action",
+      "statement": "Ran scripts/validate-output.py --tier premium on winner-draft-1.html this session: base audit clean, elevatePass false, all four elevate checks failing — the clean-template-declared-Premium failure, caught by the tier gate alone (conformance and brand both passed it).",
+      "verified": true
+    },
+    {
+      "category": "action",
+      "statement": "Ran scripts/validate-conformance.py on winner.html this session: 4 sections in order, no forbidden masthead, [LAUNCH_DATE] visibly present; exit code 0. Object attached verbatim.",
+      "verified": true
+    },
+    {
+      "category": "result",
+      "statement": "Ran scripts/validate-output.py --tier premium on winner.html this session: 4 colors all in lock, Fraunces+Quicksand pairing detected, all four elevate checks pass; exit code 0. Audit attached verbatim.",
+      "verified": true
+    },
+    {
+      "category": "limitation",
+      "statement": "Elevate rules 3-5 (editorial restraint, signature motif, scrim sufficiency) are judgment calls not covered by the script; assessed by self-check only, no rendered-browser screenshot in this environment.",
+      "verified": false
+    }
+  ],
+  "scorecard": [
+    {
+      "check": "Exact requested format",
+      "status": "pass",
+      "evidence": "Single HTML file at examples/dogfood-premium/winner.html"
+    },
+    {
+      "check": "Source editability",
+      "status": "pass",
+      "evidence": "Plain HTML/CSS, one file, commented"
+    },
+    {
+      "check": "Desktop/mobile states",
+      "status": "pass",
+      "evidence": "640px breakpoint; hero and sections collapse cleanly"
+    },
+    {
+      "check": "Preview fidelity",
+      "status": "partial",
+      "evidence": "Static review only — no rendered-browser screenshot in this environment"
+    },
+    {
+      "check": "Brand fit",
+      "status": "pass",
+      "evidence": "Output audit: all colors and fonts in lock; elevatePass true"
+    },
+    {
+      "check": "Stakeholder access",
+      "status": "pass",
+      "evidence": "File path shared; opens in any browser"
+    },
+    {
+      "check": "Developer clarity",
+      "status": "pass",
+      "evidence": "Single file, sectioned CSS, comments map each elevate rule to its implementation"
+    }
+  ],
+  "outputAudit": {
+    "deliverablePath": "examples/dogfood-premium/winner.html",
+    "colorsFound": [
+      "#062456",
+      "#25c7c3",
+      "#ff5747",
+      "#ffffff"
+    ],
+    "colorsOutOfLock": [],
+    "nearMisses": {},
+    "fontsFound": [
+      "Arial",
+      "Fraunces",
+      "Quicksand",
+      "sans-serif",
+      "serif"
+    ],
+    "fontsOutOfLock": [],
+    "hardNoHits": [],
+    "hardNoDetails": [],
+    "claimsApproved": [],
+    "unverifiedClaims": [],
+    "unverifiable": [],
+    "notes": [],
+    "pass": true,
+    "elevateChecks": [
+      {
+        "check": "full-bleed hero section",
+        "status": "pass",
+        "detail": "hero section with full-bleed imagery detected (imagery + cover/vh in scope)"
+      },
+      {
+        "check": "legibility scrim over hero imagery",
+        "status": "pass",
+        "detail": "scrim/overlay/gradient/text-shadow detected in the hero's own scope"
+      },
+      {
+        "check": "display type system (serif display + sans body)",
+        "status": "pass",
+        "detail": "serif display + sans body pairing detected (display: 'Fraunces' on 'h1, h2'; body: 'Quicksand')"
+      },
+      {
+        "check": "sticky action bar",
+        "status": "pass",
+        "detail": "bottom-anchored sticky/fixed bar '.sticky-bar' contains a CTA link/button"
+      }
+    ],
+    "elevatePass": true,
+    "lockPath": "examples/dogfood-premium/lock.json"
+  },
+  "conformance": {
+    "deliverablePath": "examples/dogfood-premium/winner.html",
+    "sectionsFound": [
+      "hero",
+      "tiers",
+      "proof",
+      "cta"
+    ],
+    "missingSections": [],
+    "stubSections": [],
+    "orderViolations": [],
+    "forbiddenHits": [],
+    "forbiddenDetails": [],
+    "missingPlaceholders": [],
+    "hiddenPlaceholders": [],
+    "pass": true,
+    "structurePath": "examples/dogfood-premium/structure.json"
+  },
+  "verdict": {
+    "value": "ship with changes",
+    "reason": "The brief declared Premium and the tier gate proved it matters: draft 1 was clean, on-brand, structurally conforming — and failed all four elevate checks. The rebuilt winner passes the brand audit, the Premium bar, and the conformance check. One bounded change remains: render in a real browser and confirm both breakpoints and the scrim's visual sufficiency before publishing.",
+    "requiredProof": "outputAudit.pass + elevatePass + conformance.pass (all attached) + design scorecard.",
+    "nextAction": "Open examples/dogfood-premium/winner.html in a browser, confirm breakpoints and scrim, then publish."
+  },
+  "pathToShip": [
+    {
+      "item": "Open winner.html in a real browser; confirm desktop + mobile rendering and that the hero scrim is visually sufficient (elevate rule 5 is a judgment call)",
+      "owner": "human"
+    }
+  ],
+  "trace": [
+    {
+      "step": "brief-gate",
+      "modelTier": "fast",
+      "durationMs": 0
+    },
+    {
+      "step": "options-generation",
+      "modelTier": "deep",
+      "durationMs": 0
+    },
+    {
+      "step": "options-lock-check",
+      "modelTier": "fast",
+      "durationMs": 0
+    },
+    {
+      "step": "output-audit",
+      "modelTier": "fast",
+      "durationMs": 0
+    },
+    {
+      "step": "conformance-check",
+      "modelTier": "fast",
+      "durationMs": 0
+    },
+    {
+      "step": "self-check",
+      "modelTier": "fast",
+      "durationMs": 0
+    }
+  ]
+}

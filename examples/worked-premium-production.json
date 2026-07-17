@@ -7,84 +7,228 @@
   "request": "Design the VIP Lake Travis flagship landing page at the Premium tier.",
   "stakeholder": "Client (marina owner)",
   "inputs": [
-    { "type": "note", "ref": "client brief call + existing brand deck", "note": "navy/coral/aqua, premium positioning, 15% weekday offer" }
+    {
+      "type": "note",
+      "ref": "client brief call + existing brand deck",
+      "note": "navy/coral/aqua, premium positioning, 15% weekday offer"
+    }
   ],
-  "constraints": { "brand": "navy/coral/aqua", "format_requested": "html" },
+  "constraints": {
+    "brand": "navy/coral/aqua",
+    "format_requested": "html"
+  },
   "brief": {
     "deliverable": "Single-file HTML/CSS flagship landing page, desktop + mobile + sticky action bar",
     "format": "html",
     "tier": "Premium",
-    "sources": ["client brief call notes", "existing brand deck", "marina.com/rentals (current site)"],
+    "sources": [
+      "client brief call notes",
+      "existing brand deck",
+      "marina.com/rentals (current site)"
+    ],
     "handoffPageRead": true,
     "designSystemLock": "examples/premium-lock.json",
-    "hardNos": ["lorem ipsum", "click here"],
+    "hardNos": [
+      "lorem ipsum",
+      "click here"
+    ],
     "structure": {
-      "requiredSections": ["hero", "offer", "proof", "cta"],
+      "requiredSections": [
+        "hero",
+        "offer",
+        "proof",
+        "cta"
+      ],
       "sectionOrder": true,
       "forbiddenElements": [],
       "requiredPlaceholders": []
     }
   },
   "designSystemLock": {
-    "colors": ["#062456", "#FF5747", "#25C7C3", "#FFFFFF"],
-    "typography": ["Fraunces", "Quicksand", "Arial"],
+    "colors": [
+      "#062456",
+      "#FF5747",
+      "#25C7C3",
+      "#FFFFFF"
+    ],
+    "typography": [
+      "Fraunces",
+      "Quicksand",
+      "Arial"
+    ],
     "hardNos": [
-      { "pattern": "lorem ipsum", "why": "placeholder text must never ship" },
-      { "pattern": "click here", "why": "brand voice: never generic link text" }
+      {
+        "pattern": "lorem ipsum",
+        "why": "placeholder text must never ship"
+      },
+      {
+        "pattern": "click here",
+        "why": "brand voice: never generic link text"
+      }
     ],
     "claims": []
   },
   "options": [
-    { "id": "concept-a", "summary": "Coordinate-masthead flagship: full-bleed dawn-water hero, Fraunces display type, wake-pin motif repeated in header/footer/sticky bar.", "distinctionAxis": "editorial full-bleed hero with signature motif", "lockCompliant": true },
-    { "id": "concept-b", "summary": "Boat-picker-first: pricing grid above the fold, no full-bleed imagery, functional rather than cinematic.", "distinctionAxis": "utility grid, no hero imagery", "lockCompliant": true },
-    { "id": "concept-c", "summary": "Split-screen story: static marina photo left rail, copy right rail, no motion or scrim treatment.", "distinctionAxis": "static split-screen layout", "lockCompliant": true }
+    {
+      "id": "concept-a",
+      "summary": "Coordinate-masthead flagship: full-bleed dawn-water hero, Fraunces display type, wake-pin motif repeated in header/footer/sticky bar.",
+      "distinctionAxis": "editorial full-bleed hero with signature motif",
+      "lockCompliant": true
+    },
+    {
+      "id": "concept-b",
+      "summary": "Boat-picker-first: pricing grid above the fold, no full-bleed imagery, functional rather than cinematic.",
+      "distinctionAxis": "utility grid, no hero imagery",
+      "lockCompliant": true
+    },
+    {
+      "id": "concept-c",
+      "summary": "Split-screen story: static marina photo left rail, copy right rail, no motion or scrim treatment.",
+      "distinctionAxis": "static split-screen layout",
+      "lockCompliant": true
+    }
   ],
   "optionFeedback": [
-    { "optionId": "concept-a", "decision": "keep", "note": "this is the only concept that actually clears the Premium bar — build this one" },
-    { "optionId": "concept-b", "decision": "kill", "note": "reads as Standard tier, not what was briefed" },
-    { "optionId": "concept-c", "decision": "kill", "note": "no legibility scrim plan and no signature motif; also Standard-bar quality" }
+    {
+      "optionId": "concept-a",
+      "decision": "keep",
+      "note": "this is the only concept that actually clears the Premium bar — build this one"
+    },
+    {
+      "optionId": "concept-b",
+      "decision": "kill",
+      "note": "reads as Standard tier, not what was briefed"
+    },
+    {
+      "optionId": "concept-c",
+      "decision": "kill",
+      "note": "no legibility scrim plan and no signature motif; also Standard-bar quality"
+    }
   ],
   "evidence": [
-    { "category": "source", "statement": "Read the client brief call notes and the current marina.com/rentals page this session before drafting; brief.tier confirmed Premium by the stakeholder.", "verified": true },
-    { "category": "action", "statement": "Ran scripts/validate-output.py --tier premium against examples/premium-exemplar.html and examples/premium-lock.json this session: exit code 0, elevatePass true.", "verified": true },
-    { "category": "action", "statement": "Ran scripts/validate-conformance.py against examples/premium-exemplar.html and examples/premium-structure.json this session: exit code 0, all four required sections present in order.", "verified": true },
-    { "category": "result", "statement": "Output audit: 4 colors found, all in lock; 3 fonts (Arial, Fraunces, Quicksand), all in lock; no Hard-NO hits; no unverified claims; all four elevate checks pass (full-bleed hero, legibility scrim, 2+ type families, sticky bar).", "verified": true },
-    { "category": "limitation", "statement": "Editorial restraint/negative space and the repeating signature motif are not machine-checked (references/elevate.md) — judged by the board this session from the rendered markup, not from a live browser screenshot.", "verified": false }
+    {
+      "category": "source",
+      "statement": "Read the client brief call notes and the current marina.com/rentals page this session before drafting; brief.tier confirmed Premium by the stakeholder.",
+      "verified": true
+    },
+    {
+      "category": "action",
+      "statement": "Ran scripts/validate-output.py --tier premium against examples/premium-exemplar.html and examples/premium-lock.json this session: exit code 0, elevatePass true.",
+      "verified": true
+    },
+    {
+      "category": "action",
+      "statement": "Ran scripts/validate-conformance.py against examples/premium-exemplar.html and examples/premium-structure.json this session: exit code 0, all four required sections present in order.",
+      "verified": true
+    },
+    {
+      "category": "result",
+      "statement": "Output audit: 4 colors found, all in lock; 3 fonts (Arial, Fraunces, Quicksand), all in lock; no Hard-NO hits; no unverified claims; all four elevate checks pass (full-bleed hero, legibility scrim, 2+ type families, sticky bar).",
+      "verified": true
+    },
+    {
+      "category": "limitation",
+      "statement": "Editorial restraint/negative space and the repeating signature motif are not machine-checked (references/elevate.md) — judged by the board this session from the rendered markup, not from a live browser screenshot.",
+      "verified": false
+    }
   ],
   "scorecard": [
-    { "check": "Exact requested format", "status": "pass", "evidence": "Single HTML file at examples/premium-exemplar.html" },
-    { "check": "Source editability", "status": "pass", "evidence": "Plain HTML/CSS, fully editable" },
-    { "check": "Desktop/mobile states", "status": "pass", "evidence": "640px breakpoint present; hero and masthead collapse cleanly" },
-    { "check": "Preview fidelity", "status": "partial", "evidence": "Static review only in this session — no rendered-browser screenshot" },
-    { "check": "Brand fit", "status": "pass", "evidence": "Output audit: all colors and fonts in lock; elevate checks pass" },
-    { "check": "Stakeholder access", "status": "pass", "evidence": "File path shared, opens in any browser" },
-    { "check": "Developer clarity", "status": "pass", "evidence": "Single file, sectioned with data-section markers, commented" }
+    {
+      "check": "Exact requested format",
+      "status": "pass",
+      "evidence": "Single HTML file at examples/premium-exemplar.html"
+    },
+    {
+      "check": "Source editability",
+      "status": "pass",
+      "evidence": "Plain HTML/CSS, fully editable"
+    },
+    {
+      "check": "Desktop/mobile states",
+      "status": "pass",
+      "evidence": "640px breakpoint present; hero and masthead collapse cleanly"
+    },
+    {
+      "check": "Preview fidelity",
+      "status": "partial",
+      "evidence": "Static review only in this session — no rendered-browser screenshot"
+    },
+    {
+      "check": "Brand fit",
+      "status": "pass",
+      "evidence": "Output audit: all colors and fonts in lock; elevate checks pass"
+    },
+    {
+      "check": "Stakeholder access",
+      "status": "pass",
+      "evidence": "File path shared, opens in any browser"
+    },
+    {
+      "check": "Developer clarity",
+      "status": "pass",
+      "evidence": "Single file, sectioned with data-section markers, commented"
+    }
   ],
   "outputAudit": {
     "deliverablePath": "examples/premium-exemplar.html",
-    "lockPath": "examples/premium-lock.json",
-    "colorsFound": ["#062456", "#25c7c3", "#ff5747", "#ffffff"],
+    "colorsFound": [
+      "#062456",
+      "#25c7c3",
+      "#ff5747",
+      "#ffffff"
+    ],
     "colorsOutOfLock": [],
     "nearMisses": {},
-    "fontsFound": ["Arial", "Fraunces", "Quicksand", "sans-serif", "serif"],
+    "fontsFound": [
+      "Arial",
+      "Fraunces",
+      "Quicksand",
+      "sans-serif",
+      "serif"
+    ],
     "fontsOutOfLock": [],
     "hardNoHits": [],
+    "hardNoDetails": [],
     "claimsApproved": [],
     "unverifiedClaims": [],
     "unverifiable": [],
+    "notes": [],
+    "pass": true,
     "elevateChecks": [
-      { "check": "full-bleed hero section", "status": "pass", "detail": "hero section with background image or <img> detected" },
-      { "check": "legibility scrim over hero imagery", "status": "pass", "detail": "scrim/overlay/gradient/text-shadow detected near hero imagery" },
-      { "check": "display type system (2+ distinct type families)", "status": "pass", "detail": "3 distinct families declared: ['Arial', 'Fraunces', 'Quicksand']" },
-      { "check": "sticky action bar", "status": "pass", "detail": "position: sticky/fixed detected" }
+      {
+        "check": "full-bleed hero section",
+        "status": "pass",
+        "detail": "hero section with full-bleed imagery detected (imagery + cover/vh in scope)"
+      },
+      {
+        "check": "legibility scrim over hero imagery",
+        "status": "pass",
+        "detail": "scrim/overlay/gradient/text-shadow detected in the hero's own scope"
+      },
+      {
+        "check": "display type system (serif display + sans body)",
+        "status": "pass",
+        "detail": "serif display + sans body pairing detected (display: 'Fraunces' on 'h1, h2'; body: 'Quicksand')"
+      },
+      {
+        "check": "sticky action bar",
+        "status": "pass",
+        "detail": "bottom-anchored sticky/fixed bar '.sticky-bar' contains a CTA link/button"
+      }
     ],
     "elevatePass": true,
-    "pass": true
+    "lockPath": "examples/premium-lock.json"
   },
   "conformance": {
     "deliverablePath": "examples/premium-exemplar.html",
     "structurePath": "examples/premium-structure.json",
-    "sectionsFound": ["masthead", "hero", "offer", "proof", "cta"],
+    "sectionsFound": [
+      "masthead",
+      "hero",
+      "offer",
+      "proof",
+      "cta"
+    ],
     "missingSections": [],
     "orderViolations": [],
     "forbiddenHits": [],
@@ -98,11 +242,35 @@
     "nextAction": "Send examples/premium-exemplar.html to the client."
   },
   "trace": [
-    { "step": "brief-gate", "modelTier": "fast", "durationMs": 0 },
-    { "step": "options-generation", "modelTier": "deep", "durationMs": 0 },
-    { "step": "options-lock-check", "modelTier": "fast", "durationMs": 0 },
-    { "step": "output-audit", "modelTier": "fast", "durationMs": 0 },
-    { "step": "conformance-check", "modelTier": "fast", "durationMs": 0 },
-    { "step": "self-check", "modelTier": "fast", "durationMs": 0 }
+    {
+      "step": "brief-gate",
+      "modelTier": "fast",
+      "durationMs": 0
+    },
+    {
+      "step": "options-generation",
+      "modelTier": "deep",
+      "durationMs": 0
+    },
+    {
+      "step": "options-lock-check",
+      "modelTier": "fast",
+      "durationMs": 0
+    },
+    {
+      "step": "output-audit",
+      "modelTier": "fast",
+      "durationMs": 0
+    },
+    {
+      "step": "conformance-check",
+      "modelTier": "fast",
+      "durationMs": 0
+    },
+    {
+      "step": "self-check",
+      "modelTier": "fast",
+      "durationMs": 0
+    }
   ]
 }

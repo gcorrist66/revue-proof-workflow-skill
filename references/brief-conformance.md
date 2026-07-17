@@ -6,10 +6,12 @@ proves the deliverable stayed inside its colors, fonts, and Hard NOs. This prove
 the brief required, in the order the brief required, without the elements the brief banned, and with
 the placeholders the brief said were still open — not silently guessed values standing in for them.
 
-**v1.1 note:** this is the first working conformance check, non-adversarial scope. It matches literally
-(exact strings, a documented section-marking convention) rather than resisting evasion. Hardening
-(fuzzy section detection, obfuscation-resistant forbidden-element matching) is Fable's pass, the same
-way `scripts/validate-output.py` started as a scaffold before it was hardened.
+The check is **hardened and fail-closed**: comments are stripped before anything is counted; a
+required section faked as an empty stub or hidden with CSS fails as a stub; banned markup is matched
+on normalized and squashed forms (quoting, spacing, case, and attribute order don't matter, and a
+`class="custom-header"` ban hits any multi-class attribute containing that token); and a required
+placeholder must be *visibly* present — one buried in a `display:none` container while a guessed value
+shows is caught by an ancestor-chain scan and reported as exactly that dishonesty.
 
 ## When it runs
 
@@ -93,16 +95,23 @@ is invalid unless `conformance.pass` is `true`. `scripts/validate-run.py --stric
 same way it enforces `outputAudit.pass`. If the brief never declared a `structure` spec, this gate does
 not apply — there is nothing to conform to.
 
-## What v1.1 does not cover
+## Result additions (hardened)
 
-- Real DOM parsing — a deliverable that nests or reorders markup in ways a regex can't see may confuse
-  section detection. The `data-section` convention exists specifically to avoid needing a parser.
-- Evasion resistance on `forbiddenElements` — a banned pattern split across tags, whitespace-varied, or
-  written a different but equivalent way (a different class name doing the same visual job) is not
-  caught. `scripts/validate-output.py`'s Hard-NO scanning shows the hardened version of this same idea;
-  this pillar starts where that one started.
-- Semantic placeholder matching — only the exact declared placeholder string is checked. A close but
-  not identical placeholder (`[Client Phone]` vs. `[CLIENT_PHONE]`) is treated as missing.
+Beyond the base fields, the conformance object carries `stubSections` (required sections whose marker
+exists but whose span is empty or hidden) and `hiddenPlaceholders` (placeholders present only inside
+hidden containers). Both fail the check; `scripts/validate-run.py --strict` also rejects a conformance
+object whose `pass` was flipped to `true` while any violation list is non-empty.
+
+## What remains out of scope
+
+- Real DOM parsing — section spans and the placeholder ancestor chain are approximated with a tag
+  stack, not a browser DOM. Pathological malformed markup may confuse them; the `data-section`
+  convention exists specifically to keep the common case unambiguous.
+- Semantic equivalence on `forbiddenElements` — a *different* class name doing the same visual job is a
+  design judgment, not a string match; that stays a board/self-check call.
+- Semantic placeholder matching — only the exact declared placeholder string is checked (entity-decoded
+  first). A close but not identical placeholder (`[Client Phone]` vs. `[CLIENT_PHONE]`) is treated as
+  missing.
 
 ## Relationship to the rest of revüe
 

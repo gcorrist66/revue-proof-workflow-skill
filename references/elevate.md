@@ -39,13 +39,14 @@ rule below, not a copy of the original.
 
 ## What's machine-checked vs. judged
 
-`scripts/validate-output.py --tier premium` checks four of these rules by pattern, heuristically:
+`scripts/validate-output.py --tier premium` checks four of these rules — hardened, scope-aware, and
+fail-closed against the cheap gaming moves:
 
 | Rule | Machine check | What it can't see |
 | --- | --- | --- |
-| 1. Full-bleed hero + scrim | hero section marker + background image/`<img>` + a scrim pattern (gradient/rgba/`text-shadow`/`overlay`) nearby | whether the scrim is visually *enough* — a technically-present gradient that's too subtle still passes |
-| 2. Display type system | 2+ distinct non-generic font families declared | whether they're actually a serif-display/sans-body *pairing*, or just two unrelated fonts |
-| 6. Sticky action bar | `position: sticky` or `position: fixed` anywhere | whether it's actually the booking bar, or an unrelated fixed element |
+| 1. Full-bleed hero + scrim | hero marker (comments stripped first) + imagery **in the hero's own scope** (its section span plus CSS rules whose selectors reference it) + a full-bleed treatment (`cover`/viewport-relative height) + a scrim pattern in that same scope. A hidden hero (display:none, zero size) fails outright; a scrim declared in an unrelated rule outside the hero's scope does not count | whether the scrim is visually *enough* — a technically-present gradient that's too subtle still passes |
+| 2. Display type system | 2+ distinct non-generic families **and** a real pairing: one stack ending in the `serif` generic (the display face, declared so the pairing is checkable) attached to headings, one ending in `sans-serif`/`system-ui` (the body face). Two unrelated sans fonts do not pass | whether the serif face is actually a *display* cut, or just any serif |
+| 6. Sticky action bar | a visible, **bottom-anchored** `sticky`/`fixed` element that actually contains a CTA link/button. A sticky top masthead or decorative fixed element does not pass | whether the bar is styled as a real booking bar rather than a technically-qualifying strip |
 
 Rules 3, 4, and 5 are **not** machine-checked — restraint, a genuine signature motif, and true
 legibility-over-imagery judgment require actually looking at the rendered page. These stay a board/

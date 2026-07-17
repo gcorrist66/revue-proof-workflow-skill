@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- RED-TEAM FIXTURE (v1.1, failure class 2): a deliverable that ignores the brief's structure and
+     tries to hide it. Against examples/structure-fixture.json it commits four evasions at once:
+       - the banned custom header, disguised with uppercase tags, single quotes, extra attributes,
+         and a multi-class value (`CLASS='site-nav Custom-Header'`);
+       - the required "proof" section faked as an empty stub div (marker present, no content);
+       - the required [CLIENT_PHONE] placeholder hidden in a display:none span while a guessed,
+         invented phone number ships visibly;
+       - required sections re-ordered (cta before offer).
+     scripts/validate-conformance.py must REJECT with all four violation classes reported. -->
+<html lang="en">
+<head><meta charset="utf-8"><title>VIP Marina — structure evasion fixture</title></head>
+<body>
+  <HEADER id="top" CLASS='site-nav  Custom-Header'>
+    <p>A bespoke masthead the brief explicitly banned, reformatted to dodge a literal match.</p>
+  </HEADER>
+  <section data-section="hero">
+    <h1>Your Best Summer Day Is One Click Away</h1>
+  </section>
+  <div data-section="proof"></div>
+  <section data-section="cta">
+    <p>Reserve now, or call (512) 555-0142.<span style="display:none">[CLIENT_PHONE]</span></p>
+  </section>
+  <section data-section="offer">
+    <p>Save 15% on Weekday/Thursday rentals this summer.</p>
+  </section>
+</body>
+</html>

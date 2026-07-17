@@ -1,0 +1,32 @@
+<!doctype html>
+<!-- RED-TEAM FIXTURE (v1.1): actively tries to GAME the Premium elevate heuristics rather than meet
+     them. Attacks, one per rule:
+       - a hidden div with "hero" in its class, a 1px <img>, background-size:cover and a text-shadow,
+         to fake the full-bleed hero + scrim without any visitor ever seeing a hero;
+       - a sticky TOP masthead (position:sticky with no bottom anchor) to fake the sticky action bar;
+       - a second unrelated sans font to fake the "2+ families" type system with no serif display.
+     All colors/fonts kept in lock so ONLY the tier bar is being attacked. Every one of these must
+     fail its elevate check — a gate that can be gamed has failed. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VIP Lake Travis — Weekdays on the Water</title>
+<style>
+  body { margin: 0; background: #FFFFFF; color: #062456; font-family: Quicksand, Arial, sans-serif; }
+  h1 { font-family: Fraunces, sans-serif; }  /* second family, but no serif fallback declared */
+  .hero-badge { display: none; background-size: cover; min-height: 90vh;
+                text-shadow: 0 1px 2px #062456; }
+  .masthead { position: sticky; top: 0; background: #FFFFFF; padding: 12px 24px; }
+  .cta { background: #FF5747; color: #FFFFFF; padding: 12px 28px; text-decoration: none; }
+</style>
+</head>
+<body>
+  <div class="masthead"><a class="cta" href="#reserve">Reserve</a></div>
+  <div class="hero-badge"><img src="wave.jpg" alt="wave" width="1" height="1"></div>
+  <section data-section="offer">
+    <h1>Weekdays on the Water</h1>
+    <p>Save 15% on Weekday/Thursday rentals.</p>
+    <a class="cta" href="#reserve">Reserve Your Boat</a>
+  </section>
+</body>
+</html>

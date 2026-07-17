@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- DOGFOOD PREMIUM DRAFT 1 (tier-gate-rejected, kept as evidence): the brief declared
+     tier: Premium, and this draft is exactly the failure v1.1 exists to stop — a clean, on-brand,
+     structurally conforming page that quietly ships the STANDARD bar: solid-color hero box instead
+     of full-bleed imagery, no scrim, one sans family doing every job, no sticky action bar.
+     Base audit: clean. Conformance: pass. Elevate: all four checks FAIL.
+     See examples/dogfood-premium/README.md for the audit output; the fix ships in winner.html. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>revüe — Standard, Premium, Custom</title>
+<style>
+  body { margin: 0; background: #FFFFFF; color: #062456; font-family: Quicksand, Arial, sans-serif; }
+  .hero { background: #062456; color: #FFFFFF; padding: 72px 24px; text-align: center; }
+  .cta { display: inline-block; background: #FF5747; color: #FFFFFF; padding: 12px 28px;
+         border-radius: 999px; text-decoration: none; font-weight: 700; }
+  section { padding: 48px 24px; max-width: 820px; margin: 0 auto; }
+</style>
+</head>
+<body>
+  <section class="hero" data-section="hero">
+    <h1>Every deliverable earns its tier</h1>
+    <p>Standard, Premium, and Custom — each with a bar the work has to clear, proven by script.</p>
+    <a class="cta" href="#tiers">See the tiers</a>
+  </section>
+  <section data-section="tiers" id="tiers">
+    <h2>Three tiers, three bars</h2>
+    <p>Standard is clean, on-brand, lock-audited. Premium adds the elevate craft layer — full-bleed
+       imagery, a display type system, a persistent action bar. Custom is human-led and human-signed.</p>
+  </section>
+  <section data-section="proof">
+    <h2>Gates, not opinions</h2>
+    <p>The output audit, the elevate checks, and the conformance check are scripts. A Premium
+       declaration without Premium craft fails before it ships.</p>
+  </section>
+  <section data-section="cta">
+    <h2>Shipping [LAUNCH_DATE]</h2>
+    <a class="cta" href="#notify">Get notified</a>
+  </section>
+</body>
+</html>

@@ -1,20 +1,28 @@
 #!/usr/bin/env python3
-"""Validate a deliverable against the brief's structure spec — Pillar (brief-conformance), first
-working version (references/brief-conformance.md).
+"""Validate a deliverable against the brief's structure spec (references/brief-conformance.md) —
+hardened, evasion-resistant version.
 
 Checks a deliverable against what the brief actually promised, independent of the design-system lock:
-  - required sections are present, and (if declared) appear in the brief's order;
-  - forbidden elements the brief banned do not appear;
-  - placeholders the brief marked as not-yet-known are present verbatim, not silently guessed.
+  - required sections are present, non-stub, visible, and (if declared) in the brief's order;
+  - forbidden elements the brief banned do not appear — in any quoting/spacing/case/attribute-order
+    variant, including multi-class values (`class="nav custom-header"` still hits a
+    `class="custom-header"` ban);
+  - placeholders the brief marked as not-yet-known are present, VISIBLE, and not entity-masked —
+    a placeholder buried in a display:none container while a guessed value shows is a violation.
 
-Section convention: a section is recognized by `data-section="name"` anywhere in the markup, or by
-`<section id="name">`. This is a documented authoring convention, not DOM parsing — a deliverable that
-doesn't use it will show as having zero sections, which itself is a legitimate finding.
+Section convention: `data-section="name"` (double-, single-, or un-quoted) anywhere in the markup, or
+`<section id="name">`. A deliverable that doesn't use the convention shows zero sections, which fails
+a brief that requires sections — structure that cannot be verified cannot conform.
 
-Non-adversarial scope (references/brief-conformance.md): forbidden-element and placeholder matching are
-literal, case-sensitive-for-placeholders substring checks. No attempt to resist evasion (obfuscation,
-encoding, DOM tricks) — that hardening is intentionally deferred, matching how scripts/validate-output.py
-started before it was hardened.
+Evasion resistance:
+  - HTML comments are stripped first — a marker or placeholder inside a comment does not count.
+  - A required section whose marker exists but whose span is empty/near-empty (a stub faked to satisfy
+    presence) or hidden (display:none / visibility:hidden / zero size) fails as a stub.
+  - Forbidden patterns are matched on normalized text (casefolded, whitespace-collapsed,
+    quote-unified) and on a separator-squashed form; `class="X"` / `id="X"` bans additionally match X
+    as a token inside any multi-valued class/id attribute, in any attribute order.
+  - Placeholders are checked entity-decoded (an `&#91;`-masked placeholder still counts as present —
+    it renders identically) but must appear at least once OUTSIDE a hidden container.
 
 Stdlib only. Exit 0 = pass, 1 = violation(s), 2 = usage/input error.
 """
@@ -22,41 +30,115 @@ Stdlib only. Exit 0 = pass, 1 = violation(s), 2 = usage/input error.
 from __future__ import annotations
 
 import argparse
+import html as html_lib
 import json
 import re
 from pathlib import Path
 
-DATA_SECTION_PATTERN = re.compile(r'\bdata-section\s*=\s*"([^"]+)"', re.IGNORECASE)
-SECTION_TAG_ID_PATTERN = re.compile(r'<section\b[^>]*\bid\s*=\s*"([^"]+)"', re.IGNORECASE)
+SECTION_MARKER_PATTERN = re.compile(
+    r"""\bdata-section\s*=\s*(?:"([^"]+)"|'([^']+)'|([^\s"'>]+))""", re.IGNORECASE
+)
+SECTION_TAG_ID_PATTERN = re.compile(
+    r"""<section\b[^>]*\bid\s*=\s*(?:"([^"]+)"|'([^']+)'|([^\s"'>]+))""", re.IGNORECASE
+)
 HTML_COMMENT_PATTERN = re.compile(r"<!--.*?-->", re.DOTALL)
+TAG_PATTERN = re.compile(r"<[^>]+>")
+CLASS_OR_ID_BAN_PATTERN = re.compile(r"""^\s*<?\s*[\w-]*\s*(class|id)\s*=\s*["']?([\w -]+)["']?\s*>?\s*$""", re.IGNORECASE)
+ATTR_VALUE_PATTERN = {
+    "class": re.compile(r"""\bclass\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))""", re.IGNORECASE),
+    "id": re.compile(r"""\bid\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))""", re.IGNORECASE),
+}
+HIDDEN_PATTERN = re.compile(
+    r"(display\s*:\s*none|visibility\s*:\s*hidden|opacity\s*:\s*0(?:\.0+)?\s*[;}\"']"
+    r"|(?:max-)?(?:width|height)\s*:\s*0(?:px|%)?\s*[;}\"']|\bhidden(?:\s|>|=))",
+    re.IGNORECASE,
+)
+SECTION_BOUNDARY_PATTERN = re.compile(r"<section\b|data-section\s*=|<footer\b|</body", re.IGNORECASE)
+STUB_MIN_VISIBLE_CHARS = 20   # a "section" with less visible text than this is a presence-faking stub
+SECTION_SPAN_CAP = 20000
 
 
 def strip_comments(text: str) -> str:
     """Drop HTML comments before checking structure — an authoring note that happens to mention
-    `data-section="hero"` must not be mistaken for a real section."""
+    `data-section="hero"` (or contain a placeholder) must not count as the real thing."""
     return HTML_COMMENT_PATTERN.sub(" ", text)
 
 
-def find_sections(text: str) -> list[str]:
-    """Return section names in document order (first occurrence only, order-preserving)."""
+def normalize(text: str) -> str:
+    """Casefold, unify quotes, collapse whitespace — evasion-resistant comparison form."""
+    text = text.replace("'", '"')
+    return re.sub(r"\s+", " ", text).casefold()
+
+
+def squash(text: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", text.casefold())
+
+
+def _marker_hits(text: str) -> list[tuple[int, str]]:
     hits: list[tuple[int, str]] = []
-    for m in DATA_SECTION_PATTERN.finditer(text):
-        hits.append((m.start(), m.group(1)))
-    for m in SECTION_TAG_ID_PATTERN.finditer(text):
-        hits.append((m.start(), m.group(1)))
+    for pattern in (SECTION_MARKER_PATTERN, SECTION_TAG_ID_PATTERN):
+        for m in pattern.finditer(text):
+            name = next(g for g in m.groups() if g is not None)
+            hits.append((m.start(), name.strip()))
     hits.sort(key=lambda h: h[0])
+    return hits
+
+
+def find_sections(text: str) -> list[str]:
+    """Section names in document order (first occurrence only, order-preserving)."""
     seen: set[str] = set()
     ordered: list[str] = []
-    for _, name in hits:
+    for _, name in _marker_hits(text):
         if name not in seen:
             seen.add(name)
             ordered.append(name)
     return ordered
 
 
+def _enclosing_tag(text: str, pos: int) -> tuple[str, int, int]:
+    start = text.rfind("<", 0, pos)
+    end = text.find(">", pos)
+    if start == -1 or end == -1:
+        return "", pos, pos
+    return text[start:end + 1], start, end + 1
+
+
+def section_spans(text: str) -> dict[str, str]:
+    """Map each section name to the raw markup of its FIRST span (marker tag to next boundary)."""
+    spans: dict[str, str] = {}
+    for pos, name in _marker_hits(text):
+        if name in spans:
+            continue
+        tag, tag_start, tag_end = _enclosing_tag(text, pos)
+        boundary = SECTION_BOUNDARY_PATTERN.search(text, tag_end)
+        end = boundary.start() if boundary else min(len(text), tag_start + SECTION_SPAN_CAP)
+        spans[name] = text[tag_start:end]
+    return spans
+
+
+def stub_sections(text: str, required: list[str]) -> list[str]:
+    """Required sections whose span is hidden or has less visible text than the stub floor —
+    a marker faked to satisfy the presence check without shipping the section."""
+    spans = section_spans(text)
+    stubs: list[str] = []
+    for name in required:
+        span = spans.get(name)
+        if span is None:
+            continue  # missing entirely — reported by missingSections, not here
+        tag = span[:span.find(">") + 1] if ">" in span else span
+        visible = re.sub(r"\s+", " ", html_lib.unescape(TAG_PATTERN.sub(" ", span))).strip()
+        if HIDDEN_PATTERN.search(tag):
+            stubs.append(f"{name} (marker present but the section is hidden)")
+        elif len(visible) < STUB_MIN_VISIBLE_CHARS:
+            stubs.append(
+                f"{name} (marker present but only {len(visible)} visible characters — "
+                "a stub is not a section)"
+            )
+    return stubs
+
+
 def order_violations(required: list[str], found: list[str]) -> list[str]:
-    """Pairwise order check: for every (a, b) with a before b in `required`, if both are present in
-    `found`, a's first occurrence must precede b's. Returns human-readable violation strings."""
+    """Pairwise order check on required sections that are present."""
     position = {name: i for i, name in enumerate(found)}
     violations = []
     for i, a in enumerate(required):
@@ -67,16 +149,74 @@ def order_violations(required: list[str], found: list[str]) -> list[str]:
 
 
 def check_forbidden(text: str, forbidden: list[dict]) -> list[dict]:
+    """Normalized + squashed + token-aware matching. A ban written as `class="custom-header"` hits
+    any quoting/spacing/case variant and any multi-class attribute containing that token."""
+    norm_text = normalize(text)
+    squashed_text = squash(text)
     hits = []
     for entry in forbidden:
         pattern = str(entry.get("pattern", "")).strip()
-        if pattern and pattern in text:
+        if not pattern:
+            continue
+        found = normalize(pattern) in norm_text or (squash(pattern) and squash(pattern) in squashed_text)
+        if not found:
+            m = CLASS_OR_ID_BAN_PATTERN.match(pattern)
+            if m:
+                attr, banned_value = m.group(1).lower(), m.group(2).strip()
+                banned_tokens = set(banned_value.casefold().split())
+                for am in ATTR_VALUE_PATTERN[attr].finditer(text):
+                    value = next(g for g in am.groups() if g is not None)
+                    if banned_tokens <= set(value.casefold().split()):
+                        found = True
+                        break
+        if found:
             hits.append({"pattern": pattern, "why": entry.get("why", "")})
     return hits
 
 
-def check_placeholders(text: str, required: list[str]) -> list[str]:
-    return [p for p in required if p and p not in text]
+VOID_ELEMENTS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
+                 "meta", "param", "source", "track", "wbr"}
+OPEN_OR_CLOSE_TAG_PATTERN = re.compile(r"<(/?)([a-zA-Z][\w-]*)((?:[^>\"']|\"[^\"]*\"|'[^']*')*)>")
+
+
+def _ancestors_at(text: str, pos: int) -> list[str]:
+    """Approximate the open-tag ancestor chain at `pos` with a simple tag stack (no DOM needed).
+    Returns the full opening-tag strings still open at that position."""
+    stack: list[tuple[str, str]] = []  # (tag name, full tag text)
+    for m in OPEN_OR_CLOSE_TAG_PATTERN.finditer(text, 0, pos):
+        closing, name, attrs = m.group(1), m.group(2).lower(), m.group(3)
+        if closing:
+            for i in range(len(stack) - 1, -1, -1):
+                if stack[i][0] == name:
+                    del stack[i:]
+                    break
+        elif name not in VOID_ELEMENTS and not attrs.rstrip().endswith("/"):
+            stack.append((name, m.group(0)))
+    return [tag for _, tag in stack]
+
+
+def check_placeholders(text: str, required: list[str]) -> tuple[list[str], list[str]]:
+    """Returns (missing, hidden-only). A placeholder must appear at least once in the entity-decoded
+    text, and at least one occurrence must have NO hidden element in its open-tag ancestor chain —
+    a placeholder inside a display:none container while a guessed value shows is a violation."""
+    decoded = html_lib.unescape(text)
+    missing: list[str] = []
+    hidden_only: list[str] = []
+    for p in required:
+        if not p:
+            continue
+        positions = [m.start() for m in re.finditer(re.escape(p), decoded)]
+        if not positions:
+            missing.append(p)
+            continue
+        visible_somewhere = False
+        for pos in positions:
+            if not any(HIDDEN_PATTERN.search(tag) for tag in _ancestors_at(decoded, pos)):
+                visible_somewhere = True
+                break
+        if not visible_somewhere:
+            hidden_only.append(p)
+    return missing, hidden_only
 
 
 def load_structure(path: Path) -> dict:
@@ -95,22 +235,28 @@ def audit_conformance(paths: list[Path], structure: dict) -> dict:
     found = find_sections(text)
     required = list(structure["requiredSections"])
     missing_sections = [s for s in required if s not in found]
+    stubs = stub_sections(text, required)
 
     violations = order_violations(required, found) if structure.get("sectionOrder") else []
 
     forbidden_hits = check_forbidden(text, structure["forbiddenElements"])
-    missing_placeholders = check_placeholders(text, structure["requiredPlaceholders"])
+    missing_placeholders, hidden_placeholders = check_placeholders(
+        text, structure["requiredPlaceholders"]
+    )
 
-    passed = not missing_sections and not violations and not forbidden_hits and not missing_placeholders
+    passed = not (missing_sections or stubs or violations or forbidden_hits
+                  or missing_placeholders or hidden_placeholders)
 
     return {
         "deliverablePath": str(paths[0]) if len(paths) == 1 else [str(p) for p in paths],
         "sectionsFound": found,
         "missingSections": missing_sections,
+        "stubSections": stubs,
         "orderViolations": violations,
         "forbiddenHits": [h["pattern"] for h in forbidden_hits],
         "forbiddenDetails": forbidden_hits,
         "missingPlaceholders": missing_placeholders,
+        "hiddenPlaceholders": hidden_placeholders,
         "pass": passed,
     }
 
@@ -159,6 +305,8 @@ def main() -> int:
     print("FAIL")
     for s in conformance["missingSections"]:
         print(f"- missing required section: {s!r}")
+    for s in conformance["stubSections"]:
+        print(f"- stub/hidden required section: {s}")
     for v in conformance["orderViolations"]:
         print(f"- section order violation: {v}")
     for hit in conformance["forbiddenDetails"]:
@@ -166,6 +314,9 @@ def main() -> int:
         print(f"- forbidden element present: {hit['pattern']!r}{why}")
     for p in conformance["missingPlaceholders"]:
         print(f"- required placeholder missing (may have been silently guessed instead): {p!r}")
+    for p in conformance["hiddenPlaceholders"]:
+        print(f"- required placeholder present only inside hidden markup: {p!r} — hiding the "
+              "placeholder while showing a guessed value is the exact dishonesty this check exists for")
     return 1
 
 

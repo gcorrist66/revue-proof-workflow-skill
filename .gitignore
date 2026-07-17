@@ -6,3 +6,4 @@ venv/
 dist/
 build/
 *.zip
+HANDOFF-TO-FABLE*.md

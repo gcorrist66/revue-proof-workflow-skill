@@ -160,9 +160,10 @@ BINARY_MAGICS = (b"%PDF", b"\x89PNG", b"\xff\xd8\xff", b"GIF8", b"PK\x03\x04", b
 
 # --------------------------------------------------------------------------- elevate (Pillar: Premium)
 
-# Heuristic patterns for references/elevate.md's machine-checkable rules. Not evasion-hardened — see
-# the module docstring's v1.1 note and references/output-audit.md.
-HERO_MARKER_PATTERN = re.compile(r'(?:class|id|data-section)\s*=\s*"[^"]*\bhero\b[^"]*"', re.IGNORECASE)
+# Heuristic patterns for references/elevate.md's machine-checkable rules — hardened v1.1 pass.
+# Scoping is section-bounded and CSS-rule-aware rather than a fixed character window, and the checks
+# fail closed on the cheap gaming moves (hidden hero, decorative sticky, two-sans "type system").
+HERO_MARKER_PATTERN = re.compile(r'(?:class|id|data-section)\s*=\s*["\'][^"\']*\bhero\b[^"\']*["\']', re.IGNORECASE)
 BG_IMAGE_PATTERN = re.compile(r'background(?:-image)?\s*:\s*[^;}]*url\(', re.IGNORECASE)
 IMG_TAG_PATTERN = re.compile(r"<img\b", re.IGNORECASE)
 SCRIM_PATTERN = re.compile(
@@ -171,7 +172,23 @@ SCRIM_PATTERN = re.compile(
     re.IGNORECASE,
 )
 STICKY_PATTERN = re.compile(r"position\s*:\s*(?:sticky|fixed)\b", re.IGNORECASE)
-HERO_WINDOW_CHARS = 2000  # heuristic scope: text following a hero marker, in lieu of real DOM bounds
+CSS_RULE_PATTERN = re.compile(r"([^{}]+)\{([^{}]*)\}")
+HIDDEN_PATTERN = re.compile(
+    r"(display\s*:\s*none|visibility\s*:\s*hidden|opacity\s*:\s*0(?:\.0+)?\s*[;}\"']"
+    r"|(?:max-)?(?:width|height)\s*:\s*0(?:px|%)?\s*[;}\"'])",
+    re.IGNORECASE,
+)
+FULL_BLEED_PATTERN = re.compile(
+    r"(background-size\s*:\s*cover|object-fit\s*:\s*cover|\b\d{2,3}(?:\.\d+)?\s*(?:vh|svh|dvh)\b)",
+    re.IGNORECASE,
+)
+SECTION_BOUNDARY_PATTERN = re.compile(r"<section\b|data-section\s*=|<footer\b", re.IGNORECASE)
+CTA_TAG_PATTERN = re.compile(r"<a\b|<button\b", re.IGNORECASE)
+BOTTOM_ANCHOR_PATTERN = re.compile(r"\bbottom\s*:", re.IGNORECASE)
+HEADING_SELECTOR_PATTERN = re.compile(r"\bh[1-3]\b|display|headline|title|hero", re.IGNORECASE)
+BODY_GENERIC_FALLBACKS = {"sans-serif", "system-ui", "ui-sans-serif"}
+HERO_WINDOW_MAX_CHARS = 6000    # cap if no section boundary follows the hero
+ELEMENT_WINDOW_CHARS = 2500     # scope for "does this element contain a CTA"
 
 # Common Cyrillic/Greek homoglyphs folded to ASCII (post-casefold, so lowercase forms only).
 CONFUSABLES = str.maketrans({
@@ -316,6 +333,10 @@ def extract_colors(text: str, is_css: bool) -> list[str]:
             if prop in NAMED_SCAN_SKIP_PROPS:
                 continue
             value = re.sub(r"(\"[^\"]*\"|'[^']*')", " ", decl.group(2))
+            # A custom-property NAME is an identifier, not a color: `var(--navy)` must not read as
+            # the named color `navy`. Strip the name but KEEP any var() fallback value — the fallback
+            # (`var(--x, red)`) is a real color the browser can render.
+            value = re.sub(r"var\(\s*--[\w-]+\s*", "var(", value)
             for token in re.findall(r"[a-zA-Z]{3,20}", value):
                 hexval = NAMED_COLORS.get(token.lower())
                 if hexval:
@@ -470,15 +491,52 @@ def near_miss(color: str, lock_colors: list[str], tolerance: int = 24) -> str | 
     return best
 
 
+def parse_css_rules(text: str, is_css: bool = False) -> list[tuple[str, str]]:
+    """Extract flat (selector, body) pairs from every <style> block (or the whole file for CSS).
+    Nested @media wrappers are skipped naturally — only innermost rule blocks match."""
+    sources = [text] if is_css else [m.group(1) for m in STYLE_BLOCK_PATTERN.finditer(text)]
+    rules: list[tuple[str, str]] = []
+    for src in sources:
+        src = CSS_JS_COMMENT_PATTERN.sub(" ", src)
+        for m in CSS_RULE_PATTERN.finditer(src):
+            sel = m.group(1).strip()
+            if sel.startswith("@") and "{" not in sel:
+                # @media/@supports header captured as a "selector" — its inner rules match separately.
+                continue
+            rules.append((sel, m.group(2)))
+    return rules
+
+
+def _section_window(text: str, tag_start: int, tag_end: int, cap: int) -> str:
+    """Element scope: from the opening tag to the next section boundary (or a cap)."""
+    boundary = SECTION_BOUNDARY_PATTERN.search(text, tag_end)
+    end = boundary.start() if boundary else min(len(text), tag_start + cap)
+    return text[tag_start:end]
+
+
+def _enclosing_tag(text: str, pos: int) -> tuple[str, int, int]:
+    start = text.rfind("<", 0, pos)
+    end = text.find(">", pos)
+    if start == -1 or end == -1:
+        return "", pos, pos
+    return text[start:end + 1], start, end + 1
+
+
 def check_elevate(text: str, fonts_found: set[str], lock_typography: list[str]) -> tuple[list[dict], bool]:
-    """references/elevate.md's machine-checkable Premium bar. Returns (checks, elevatePass).
+    """references/elevate.md's machine-checkable Premium bar — hardened. Returns (checks, elevatePass).
 
-    Only the pattern-detectable rules are checked here: a full-bleed hero, a legibility scrim over any
-    hero imagery, a two-family (display + body) type system, and a sticky action bar. Editorial
-    restraint/negative space and a repeating signature motif are qualitative — they are not checked
-    here and stay a human/board call (references/elevate.md)."""
+    Scoping is real, not a fixed window: the hero is judged by its own section span plus the CSS rules
+    whose selectors reference it; the sticky bar must be a bottom-anchored element that actually
+    contains a CTA; the type system must be a serif-display + sans-body PAIRING with the display face
+    attached to headings — two unrelated sans fonts do not pass. Cheap gaming moves fail closed: a
+    hidden hero, a decorative sticky masthead, or a scrim declared outside the hero's scope are all
+    rejected with a detail naming what was actually found. Editorial restraint and the signature motif
+    remain human/board judgment (references/elevate.md)."""
     checks: list[dict] = []
+    text = HTML_COMMENT_PATTERN.sub(" ", text)  # a hero marker in an authoring comment is not a hero
+    rules = parse_css_rules(text, is_css="<" not in text)
 
+    # ---- Rule 1: full-bleed hero ----
     hero_match = HERO_MARKER_PATTERN.search(text)
     if not hero_match:
         checks.append({
@@ -492,67 +550,154 @@ def check_elevate(text: str, fonts_found: set[str], lock_typography: list[str]) 
             "detail": "cannot evaluate — no hero section was found",
         })
     else:
-        window = text[hero_match.start(): hero_match.start() + HERO_WINDOW_CHARS]
-        has_imagery = bool(BG_IMAGE_PATTERN.search(window) or IMG_TAG_PATTERN.search(window))
-        if not has_imagery:
+        hero_tag, tag_start, tag_end = _enclosing_tag(text, hero_match.start())
+        hero_window = _section_window(text, tag_start, tag_end, HERO_WINDOW_MAX_CHARS)
+        hero_css = " ".join(body for sel, body in rules if "hero" in sel.lower()) + " " + hero_tag
+        hero_scope = hero_css + " " + hero_window
+
+        if HIDDEN_PATTERN.search(hero_css):
             checks.append({
                 "check": "full-bleed hero section",
                 "status": "fail",
-                "detail": "hero section found, but no background image or <img> detected within it",
+                "detail": "hero section appears hidden (display:none / visibility:hidden / zero size "
+                          "in its own styles) — a hero the visitor never sees does not meet the bar",
             })
             checks.append({
                 "check": "legibility scrim over hero imagery",
                 "status": "fail",
-                "detail": "cannot evaluate — hero has no detected imagery",
+                "detail": "cannot evaluate — the hero appears hidden",
             })
         else:
-            checks.append({
-                "check": "full-bleed hero section",
-                "status": "pass",
-                "detail": "hero section with background image or <img> detected",
-            })
-            if SCRIM_PATTERN.search(window):
+            has_imagery = bool(BG_IMAGE_PATTERN.search(hero_scope) or IMG_TAG_PATTERN.search(hero_window))
+            full_bleed = bool(FULL_BLEED_PATTERN.search(hero_scope))
+            if not has_imagery:
                 checks.append({
-                    "check": "legibility scrim over hero imagery",
-                    "status": "pass",
-                    "detail": "scrim/overlay/gradient/text-shadow detected near hero imagery",
+                    "check": "full-bleed hero section",
+                    "status": "fail",
+                    "detail": "hero section found, but no background image or <img> detected in its "
+                              "own scope (section span + hero-selector CSS rules)",
                 })
-            else:
                 checks.append({
                     "check": "legibility scrim over hero imagery",
                     "status": "fail",
-                    "detail": "hero has imagery but no scrim, overlay, gradient, or text-shadow was "
-                              "detected — text/CTAs may sit directly on a bright or busy region",
+                    "detail": "cannot evaluate — hero has no detected imagery",
                 })
+            elif not full_bleed:
+                checks.append({
+                    "check": "full-bleed hero section",
+                    "status": "fail",
+                    "detail": "hero has imagery but no full-bleed treatment detected — expected "
+                              "background-size: cover, object-fit: cover, or a viewport-relative "
+                              "height (vh) in the hero's scope",
+                })
+                checks.append({
+                    "check": "legibility scrim over hero imagery",
+                    "status": "fail",
+                    "detail": "cannot evaluate — hero imagery is not full-bleed",
+                })
+            else:
+                checks.append({
+                    "check": "full-bleed hero section",
+                    "status": "pass",
+                    "detail": "hero section with full-bleed imagery detected (imagery + cover/vh in scope)",
+                })
+                if SCRIM_PATTERN.search(hero_scope):
+                    checks.append({
+                        "check": "legibility scrim over hero imagery",
+                        "status": "pass",
+                        "detail": "scrim/overlay/gradient/text-shadow detected in the hero's own scope",
+                    })
+                else:
+                    checks.append({
+                        "check": "legibility scrim over hero imagery",
+                        "status": "fail",
+                        "detail": "hero has imagery but no scrim, overlay, gradient, or text-shadow in "
+                                  "the hero's scope — text/CTAs may sit directly on a bright or busy region",
+                    })
 
+    # ---- Rule 2: display type system (serif display + sans body pairing) ----
     distinct_families = {f for f in fonts_found if f.casefold() not in GENERIC_FONT_FAMILIES}
-    if len(distinct_families) >= 2:
-        checks.append({
-            "check": "display type system (2+ distinct type families)",
-            "status": "pass",
-            "detail": f"{len(distinct_families)} distinct families declared: {sorted(distinct_families)}",
-        })
-    else:
-        checks.append({
-            "check": "display type system (2+ distinct type families)",
-            "status": "fail",
-            "detail": f"only {len(distinct_families)} distinct family declared "
-                      f"({sorted(distinct_families)}) — Premium expects a serif display + sans body pairing",
-        })
+    stacks: list[tuple[str, list[str]]] = []  # (selector, families)
+    for sel, body in rules:
+        for decl in CSS_DECL_PATTERN.finditer(body):
+            if decl.group(1).lower() == "font-family":
+                fams = [f.strip().strip("\"'").strip() for f in decl.group(2).split(",")]
+                stacks.append((sel, [f for f in fams if f]))
+    display_stacks = [(sel, fams) for sel, fams in stacks
+                      if fams and fams[-1].casefold() == "serif"]
+    body_stacks = [(sel, fams) for sel, fams in stacks
+                   if fams and fams[-1].casefold() in BODY_GENERIC_FALLBACKS]
+    display_on_headings = any(HEADING_SELECTOR_PATTERN.search(sel) for sel, _ in display_stacks)
 
-    if STICKY_PATTERN.search(text):
-        checks.append({
-            "check": "sticky action bar",
-            "status": "pass",
-            "detail": "position: sticky/fixed detected",
-        })
+    if len(distinct_families) < 2:
+        detail = (f"only {len(distinct_families)} distinct family declared "
+                  f"({sorted(distinct_families)}) — Premium expects a serif display + sans body pairing")
+        status = "fail"
+    elif not display_stacks:
+        detail = ("2+ families declared but no display stack found — no font-family declaration ends "
+                  "in the 'serif' generic; a display face must declare its serif fallback "
+                  "(e.g. font-family: 'Fraunces', serif) so the pairing is checkable")
+        status = "fail"
+    elif not body_stacks:
+        detail = ("a serif display stack exists but no body stack ends in sans-serif/system-ui — "
+                  "body copy must run in a sans with its generic fallback declared")
+        status = "fail"
+    elif not display_on_headings:
+        detail = ("a serif display stack exists but is not attached to headings — declare it on "
+                  "h1/h2 (or a display/headline/hero selector), not on an unrelated element")
+        status = "fail"
     else:
-        checks.append({
-            "check": "sticky action bar",
-            "status": "fail",
-            "detail": "no position: sticky/fixed element found — Premium requires a persistent "
-                      "booking/CTA bar",
-        })
+        detail = (f"serif display + sans body pairing detected "
+                  f"(display: {display_stacks[0][1][0]!r} on {display_stacks[0][0]!r}; "
+                  f"body: {body_stacks[0][1][0]!r})")
+        status = "pass"
+    checks.append({"check": "display type system (serif display + sans body)", "status": status, "detail": detail})
+
+    # ---- Rule 6: sticky action bar (bottom-anchored, contains a CTA) ----
+    sticky_found = False
+    qualified = False
+    sticky_detail = "no position: sticky/fixed element found — Premium requires a persistent booking/CTA bar"
+    for sel, body in rules:
+        if not STICKY_PATTERN.search(body):
+            continue
+        sticky_found = True
+        if not BOTTOM_ANCHOR_PATTERN.search(body):
+            continue
+        if HIDDEN_PATTERN.search(body):
+            continue
+        for token in re.findall(r"[.#]([\w-]+)", sel):
+            el = re.search(
+                r'<\w+[^>]*(?:class|id)\s*=\s*["\'][^"\']*\b' + re.escape(token) + r'\b[^"\']*["\'][^>]*>',
+                text, re.IGNORECASE,
+            )
+            if el and CTA_TAG_PATTERN.search(
+                _section_window(text, el.start(), el.end(), ELEMENT_WINDOW_CHARS)
+            ):
+                qualified = True
+                sticky_detail = f"bottom-anchored sticky/fixed bar {sel!r} contains a CTA link/button"
+                break
+        if qualified:
+            break
+    if not qualified:
+        # Inline-styled sticky elements: style="...position:sticky...bottom..." on the element itself.
+        for m in re.finditer(r"<\w+[^>]*style\s*=\s*([\"'])(.*?)\1[^>]*>", text, re.IGNORECASE | re.DOTALL):
+            style = m.group(2)
+            if STICKY_PATTERN.search(style) and BOTTOM_ANCHOR_PATTERN.search(style) \
+                    and not HIDDEN_PATTERN.search(style):
+                sticky_found = True
+                if CTA_TAG_PATTERN.search(_section_window(text, m.start(), m.end(), ELEMENT_WINDOW_CHARS)):
+                    qualified = True
+                    sticky_detail = "bottom-anchored inline-styled sticky/fixed element contains a CTA"
+                    break
+    if not qualified and sticky_found:
+        sticky_detail = ("sticky/fixed positioning exists but no bottom-anchored, visible element "
+                         "containing a CTA link/button was found — a sticky masthead or decorative "
+                         "fixed element is not a booking bar")
+    checks.append({
+        "check": "sticky action bar",
+        "status": "pass" if qualified else "fail",
+        "detail": sticky_detail,
+    })
 
     elevate_pass = all(c["status"] == "pass" for c in checks)
     return checks, elevate_pass

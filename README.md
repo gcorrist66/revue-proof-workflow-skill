@@ -50,8 +50,8 @@ Or use the self-contained installer, which recreates the full tree and refuses t
 complete eval suite passes inside it:
 
 ```bash
-python3 scripts/make-installer.py            # writes dist/apply-revue-v1.0.0.sh
-bash dist/apply-revue-v1.0.0.sh ~/.claude/skills/revue-proof-workflow
+python3 scripts/make-installer.py --version 1.1.0   # writes dist/apply-revue-v1.1.0.sh
+bash dist/apply-revue-v1.1.0.sh ~/.claude/skills/revue-proof-workflow
 ```
 
 Restart Claude / Claude Code if the skill does not appear immediately.
@@ -76,19 +76,23 @@ python3 scripts/validate-run.py path/to/run.json --strict
 python3 scripts/run-evals.py
 ```
 
-The eval suite (58 cases) asserts that golden reviews across modes validate and reach the expected
+The eval suite (102 cases) asserts that golden reviews across modes validate and reach the expected
 verdict, that every failure mode is rejected (dead-end verdict, false ship, thin evidence, missing
-source, missing freshness marker, bad path owner), that fixed bugs stay fixed — and, as of v1.0.0,
-that the output audit resists active evasion: nine red-team fixtures (`examples/redteam-*.html`) that
-try to sneak off-palette colors, obfuscated Hard NOs, and fabricated metrics past the audit are each
-proven REJECTED, including a faithful reproduction of the generic-clone-with-fabricated-metric failure
-v1.0 exists to prevent. CI runs it via `.github/workflows/evals.yml`.
+source, missing freshness marker, bad path owner), that fixed bugs stay fixed — and that every gate
+resists active evasion. Twelve red-team fixtures (`examples/redteam-*.html`) attack the gates directly
+and are each proven REJECTED: off-palette colors in any syntax, obfuscated Hard NOs, fabricated
+metrics (including a faithful reproduction of the generic-clone failure v1.0 exists to prevent), a
+Premium-declared page that ships clean-template, a page that games the Premium heuristics with a
+hidden hero and a sticky masthead, and a deliverable that disguises structure violations behind
+reformatting and hidden placeholders. CI runs it via `.github/workflows/evals.yml`.
 
 ## Current status
 
-v1.0.0. Opinionated by design. The eval suite is the trust anchor — if it is green, the guarantees
-hold. See `docs/v1.0-acceptance-report.md` for the acceptance criteria mapped to their proving evals,
-and `examples/dogfood/` for the pipeline run end to end on revüe's own brand.
+v1.1.0 — adds site tiers (`Standard` / `Premium` / `Custom`), the elevate Premium craft bar, and
+brief-conformance, all adversarially enforced. Opinionated by design. The eval suite is the trust
+anchor — if it is green, the guarantees hold. See `docs/v1.1-acceptance-report.md` and
+`docs/v1.0-acceptance-report.md` for every guarantee mapped to its proving evals, and
+`examples/dogfood/` + `examples/dogfood-premium/` for the pipeline run end to end on real work.
 
 ## Brand
 

@@ -1,0 +1,87 @@
+<!doctype html>
+<!-- DOGFOOD PREMIUM WINNER (all gates passed): draft 1 rebuilt to actually earn its declared tier.
+     What changed against winner-draft-1.html, rule by rule (references/elevate.md):
+       - full-bleed hero: viewport-height hero with cover imagery (in-lock SVG gradient data URI)
+         instead of a solid colored box;
+       - legibility scrim: a navy gradient overlay under the hero copy;
+       - display type system: Fraunces (serif display) on headings, Quicksand (sans) body;
+       - sticky action bar: bottom-anchored, always-reachable CTA.
+     Structure (examples/dogfood-premium/structure.json): hero -> tiers -> proof -> cta, no bespoke
+     masthead, [LAUNCH_DATE] left as an honest, visible placeholder.
+     Verify:
+       python3 scripts/validate-output.py examples/dogfood-premium/winner.html --lock examples/dogfood-premium/lock.json --tier premium
+       python3 scripts/validate-conformance.py examples/dogfood-premium/winner.html --structure examples/dogfood-premium/structure.json -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>revüe — Standard, Premium, Custom</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #FFFFFF; color: #062456; font-family: Quicksand, Arial, sans-serif; }
+  h1, h2 { font-family: 'Fraunces', serif; font-weight: 600; margin: 0; }
+
+  .hero {
+    position: relative; min-height: 86vh;
+    display: flex; align-items: flex-end; padding: 0 40px 88px;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http://www.w3.org/2000/svg%27%20viewBox%3D%270%200%201600%20900%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23062456%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%2325C7C3%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%271600%27%20height%3D%27900%27%20fill%3D%27url%28%23g%29%27/%3E%3C/svg%3E");
+    background-size: cover; background-position: center;
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(6,36,86,0) 30%, rgba(6,36,86,0.75) 100%);
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 640px; color: #FFFFFF; }
+  .hero h1 { font-size: 58px; line-height: 1.06; margin-bottom: 18px; }
+  .hero p { font-size: 19px; margin: 0 0 30px; max-width: 500px; }
+  .cta {
+    display: inline-block; background: #FF5747; color: #FFFFFF;
+    padding: 15px 34px; border-radius: 999px; text-decoration: none; font-weight: 700;
+  }
+  section { padding: 88px 40px; max-width: 860px; margin: 0 auto; }
+  section h2 { font-size: 34px; margin-bottom: 22px; }
+  section p { font-size: 17px; line-height: 1.6; max-width: 580px; }
+  .cta-band { background: #062456; color: #FFFFFF; text-align: center; max-width: none; }
+  .cta-band .cta { margin-top: 22px; }
+  .sticky-bar {
+    position: sticky; bottom: 0;
+    background: #FFFFFF; border-top: 1px solid rgba(6,36,86,0.15);
+    padding: 13px 40px; display: flex; justify-content: space-between; align-items: center;
+  }
+  @media (max-width: 640px) {
+    .hero { min-height: 70vh; padding: 0 24px 56px; }
+    .hero h1 { font-size: 38px; }
+    section { padding: 56px 24px; }
+  }
+</style>
+</head>
+<body>
+  <section class="hero" data-section="hero">
+    <div class="hero-content">
+      <h1>Every deliverable earns its tier</h1>
+      <p>Standard, Premium, and Custom — each with a bar the work has to clear, proven by script.</p>
+      <a class="cta" href="#tiers">See the tiers</a>
+    </div>
+  </section>
+  <section data-section="tiers" id="tiers">
+    <h2>Three tiers, three bars</h2>
+    <p>Standard is clean, on-brand, lock-audited. Premium adds the elevate craft layer — full-bleed
+       imagery under a legibility scrim, a serif display over a sans body, a persistent action bar.
+       Custom is human-led and human-signed.</p>
+  </section>
+  <section data-section="proof">
+    <h2>Gates, not opinions</h2>
+    <p>The output audit, the elevate checks, and the conformance check are scripts. A Premium
+       declaration without Premium craft fails before it ships — this page had to pass the same
+       gates it describes.</p>
+  </section>
+  <section class="cta-band" data-section="cta">
+    <h2>Shipping [LAUNCH_DATE]</h2>
+    <a class="cta" href="#notify">Get notified</a>
+  </section>
+  <div class="sticky-bar">
+    <span>revüe v1.1 — tiers, elevate, conformance</span>
+    <a class="cta" href="#notify">Get notified</a>
+  </div>
+</body>
+</html>

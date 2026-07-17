@@ -407,6 +407,155 @@ check("conformance: missing required placeholder caught (guessed value instead)"
 rc, out = _run([str(VC), str(EX / "premium-exemplar.html"), "--structure", str(EX / "premium-structure.json"), "--json"])
 check("conformance: premium exemplar's real sections conform to its own structure spec", rc == 0 and json.loads(out)["pass"] is True)
 
+# ---- v1.1.0 red team: the three failure classes, plus attacks on the new gates themselves ----
+
+# Failure class 1: a page DECLARED Premium that ships clean-template. Its base audit is clean —
+# only the tier bar catches it, and it must catch all four elevate rules.
+rc, out = _run([str(VO), str(EX / "redteam-premium-clean-template.html"),
+                "--lock", str(EX / "premium-lock.json"), "--tier", "premium", "--json"])
+ct = json.loads(out)
+check(
+    "red team: Premium-declared clean-template FAILS its tier (base audit clean, elevatePass false)",
+    rc == 1 and ct["elevatePass"] is False
+    and not ct["colorsOutOfLock"] and not ct["fontsOutOfLock"]
+    and not ct["hardNoHits"] and not ct["unverifiedClaims"] and not ct["unverifiable"],
+)
+check(
+    "red team: clean-template misses all four elevate rules by name",
+    {c["check"] for c in ct["elevateChecks"] if c["status"] == "fail"}
+    == {"full-bleed hero section", "legibility scrim over hero imagery",
+        "display type system (serif display + sans body)", "sticky action bar"},
+)
+# ...and a ship verdict carrying that audit must be rejected by the run gate.
+d = copy.deepcopy(prem_base)
+d["outputAudit"] = {**ct, "deliverablePath": "examples/redteam-premium-clean-template.html"}
+rc, out = vr_obj(d)
+check(
+    "red team: ship over the clean-template Premium audit REJECTED as Standard-bar-only",
+    rc == 1 and "standard bar" in out.lower(),
+)
+
+# Gaming the elevate heuristics: hidden hero + 1px img + cover/text-shadow, sticky TOP masthead,
+# second sans family with no serif fallback — every fake must fail its check.
+rc, out = _run([str(VO), str(EX / "redteam-premium-gamed.html"),
+                "--lock", str(EX / "premium-lock.json"), "--tier", "premium", "--json"])
+gm = json.loads(out)
+check(
+    "red team: gamed elevate heuristics (hidden hero, sticky masthead, two-sans) all FAIL",
+    rc == 1 and gm["elevatePass"] is False
+    and {c["check"] for c in gm["elevateChecks"] if c["status"] == "fail"}
+    == {"full-bleed hero section", "legibility scrim over hero imagery",
+        "display type system (serif display + sans body)", "sticky action bar"},
+)
+
+# Failure class 2: a deliverable that ignores the brief's structure and disguises it.
+rc, out = _run([str(VC), str(EX / "redteam-conformance-evasion.html"),
+                "--structure", str(EX / "structure-fixture.json"), "--json"])
+ce = json.loads(out)
+check(
+    "red team: reformatted banned header (case/quotes/multi-class) still caught",
+    rc == 1 and 'class="custom-header"' in ce["forbiddenHits"],
+)
+check("red team: empty stub faking a required section caught", any("proof" in s for s in ce["stubSections"]))
+check("red team: reordered required sections caught", bool(ce["orderViolations"]))
+check(
+    "red team: placeholder hidden while a guessed value ships caught",
+    "[CLIENT_PHONE]" in ce["hiddenPlaceholders"],
+)
+
+# Failure class 3: the original off-palette generic clone must still fail the brand audit —
+# asserted here explicitly for the v1.1 acceptance map (full coverage lives in the v1.0 cases above).
+rc, out = vo_run("redteam-original-failure.html", "lock-fixture.json")
+check("red team: original off-palette generic clone still FAILS the brand audit", rc == 1)
+
+# Run-level forgeries against the new gates.
+d = copy.deepcopy(prem_base)
+d["outputAudit"]["elevatePass"] = True
+d["outputAudit"]["elevateChecks"] = []
+rc, out = vr_obj(d)
+check(
+    "red team: bare elevatePass with no elevateChecks REJECTED as hand-asserted",
+    rc == 1 and "elevatechecks" in out.lower(),
+)
+
+d = copy.deepcopy(prem_base)
+d["outputAudit"]["elevateChecks"] = copy.deepcopy(d["outputAudit"]["elevateChecks"])
+d["outputAudit"]["elevateChecks"][0]["status"] = "fail"
+rc, out = vr_obj(d)
+check(
+    "red team: elevatePass true over a failing elevate check REJECTED as inconsistent",
+    rc == 1 and "inconsistent" in out.lower(),
+)
+
+d = copy.deepcopy(prem_base)
+d["conformance"] = {**d["conformance"], "pass": True, "missingSections": ["proof"]}
+rc, out = vr_obj(d)
+check(
+    "red team: conformance pass flipped true over listed violations REJECTED",
+    rc == 1 and "inconsistent" in out.lower(),
+)
+
+d = copy.deepcopy(prem_base)
+d["brief"]["tier"] = "Custom"
+d["trace"][1]["modelTier"] = "standard"
+d["tierSignoff"] = {"by": "N/A"}
+rc, out = vr_obj(d)
+check(
+    "red team: Custom tierSignoff.by = 'N/A' placeholder REJECTED",
+    rc == 1 and "tiersignoff" in out.lower(),
+)
+
+# Regression guard for the var() fix: custom properties NAMED after colors are not misread as
+# named colors (in-lock deliverable using --navy/--coral variables must pass), while a real color
+# hidden in a var() FALLBACK is still caught.
+with tempfile.NamedTemporaryFile("w", suffix=".html", delete=False) as f:
+    f.write(
+        "<style>:root{--navy:#062456;--coral:#FF5747}"
+        "body{background:var(--navy);color:#FFFFFF;font-family:Quicksand,Arial,sans-serif}"
+        ".c{background:var(--coral)}</style><h1>Reserve Your Boat</h1>"
+    ); var_ok_path = f.name
+rc, out = _run([str(VO), var_ok_path, "--lock", str(EX / "lock-fixture.json"), "--json"])
+check("regression: color-word var() names no longer false-positive as named colors", rc == 0 and json.loads(out)["pass"] is True)
+with tempfile.NamedTemporaryFile("w", suffix=".html", delete=False) as f:
+    f.write(
+        "<style>body{background:#062456;color:var(--x, rebeccapurple);font-family:Quicksand}</style><p>hi</p>"
+    ); var_bad_path = f.name
+rc, out = _run([str(VO), var_bad_path, "--lock", str(EX / "lock-fixture.json"), "--json"])
+check("red team: off-lock named color in a var() fallback still caught", rc == 1 and "#663399" in json.loads(out)["colorsOutOfLock"])
+
+# ---- v1.1.0 dogfood: the Premium pipeline run on revüe's own launch page stays reproducible ----
+DOGP = EX / "dogfood-premium"
+rc, out = _run([str(VO), str(DOGP / "winner-draft-1.html"), "--lock", str(DOGP / "lock.json"),
+                "--tier", "premium", "--json"])
+dp1 = json.loads(out)
+check(
+    "dogfood-premium: clean-template draft fails ALL FOUR elevate checks while base audit is clean",
+    rc == 1 and dp1["elevatePass"] is False and not dp1["colorsOutOfLock"] and not dp1["fontsOutOfLock"]
+    and sum(1 for c in dp1["elevateChecks"] if c["status"] == "fail") == 4,
+)
+rc, _ = _run([str(VC), str(DOGP / "winner-draft-1.html"), "--structure", str(DOGP / "structure.json")])
+check("dogfood-premium: the same draft CONFORMS structurally — only the tier gate catches it", rc == 0)
+rc, _ = _run([str(VO), str(DOGP / "winner.html"), "--lock", str(DOGP / "lock.json"), "--tier", "premium"])
+check("dogfood-premium: rebuilt winner passes the full Premium audit", rc == 0)
+rc, _ = _run([str(VC), str(DOGP / "winner.html"), "--structure", str(DOGP / "structure.json")])
+check("dogfood-premium: rebuilt winner passes conformance ([LAUNCH_DATE] visibly intact)", rc == 0)
+dogp_run = json.loads((DOGP / "run.json").read_text(encoding="utf-8"))
+rc, _ = _run([str(VR), str(DOGP / "run.json"), "--strict"])
+check("dogfood-premium: full run artifact validates (strict)", rc == 0)
+
+# Both directions from the same artifact: a genuinely Premium output MAY ship...
+d = copy.deepcopy(dogp_run); d["verdict"]["value"] = "ship"
+rc, _ = vr_obj(d)
+check("dogfood-premium: flipped to 'ship' with the real passing audits, validates", rc == 0)
+# ...and the same ship claim over the clean-template draft's audit is rejected as Standard-bar-only.
+d = copy.deepcopy(dogp_run); d["verdict"]["value"] = "ship"
+d["outputAudit"] = {**dp1, "deliverablePath": "examples/dogfood-premium/winner-draft-1.html"}
+rc, out = vr_obj(d)
+check(
+    "dogfood-premium: 'ship' over the clean-template draft audit REJECTED as Standard-bar-only",
+    rc == 1 and "standard bar" in out.lower(),
+)
+
 # ---- regression guards: the bugs we fixed must stay fixed ----
 design = (EX / "worked-design-handoff.md").read_text(encoding="utf-8")
 plural = design.replace("screenshot (1512x785 capture)", "screenshots captured")
