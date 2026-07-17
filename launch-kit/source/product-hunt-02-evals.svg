@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1270" height="760" viewBox="0 0 1270 760">
+  <rect width="1270" height="760" fill="#062456"/>
+  <circle cx="1080" cy="90" r="190" fill="none" stroke="#25C7C3" stroke-width="2" opacity="0.45"/>
+  <circle cx="1160" cy="700" r="260" fill="none" stroke="#FF5747" stroke-width="2" opacity="0.35"/>
+  <text x="90" y="115" fill="#25C7C3" font-family="Avenir Next, Arial, sans-serif" font-size="22" font-weight="800" letter-spacing="3">THE TRUST ANCHOR</text>
+  <rect x="850" y="92" width="318" height="76" rx="18" fill="#fff" fill-opacity="0.10"/>
+  <image href="evals-badge.svg" x="873" y="100" width="272" height="52" preserveAspectRatio="xMidYMid meet"/>
+  <text x="86" y="260" fill="#fff" font-family="Avenir Next, Arial, sans-serif" font-size="132" font-weight="800">108/108</text>
+  <text x="92" y="330" fill="#fff" font-family="Avenir Next, Arial, sans-serif" font-size="38" font-weight="650">eval cases pass</text>
+  <g transform="translate(90 405)" font-family="Avenir Next, Arial, sans-serif">
+    <rect width="480" height="205" rx="24" fill="#fff" fill-opacity="0.08" stroke="#fff" stroke-opacity="0.16"/>
+    <text x="34" y="56" fill="#FFCC70" font-size="21" font-weight="750">12 adversarial fixtures</text>
+    <text x="34" y="99" fill="#dce7f8" font-size="20">Encoded colors · obfuscated hard noes</text>
+    <text x="34" y="136" fill="#dce7f8" font-size="20">Fabricated metrics · forged audit flags</text>
+    <text x="34" y="173" fill="#dce7f8" font-size="20">Hidden heroes · structure evasions</text>
+  </g>
+  <g transform="translate(603 405)" font-family="Avenir Next, Arial, sans-serif">
+    <rect width="480" height="205" rx="24" fill="#25C7C3"/>
+    <text x="34" y="58" fill="#062456" font-size="22" font-weight="800">Local, inspectable, reproducible</text>
+    <text x="34" y="104" fill="#062456" font-size="20">Python standard library only</text>
+    <text x="34" y="141" fill="#062456" font-size="20">No network or credentials required</text>
+    <text x="34" y="178" fill="#062456" font-size="20">CI runs on every push</text>
+  </g>
+</svg>

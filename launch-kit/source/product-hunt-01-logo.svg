@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1270" height="760" viewBox="0 0 1270 760">
+  <image href="editorial-background.png" width="1270" height="760" preserveAspectRatio="xMidYMid slice"/>
+  <rect x="75" y="64" width="1120" height="632" rx="38" fill="#fff" fill-opacity="0.92" stroke="#062456" stroke-opacity="0.08"/>
+  <image href="../../assets/logo-revue.svg" x="225" y="155" width="820" height="208"/>
+  <text x="635" y="462" text-anchor="middle" fill="#062456" font-family="Avenir Next, Arial, sans-serif" font-size="50" font-weight="760">Proof over vibes.</text>
+  <text x="635" y="520" text-anchor="middle" fill="#465875" font-family="Avenir Next, Arial, sans-serif" font-size="25">An open review workflow for client-ready AI work.</text>
+  <rect x="439" y="574" width="392" height="66" rx="33" fill="#062456"/>
+  <text x="635" y="616" text-anchor="middle" fill="#fff" font-family="Avenir Next, Arial, sans-serif" font-size="21" font-weight="700">Claude Code · Codex · Cowork</text>
+</svg>
+

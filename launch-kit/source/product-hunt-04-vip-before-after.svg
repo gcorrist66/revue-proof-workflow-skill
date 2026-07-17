@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1270" height="760" viewBox="0 0 1270 760">
+  <rect width="1270" height="760" fill="#f7f4ee"/>
+  <text x="70" y="78" fill="#062456" font-family="Avenir Next, Arial, sans-serif" font-size="21" font-weight="800" letter-spacing="3">VIP LAKE TRAVIS · PREMIUM GATE</text>
+  <text x="70" y="137" fill="#062456" font-family="Avenir Next, Arial, sans-serif" font-size="46" font-weight="760">On-brand is the floor. Premium must be earned.</text>
+  <g transform="translate(70 188)">
+    <rect width="540" height="430" rx="22" fill="#fff" stroke="#E5484D" stroke-width="3"/>
+    <image href="vip-before.png" x="16" y="16" width="508" height="318" preserveAspectRatio="xMidYMin slice"/>
+    <rect x="16" y="350" width="150" height="48" rx="24" fill="#E5484D"/>
+    <text x="91" y="381" text-anchor="middle" fill="#fff" font-family="Avenir Next, Arial, sans-serif" font-size="18" font-weight="800">REJECTED</text>
+    <text x="184" y="381" fill="#062456" font-family="Avenir Next, Arial, sans-serif" font-size="18" font-weight="700">Clean template · Standard bar only</text>
+  </g>
+  <g transform="translate(660 188)">
+    <rect width="540" height="430" rx="22" fill="#fff" stroke="#25C7C3" stroke-width="3"/>
+    <image href="vip-after.png" x="16" y="16" width="508" height="318" preserveAspectRatio="xMidYMin slice"/>
+    <rect x="16" y="350" width="150" height="48" rx="24" fill="#25C7C3"/>
+    <text x="91" y="381" text-anchor="middle" fill="#062456" font-family="Avenir Next, Arial, sans-serif" font-size="18" font-weight="800">PASSES</text>
+    <text x="184" y="381" fill="#062456" font-family="Avenir Next, Arial, sans-serif" font-size="18" font-weight="700">Brand + structure + Premium craft</text>
+  </g>
+  <text x="635" y="686" text-anchor="middle" fill="#53637c" font-family="Avenir Next, Arial, sans-serif" font-size="18">Real repository fixtures rendered in-browser; no invented performance claim.</text>
+</svg>

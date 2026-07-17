@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1270" height="760" viewBox="0 0 1270 760">
+  <rect width="1270" height="760" fill="#fff"/>
+  <text x="80" y="92" fill="#062456" font-family="Avenir Next, Arial, sans-serif" font-size="22" font-weight="800" letter-spacing="3">ONE DECISION</text>
+  <text x="80" y="160" fill="#062456" font-family="Avenir Next, Arial, sans-serif" font-size="52" font-weight="760">A verdict with a path forward.</text>
+  <image href="../../assets/logo-states.png" x="52" y="212" width="1166" height="335" preserveAspectRatio="xMidYMid meet"/>
+  <rect x="80" y="600" width="1110" height="92" rx="24" fill="#f3f7fb"/>
+  <text x="635" y="640" text-anchor="middle" fill="#062456" font-family="Avenir Next, Arial, sans-serif" font-size="22" font-weight="700">Every non-ship verdict names the owner and shortest credible path to ship.</text>
+  <text x="635" y="672" text-anchor="middle" fill="#53637c" font-family="Avenir Next, Arial, sans-serif" font-size="18">No endless review loop. No false green light.</text>
+</svg>
+

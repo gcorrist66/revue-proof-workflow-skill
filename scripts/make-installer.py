@@ -22,7 +22,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-EXCLUDE_DIRS = {".git", "__pycache__", "dist", "build", ".venv", "venv", ".DS_Store"}
+EXCLUDE_DIRS = {
+    ".git",
+    "__pycache__",
+    "dist",
+    "build",
+    ".venv",
+    "venv",
+    ".DS_Store",
+    "launch-kit",
+}
 # Internal build-handoff notes are working documents, not part of the public skill (the repo's own
 # convention: the v1.0 note was removed from the public tree the same way).
 EXCLUDE_FILES = {

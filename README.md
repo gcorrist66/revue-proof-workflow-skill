@@ -13,6 +13,11 @@ converging on `ship` instead of looping on `caution`.
 Use it when an agent needs to review work before it goes to a client, developer, stakeholder, or public
 audience.
 
+If revüe is useful in your workflow, star the repo so other teams can find it.
+
+Built in public by Corriston Consulting: the same proof-first operating discipline we use to turn AI
+output into client-ready work.
+
 ## What it is good for
 
 - Design and Figma handoffs
