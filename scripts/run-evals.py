@@ -568,6 +568,46 @@ check("regression: plural 'screenshots' accepted", rc == 0)
 rc, _ = ve_file(EX / "worked-implementation-review.md", [])
 check("regression: 'ship with changes' not misread as 'ship'", rc == 0)
 
+# ---- v1.2.0 operating-layer contracts: Codex-native metadata, scoped routing, and UX clarity ----
+skill_text = (ROOT / "SKILL.md").read_text(encoding="utf-8")
+brief_text = (ROOT / "references" / "creative-brief.md").read_text(encoding="utf-8")
+routing_text = (ROOT / "references" / "model-routing.md").read_text(encoding="utf-8")
+inspection_text = (ROOT / "references" / "inspection-checklists.md").read_text(encoding="utf-8")
+openai_text = (ROOT / "agents" / "openai.yaml").read_text(encoding="utf-8")
+
+check(
+    "v1.2 contract: bounded changes to existing products stay review/remediation",
+    "existing dashboard feel more premium" in skill_text
+    and "review/remediation track" in brief_text,
+)
+check(
+    "v1.2 contract: explicit premium language sets tier without a redundant question",
+    all(term in skill_text for term in ('"premium"', '"flagship"', '"custom"'))
+    and "Infer an explicit choice" in brief_text,
+)
+check(
+    "v1.2 contract: model routing is vendor-neutral and honest about unsupported routing",
+    "vendor-neutral" in routing_text
+    and "omit `modelTier`" in routing_text
+    and not re.search(r"Claude|Haiku|Sonnet|Fable|Opus|claude-", routing_text, re.I),
+)
+check(
+    "v1.2 contract: product UI inspection covers context, async status, targets, and actions",
+    all(term in inspection_text for term in ("active client/company/account", "show progress", "target to aim for", "what to fix first")),
+)
+check(
+    "v1.2 contract: Codex skill metadata exists and names the skill in its default prompt",
+    'display_name: "revüe Proof Workflow"' in openai_text
+    and "$revue-proof-workflow" in openai_text
+    and "allow_implicit_invocation: true" in openai_text,
+)
+check(
+    "v1.2 contract: reported evidence, no-artifact fallback, and finding priorities are explicit",
+    "reported by user" in skill_text
+    and "no artifact" in skill_text
+    and all(priority in skill_text for priority in ("`P0`", "`P1`", "`P2`")),
+)
+
 
 def main() -> int:
     passed = sum(1 for _, ok in cases if ok)

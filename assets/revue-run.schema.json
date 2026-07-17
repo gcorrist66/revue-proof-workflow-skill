@@ -254,7 +254,7 @@
             "enum": ["fast", "standard", "deep", "deep-coding"],
             "description": "references/model-routing.md. Gate/validator steps (brief-gate, design-system-lock-check, options-lock-check, output-audit, self-check, validate-run, validate-output, validate-evidence) must be 'fast'."
           },
-          "model": { "type": "string", "description": "Model string actually used, e.g. claude-haiku-4-5-20251001." }
+          "model": { "type": "string", "description": "Runtime-confirmed model identifier actually used. Omit when the runtime does not expose it." }
         }
       }
     }

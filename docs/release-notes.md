@@ -1,5 +1,26 @@
 # Release Notes
 
+## v1.2.0
+
+Simplifies revüe's operating layer without weakening its proof gates.
+
+- Existing-product fixes, copy refinements, backend simplification, and bounded UI polish now route to
+  review/remediation. They no longer trigger a creative brief, tier question, or 2–3 concept round.
+- Explicit `premium`, `flagship`, or `custom` language sets the creative tier; the workflow does not ask
+  the user to repeat a decision already present in the request.
+- Model routing is capability-based and vendor-neutral. A run omits routing metadata when the runtime
+  cannot confirm that routing occurred.
+- Implementation inspection now covers active account context, loading and completion feedback, plain
+  score meaning, a visible target, prioritized fixes, and useful empty states.
+- User reports are explicitly separated from direct observations; no-artifact reviews name the proof
+  still needed instead of pretending a validator ran. P0/P1/P2 priorities make fix order unambiguous.
+- `agents/openai.yaml` adds Codex-facing identity, icons, brand color, and a useful default prompt.
+- The self-contained installer excludes the tracked empty `deltest.tmp` scratch file.
+- Six new contract evals guard the v1.2 behavior. Total: **108 cases**.
+
+The v1.0/v1.1 validators, adversarial fixtures, and creative-production gates remain backward
+compatible.
+
 ## v1.1.0
 
 Adds site tiers, the Premium craft layer, and brief-conformance on top of the v1.0 creative-production
@@ -120,10 +141,9 @@ the verdict, never just advises), and every pre-v1.0 run artifact stays valid.
   cannot dodge the gates by omitting `"produces": "creative-production"`; a forged `outputAudit`
   (pass flipped `true` over listed violations) is rejected as internally inconsistent; option
   distinctness survives case/punctuation paraphrases.
-- **Pillar 4 — model routing** (`references/model-routing.md`): `fast` (Haiku 4.5) for every gate and
-  validator, `standard` (Sonnet 5) for creative generation and board synthesis, `deep` (Fable 5) for
-  ambiguous judgment, `deep-coding` (Opus 4.8) for heavy coding. `scripts/validate-run.py` rejects a
-  run where a known gate step is tagged anything other than `fast`.
+- **Pillar 4 — model routing** (`references/model-routing.md`): introduced the `fast`, `standard`,
+  `deep`, and `deep-coding` capability tiers. v1.2 made these labels vendor-neutral. The validator
+  rejects a known gate step tagged anything other than `fast`.
 - Schema (`assets/revue-run.schema.json`): adds `produces` (`review` | `creative-production`, default
   `review`), `brief`, `designSystemLock`, `options`, `optionFeedback`, `outputAudit`, and per-step
   `modelTier`/`model` on `trace` entries.
