@@ -39,28 +39,28 @@ Review this Figma handoff and tell me if it is ship, caution, or block.
 Get this to ship — fix what you can and only ask me what you can't.
 ```
 
-## Install in Claude / Claude Code
+## Install in Codex
 
 ```bash
-mkdir -p ~/.claude/skills
-cp -R revue-proof-workflow ~/.claude/skills/revue-proof-workflow
+mkdir -p ~/.codex/skills
+cp -R revue-proof-workflow ~/.codex/skills/revue-proof-workflow
 ```
 
 Or use the self-contained installer, which recreates the full tree and refuses to finish unless the
 complete eval suite passes inside it:
 
 ```bash
-python3 scripts/make-installer.py --version 1.1.0   # writes dist/apply-revue-v1.1.0.sh
-bash dist/apply-revue-v1.1.0.sh ~/.claude/skills/revue-proof-workflow
+python3 scripts/make-installer.py --version 1.2.0   # writes dist/apply-revue-v1.2.0.sh
+bash dist/apply-revue-v1.2.0.sh ~/.codex/skills/revue-proof-workflow
 ```
 
-Restart Claude / Claude Code if the skill does not appear immediately.
+Start a new Codex task if the updated skill does not appear immediately.
 
-## Install in Codex
+## Install in Claude / Claude Code
 
 ```bash
-mkdir -p ~/.codex/skills
-cp -R revue-proof-workflow ~/.codex/skills/revue-proof-workflow
+mkdir -p ~/.claude/skills
+cp -R revue-proof-workflow ~/.claude/skills/revue-proof-workflow
 ```
 
 ## Validation & evals
@@ -76,7 +76,7 @@ python3 scripts/validate-run.py path/to/run.json --strict
 python3 scripts/run-evals.py
 ```
 
-The eval suite (102 cases) asserts that golden reviews across modes validate and reach the expected
+The eval suite (108 cases) asserts that golden reviews across modes validate and reach the expected
 verdict, that every failure mode is rejected (dead-end verdict, false ship, thin evidence, missing
 source, missing freshness marker, bad path owner), that fixed bugs stay fixed — and that every gate
 resists active evasion. Twelve red-team fixtures (`examples/redteam-*.html`) attack the gates directly
@@ -88,9 +88,11 @@ reformatting and hidden placeholders. CI runs it via `.github/workflows/evals.ym
 
 ## Current status
 
-v1.1.0 — adds site tiers (`Standard` / `Premium` / `Custom`), the elevate Premium craft bar, and
-brief-conformance, all adversarially enforced. Opinionated by design. The eval suite is the trust
-anchor — if it is green, the guarantees hold. See `docs/v1.1-acceptance-report.md` and
+v1.2.0 — simplifies the operating layer for Codex, separates bounded remediation from net-new creative
+production, makes routing vendor-neutral, and adds product-interface checks for active account context,
+slow-action feedback, score targets, actionable findings, and useful empty states. The validator core
+and v1.1 creative gates remain intact. The eval suite is the trust anchor — if it is green, the
+guarantees hold. See `docs/v1.2-acceptance-report.md`, `docs/v1.1-acceptance-report.md`, and
 `docs/v1.0-acceptance-report.md` for every guarantee mapped to its proving evals, and
 `examples/dogfood/` + `examples/dogfood-premium/` for the pipeline run end to end on real work.
 

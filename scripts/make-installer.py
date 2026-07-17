@@ -25,7 +25,13 @@ ROOT = Path(__file__).resolve().parent.parent
 EXCLUDE_DIRS = {".git", "__pycache__", "dist", "build", ".venv", "venv", ".DS_Store"}
 # Internal build-handoff notes are working documents, not part of the public skill (the repo's own
 # convention: the v1.0 note was removed from the public tree the same way).
-EXCLUDE_FILES = {"scratch.tmp", ".DS_Store", "HANDOFF-TO-FABLE.md", "HANDOFF-TO-FABLE-v1.1.md"}
+EXCLUDE_FILES = {
+    "scratch.tmp",
+    "deltest.tmp",
+    ".DS_Store",
+    "HANDOFF-TO-FABLE.md",
+    "HANDOFF-TO-FABLE-v1.1.md",
+}
 EXCLUDE_SUFFIXES = {".pyc", ".zip"}
 
 

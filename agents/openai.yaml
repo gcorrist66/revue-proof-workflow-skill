@@ -1,0 +1,9 @@
+interface:
+  display_name: "revüe Proof Workflow"
+  short_description: "Evidence-first review, remediation, and handoff"
+  icon_small: "./assets/logo-mark.png"
+  icon_large: "./assets/logo-revue.svg"
+  brand_color: "#062456"
+  default_prompt: "Use $revue-proof-workflow to inspect this work, fix what is in scope, and give me an evidence-backed verdict with the shortest path to ship."
+policy:
+  allow_implicit_invocation: true

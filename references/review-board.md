@@ -55,13 +55,14 @@ Each lane answers one question and stays in it. Adapt the named roles to the mod
 | Critique & Refinement | What are the genuine strengths to protect, and the specific weaknesses to fix — by area, citing what is actually there? | It gives vague praise, or prescribes "make it cleaner" instead of an actionable punch-list. |
 | Aggressive | What is the boldest, sharper-POV version that still clears the bar and the non-negotiables? | It confuses louder/hypey with sharper, or breaks a non-negotiable to look bold. |
 | Conservative | What is the most credible, lowest-objection version that a cautious stakeholder could not reject? | It becomes generic or templated in the name of safety. |
+| Implementation | Can this be built, tested, operated, and maintained safely from the available work? | It discusses visual direction instead of behavior, failure states, dependencies, and proof. |
 | Proof | What actually proves this exists and works, in the exact requested format? | It accepts a substitute or an untested preview as proof. |
 | Stakeholder | Can the named recipient use / decide from this without a live explanation? | It reviews for the maker, not the recipient. |
 | Synthesis | Across all lanes: the highest-leverage moves, and the single verdict with reasons. | It lists everything equally instead of forcing priority and a decision. |
 
 For a design or client review, run Critique + Aggressive + Conservative + Proof + Stakeholder, then
-Synthesis. For implementation or QA review, swap Aggressive/Conservative for an Implementation lane
-(can someone build/operate this from the handoff?) and keep Proof, Stakeholder, Synthesis.
+Synthesis. For implementation or QA review, run Critique + Implementation + Proof + Stakeholder, then
+Synthesis. Do not run Aggressive or Conservative for that board.
 
 ## Output block
 
@@ -74,6 +75,7 @@ Non-negotiable check: <any rule breached, or "all clear">
 Critique: strengths worth protecting → …; weaknesses by area (hero/hierarchy/moat/proof/copy/mobile) → …; punch-list → …
 Aggressive: sharper direction → …; where the line was held so it stays credible → …
 Conservative: lowest-objection direction → …; what keeps it non-generic → …
+Implementation (implementation/QA mode only): build/run path → …; behavior and failure states → …; operational risk → …
 Proof: exact format present? → …; evidence → …; not verified → …
 Stakeholder: can the recipient use/decide without a walkthrough? → …; gaps → …
 
