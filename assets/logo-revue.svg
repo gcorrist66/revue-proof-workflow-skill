@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="360" viewBox="0 0 1420 360" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1250" height="360" viewBox="0 0 1250 360" role="img" aria-labelledby="title desc">
   <title id="title">revüe logo</title>
-  <desc id="desc">Lowercase revüe wordmark in navy; the coral ü is a smiling face; an aqua check badge is perched on the top-right shoulder of the final e.</desc>
+  <desc id="desc">Lowercase revüe wordmark in navy on a white card; the coral ü is a smiling face; an aqua check badge is perched on the top-right of the final e.</desc>
+  <rect width="1250" height="360" rx="44" fill="#FFFFFF"/>
   <g transform="translate(104 30)" font-family="Avenir Next Rounded, Avenir Next, Nunito, Quicksand, Arial Rounded MT Bold, Arial, sans-serif" font-size="262" font-weight="760" fill="#062456">
     <text x="0" y="250">r</text>
     <text x="132" y="250">e</text>
@@ -8,12 +9,11 @@
     <g transform="translate(500 0)">
       <circle cx="96" cy="44" r="33" fill="#FF5747"/>
       <circle cx="220" cy="44" r="33" fill="#FF5747"/>
-      <path d="M44 134 L44 184 C44 252 100 290 162 290 C224 290 280 252 280 184 L280 134"
-            fill="none" stroke="#FF5747" stroke-width="62" stroke-linecap="round"/>
+      <path d="M44 134 L44 184 C44 252 100 290 162 290 C224 290 280 252 280 184 L280 134" fill="none" stroke="#FF5747" stroke-width="62" stroke-linecap="round"/>
     </g>
     <text x="812" y="250">e</text>
     <g transform="translate(922 -14)">
-      <circle cx="58" cy="58" r="62" fill="#FFFFFF"/>
+      <circle cx="58" cy="58" r="62" fill="#EAF7FF"/>
       <circle cx="58" cy="58" r="50" fill="#25C7C3"/>
       <path d="M34 60 L51 77 L84 39" fill="none" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
     </g>
