@@ -1,0 +1,89 @@
+{
+  "schema": "revue.review.v1",
+  "runId": "dogfood-revue-promo-v1",
+  "mode": "design-handoff",
+  "dryRun": true,
+  "produces": "creative-production",
+  "request": "Design a single-page promo site for revüe itself, from the repo's own brand source, through the full v1.0 pipeline.",
+  "stakeholder": "Repo owner",
+  "inputs": [
+    { "type": "file", "ref": "docs/brand.md", "note": "the design source: locked palette (6 colors), typography rules, logo usage" },
+    { "type": "file", "ref": "assets/logo-revue.svg", "note": "wordmark reference for the hero treatment" },
+    { "type": "file", "ref": "README.md", "note": "positioning language and audience" }
+  ],
+  "constraints": { "brand": "revüe navy/coral/aqua + verdict amber/red", "format_requested": "html" },
+  "brief": {
+    "deliverable": "Single-file HTML promo one-pager for revüe, desktop + mobile breakpoints",
+    "format": "html",
+    "sources": ["docs/brand.md", "assets/logo-revue.svg", "README.md"],
+    "handoffPageRead": true,
+    "designSystemLock": "examples/dogfood/revue-lock.json",
+    "hardNos": ["lorem ipsum", "click here", "revue proof"]
+  },
+  "designSystemLock": {
+    "colors": ["#062456", "#FF5747", "#25C7C3", "#F2A64D", "#E5484D", "#FFFFFF"],
+    "typography": ["Quicksand", "Arial"],
+    "hardNos": [
+      { "pattern": "lorem ipsum", "why": "placeholder text must never ship" },
+      { "pattern": "click here", "why": "brand voice: never generic link text" },
+      { "pattern": "revue proof", "why": "the name is revüe (u-umlaut) — never flatten it in display copy" }
+    ],
+    "claims": []
+  },
+  "options": [
+    { "id": "concept-a", "summary": "Verdict-led: the four verdict states are the visual spine; navy hero, coral ü, verdict cards in their brand colors.", "distinctionAxis": "verdict states as hero", "lockCompliant": true },
+    { "id": "concept-b", "summary": "Gate-pipeline: a horizontal strip of the operating contract's gates, developer-tool aesthetic, monochrome navy with aqua accents.", "distinctionAxis": "pipeline of gates as hero", "lockCompliant": true },
+    { "id": "concept-c", "summary": "Before/after split: messy work on the left, clean handoff on the right, transformation narrative.", "distinctionAxis": "before/after transformation split", "lockCompliant": true }
+  ],
+  "optionFeedback": [
+    { "optionId": "concept-a", "decision": "keep", "note": "verdict cards are the most revüe-specific asset; keep as the spine" },
+    { "optionId": "concept-b", "decision": "change", "note": "keep the gate strip, fold it into concept A below the verdicts instead of leading with it" },
+    { "optionId": "concept-c", "decision": "kill", "note": "before/after split is a generic marketing trope — fails the anti-generic bar" }
+  ],
+  "evidence": [
+    { "category": "source", "statement": "Read docs/brand.md, assets/logo-revue.svg, and README.md this session before writing the brief; the lock's six hex values are copied from docs/brand.md verbatim.", "verified": true },
+    { "category": "action", "statement": "Ran scripts/validate-run.py on the incomplete-brief run first (examples/dogfood/run-incomplete-brief.json) — the brief gate blocked with one batched field request, exit code 1, observed this session.", "verified": true },
+    { "category": "action", "statement": "Ran scripts/validate-output.py on winner-draft-1.html this session: REJECTED, exit code 1 — caught #e64435, a guessed darker-coral hover, labeled near-miss of #e5484d.", "verified": true },
+    { "category": "result", "statement": "Ran scripts/validate-output.py on winner.html this session: 6 colors found, all in lock; fonts in lock; no Hard-NO hits; no unverified claims; exit code 0. Audit object attached below verbatim.", "verified": true },
+    { "category": "limitation", "statement": "Spacing/grid and logo-usage lock fields are not machine-checked in v1.0; verified by eye only. Page renders unchecked in real browsers (no screenshot in this environment).", "verified": false }
+  ],
+  "scorecard": [
+    { "check": "Exact requested format", "status": "pass", "evidence": "Single HTML file at examples/dogfood/winner.html" },
+    { "check": "Source editability", "status": "pass", "evidence": "Plain HTML/CSS, one file, commented" },
+    { "check": "Desktop/mobile states", "status": "pass", "evidence": "640px breakpoint present; flex layouts collapse to column" },
+    { "check": "Preview fidelity", "status": "partial", "evidence": "Static review only in this session — no rendered-browser screenshot" },
+    { "check": "Brand fit", "status": "pass", "evidence": "Output audit: all 6 colors and both fonts in lock" },
+    { "check": "Stakeholder access", "status": "pass", "evidence": "File path shared; opens in any browser" },
+    { "check": "Developer clarity", "status": "pass", "evidence": "Single file, sectioned CSS, comments name the concept lineage" }
+  ],
+  "outputAudit": {
+    "deliverablePath": "examples/dogfood/winner.html",
+    "lockPath": "examples/dogfood/revue-lock.json",
+    "colorsFound": ["#062456", "#25c7c3", "#e5484d", "#f2a64d", "#ff5747", "#ffffff"],
+    "colorsOutOfLock": [],
+    "nearMisses": {},
+    "fontsFound": ["Arial", "Quicksand", "sans-serif"],
+    "fontsOutOfLock": [],
+    "hardNoHits": [],
+    "claimsApproved": [],
+    "unverifiedClaims": [],
+    "unverifiable": [],
+    "pass": true
+  },
+  "verdict": {
+    "value": "ship with changes",
+    "reason": "Brief was complete before generation, three distinct lock-compliant concepts were presented, the winner was rebuilt from keep/kill/change feedback, and the output audit passed clean after catching a real color drift in draft 1. One bounded change remains: render in a real browser and confirm the preview before publishing.",
+    "requiredProof": "Output audit pass (attached) + design scorecard.",
+    "nextAction": "Open examples/dogfood/winner.html in a browser, confirm both breakpoints, then publish."
+  },
+  "pathToShip": [
+    { "item": "Open winner.html in a real browser and confirm desktop + mobile rendering matches intent", "owner": "human" }
+  ],
+  "trace": [
+    { "step": "brief-gate", "modelTier": "fast", "durationMs": 0 },
+    { "step": "options-generation", "modelTier": "standard", "durationMs": 0 },
+    { "step": "options-lock-check", "modelTier": "fast", "durationMs": 0 },
+    { "step": "output-audit", "modelTier": "fast", "durationMs": 0 },
+    { "step": "self-check", "modelTier": "fast", "durationMs": 0 }
+  ]
+}

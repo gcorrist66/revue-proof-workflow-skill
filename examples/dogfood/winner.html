@@ -1,0 +1,60 @@
+<!doctype html>
+<!-- DOGFOOD WINNER (audit-passed): concept A ("verdict states as hero") revised per keep/kill/change
+     feedback — concept B's gate strip folded in, concept C killed. Every color maps to
+     examples/dogfood/revue-lock.json; the drift caught in winner-draft-1.html is fixed (hover is
+     lock navy, not a guessed darker coral). Audited by scripts/validate-output.py — see
+     examples/dogfood/run.json for the attached outputAudit. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>revüe — the review board that has to prove it</title>
+<style>
+  body { margin: 0; background: #FFFFFF; color: #062456; font-family: Quicksand, Arial, sans-serif; }
+  .hero { background: #062456; color: #FFFFFF; padding: 72px 24px; text-align: center; }
+  .hero h1 { font-size: 56px; margin: 0 0 8px; letter-spacing: 1px; }
+  .hero .u { color: #FF5747; }
+  .hero p { margin: 0 0 28px; }
+  .cta { display: inline-block; background: #FF5747; color: #FFFFFF; padding: 14px 32px;
+         border-radius: 999px; font-weight: 700; text-decoration: none; }
+  .cta:hover { background: #062456; box-shadow: 0 0 0 2px #FF5747 inset, 0 0 0 4px #FFFFFF; }
+  .verdicts { display: flex; gap: 16px; justify-content: center; padding: 48px 24px; flex-wrap: wrap; }
+  .verdict { border-radius: 16px; padding: 20px; min-width: 180px; color: #FFFFFF; }
+  .ship { background: #25C7C3; }
+  .changes { background: #062456; }
+  .caution { background: #F2A64D; }
+  .block { background: #E5484D; }
+  .gates { background: #062456; color: #FFFFFF; padding: 40px 24px; text-align: center; }
+  .gates h2 { color: #25C7C3; margin-top: 0; }
+  .gate-strip { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .gate { border: 2px solid #25C7C3; border-radius: 999px; padding: 8px 18px; }
+  footer { padding: 32px 24px; text-align: center; }
+  @media (max-width: 640px) { .hero h1 { font-size: 40px; } .verdicts, .gate-strip { flex-direction: column; align-items: center; } }
+</style>
+</head>
+<body>
+  <div class="hero">
+    <h1>rev<span class="u">ü</span>e</h1>
+    <p>A review board that must show its evidence before anything ships.</p>
+    <a class="cta" href="#verdicts">See how a verdict is earned</a>
+  </div>
+  <div class="verdicts" id="verdicts">
+    <div class="verdict ship"><strong>ship</strong><br>Proven, gated, done.</div>
+    <div class="verdict changes"><strong>ship with changes</strong><br>Bounded fixes, named owners.</div>
+    <div class="verdict caution"><strong>caution</strong><br>Open risks, path to ship attached.</div>
+    <div class="verdict block"><strong>block</strong><br>Stops here, with the reason.</div>
+  </div>
+  <div class="gates">
+    <h2>Every seam has a gate</h2>
+    <div class="gate-strip">
+      <span class="gate">brief complete, or blocked</span>
+      <span class="gate">2–3 real concepts, never one default</span>
+      <span class="gate">output audited against the lock</span>
+      <span class="gate">no proof, no ship</span>
+    </div>
+  </div>
+  <footer>
+    <p>Built with its own workflow: this page carried a brief, three concepts, and a passing output audit.</p>
+  </footer>
+</body>
+</html>

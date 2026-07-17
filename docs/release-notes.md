@@ -14,12 +14,24 @@ the verdict, never just advises), and every pre-v1.0 run artifact stays valid.
   returns 2–3 distinct, lock-compliant concepts, never one default direction. Rejecting a concept
   requires keep/kill/change feedback, which is folded into the brief before the next round —
   convergence target is ≤ 3 rounds, matching `references/converge.md`'s pass budget.
-- **Pillar 3 — design-system lock + output audit (scaffolding)**
+- **Pillar 3 — design-system lock + evasion-resistant output audit**
   (`references/design-system-lock.md`, `references/output-audit.md`, `scripts/validate-output.py`):
-  a machine-checkable color/typography/Hard-NO lock, and a first working audit script that extracts
-  colors from an HTML/CSS/SVG deliverable and scans for Hard-NO text, exiting non-zero on a violation.
-  This is the non-adversarial first pass — evasion resistance (obfuscated text, CSS variables, encoded
-  Hard NOs) is explicitly out of scope for v1.0; see `HANDOFF-TO-FABLE.md`.
+  a machine-checkable color/typography/Hard-NO/claims lock, enforced by a fail-closed audit built to
+  be attacked. Colors are caught in every expressible syntax — hex of any length, legacy hash-less
+  attribute hex, comma/space/percentage `rgb()`, `hsl()` in any hue unit, named CSS colors, CSS custom
+  properties, gradients, SVG attributes, literal colors in scripts, and colors inside base64/percent-
+  encoded data URIs and `atob()` payloads; near-miss shades are labeled with the closest lock color
+  and still fail. Hard NOs are caught across tag/comment splits, HTML entities, zero-width joins,
+  homoglyph swaps (Cyrillic/Greek), and separator respellings. Fonts are checked against the lock's
+  typography. Fabricated-metric patterns (star ratings, "200+ clients", "trusted by 500+", star-glyph
+  runs, "#1 rated") fail unless explicitly allowlisted in the lock's `claims` — the original
+  fabricated-"4.9 / 200+" failure can no longer ship silently. Anything the audit cannot verify
+  (external stylesheets/scripts, iframes, binary formats, a deliverable with no detectable colors)
+  fails as unverifiable instead of passing unexamined.
+- **Anti-evasion gates in `scripts/validate-run.py`**: a run carrying creative-production fields
+  cannot dodge the gates by omitting `"produces": "creative-production"`; a forged `outputAudit`
+  (pass flipped `true` over listed violations) is rejected as internally inconsistent; option
+  distinctness survives case/punctuation paraphrases.
 - **Pillar 4 — model routing** (`references/model-routing.md`): `fast` (Haiku 4.5) for every gate and
   validator, `standard` (Sonnet 5) for creative generation and board synthesis, `deep` (Fable 5) for
   ambiguous judgment, `deep-coding` (Opus 4.8) for heavy coding. `scripts/validate-run.py` rejects a
@@ -37,10 +49,28 @@ the verdict, never just advises), and every pre-v1.0 run artifact stays valid.
 - New fixtures: `examples/worked-creative-production.json` (full brief → options → output-audit →
   `ship` golden, the first `ship`-verdict golden in the suite), `examples/lock-fixture.json`,
   `examples/deliverable-pass.html`, `examples/deliverable-fail.html`.
-- `scripts/run-evals.py`: 14 new cases (34 total) — the creative-production golden, plus rejections for
-  an incomplete brief, too few/too many options, a non-lock-compliant option, duplicate concepts, a
-  failing or missing output audit before ship, a mistagged gate step, and an unknown model tier; plus
-  `scripts/validate-output.py` pass/fail smoke tests.
+- `scripts/run-evals.py`: **58 cases total** — the 20 pre-v1.0 cases unchanged, 14 pillar-gate cases
+  (creative-production golden, incomplete-brief batching, option count/shape/compliance/distinctness,
+  failing/missing output audit before ship, mistagged gate step, unknown model tier, audit smoke
+  tests), 19 red-team cases, and 5 dogfood cases.
+- **Red-team fixtures** (`examples/redteam-*.html`): nine deliverables that actively try to sneak past
+  the output audit, each proven REJECTED for the specific reason the attack targets — led by
+  `examples/redteam-original-failure.html`, a faithful reproduction of the failure class this version
+  exists to prevent: a generic template-clone landing page with guessed off-palette colors, an
+  off-brand font, generic link text, and a fabricated "4.9 / 200+" metric. Plus four red-team run
+  artifacts against `validate-run.py` (undeclared creative run, forged audit, paraphrased duplicate
+  concept, stringly-typed `handoffPageRead`) and a control proving a lock-approved metric still passes.
+- **Dogfood run** (`examples/dogfood/`): the v1.0 pipeline executed end to end on revüe's own brand —
+  the brief gate blocked first with one batched request, three distinct concepts were presented and
+  culled by keep/kill/change, the audit caught a genuinely guessed hover shade in draft 1 (labeled a
+  near-miss), and the fixed winner shipped `ship with changes` with the audit object attached. All
+  five steps are locked in as eval cases.
+- **Self-contained installer** (`scripts/make-installer.py` → `dist/apply-revue-v1.0.0.sh`):
+  regenerates the full tree from embedded base64 and refuses to finish unless the complete eval suite
+  passes inside the applied tree. Verified against a clean directory and a fresh clone; a sabotaged
+  tree fails the install.
+- **Acceptance report** (`docs/v1.0-acceptance-report.md`): each of the six v1.0 acceptance criteria
+  mapped to the eval case(s) that prove it.
 
 ## v0.1.0
 

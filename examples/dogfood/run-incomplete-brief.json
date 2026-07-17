@@ -1,0 +1,39 @@
+{
+  "schema": "revue.review.v1",
+  "runId": "dogfood-brief-gate-blocked",
+  "mode": "design-handoff",
+  "dryRun": true,
+  "produces": "creative-production",
+  "request": "Design a single-page promo site for revüe itself, from the repo's own brand source.",
+  "stakeholder": "Repo owner",
+  "inputs": [
+    { "type": "file", "ref": "docs/brand.md", "note": "the design source: locked palette, typography, logo rules" }
+  ],
+  "brief": {
+    "deliverable": "Single-file HTML promo one-pager, desktop + mobile",
+    "format": "html",
+    "sources": [],
+    "handoffPageRead": false,
+    "designSystemLock": "",
+    "hardNos": null
+  },
+  "designSystemLock": null,
+  "options": [],
+  "evidence": [
+    { "category": "source", "statement": "Intake captured this session; brief fields still open.", "verified": true },
+    { "category": "result", "statement": "Brief gate run this session before any generation.", "verified": true },
+    { "category": "limitation", "statement": "No generation attempted — the brief is incomplete by design in this fixture.", "verified": true }
+  ],
+  "verdict": {
+    "value": "block",
+    "reason": "Brief incomplete — generation is blocked until every missing field is supplied in one batch.",
+    "requiredProof": "A complete brief per references/creative-brief.md.",
+    "nextAction": "Return one batched field request to the stakeholder."
+  },
+  "decisionsNeeded": [
+    "Provide in one reply: sources (with handoff page read), designSystemLock path, hardNos list."
+  ],
+  "trace": [
+    { "step": "brief-gate", "modelTier": "fast", "durationMs": 0 }
+  ]
+}

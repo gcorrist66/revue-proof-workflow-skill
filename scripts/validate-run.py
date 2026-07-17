@@ -125,6 +125,17 @@ def main() -> int:
     if produces not in VALID_PRODUCES:
         failures.append(f"produces must be one of {sorted(VALID_PRODUCES)}")
 
+    # Anti-evasion: a run cannot dodge the creative-production gates by simply not declaring itself.
+    # If the run carries creative-production fields, it must be tagged as one.
+    if produces != "creative-production":
+        creative_fields = [f for f in ("brief", "options", "optionFeedback", "outputAudit", "designSystemLock") if f in data]
+        if creative_fields:
+            failures.append(
+                "creative-production fields present ("
+                + ", ".join(creative_fields)
+                + ") but 'produces' is not 'creative-production' — declare the run so its gates apply"
+            )
+
     if produces == "creative-production":
         brief = data.get("brief") or {}
         missing: list[str] = []
@@ -164,7 +175,11 @@ def main() -> int:
             else:
                 if any(opt.get("lockCompliant") is not True for opt in options):
                     failures.append("every presented option must have lockCompliant == true")
-                axes = [opt.get("distinctionAxis") for opt in options]
+                # Normalized dedupe: case/punctuation/whitespace paraphrases are still duplicates.
+                axes = [
+                    re.sub(r"[^a-z0-9]", "", str(opt.get("distinctionAxis", "")).casefold())
+                    for opt in options
+                ]
                 if len(set(axes)) != len(axes):
                     failures.append("options are not distinct: duplicate distinctionAxis")
 
@@ -235,6 +250,17 @@ def main() -> int:
                 audit = data.get("outputAudit")
                 if not isinstance(audit, dict) or audit.get("pass") is not True:
                     failures.append("ship verdict requires outputAudit.pass == true (references/output-audit.md)")
+                elif any(
+                    audit.get(k)
+                    for k in ("colorsOutOfLock", "hardNoHits", "unverifiedClaims", "fontsOutOfLock", "unverifiable")
+                ):
+                    # Anti-evasion: a hand-edited audit that flips pass to true while still listing
+                    # violations is internally inconsistent. Re-running scripts/validate-output.py is
+                    # the source of truth; this catches the cheap forgery.
+                    failures.append(
+                        "outputAudit is internally inconsistent: pass == true but violations are listed "
+                        "— re-run scripts/validate-output.py"
+                    )
 
         # Converge: a non-ship verdict must carry a path to ship (or a decision block).
         if verdict_value and verdict_value != "ship":

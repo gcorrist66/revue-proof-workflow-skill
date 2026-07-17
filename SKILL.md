@@ -224,8 +224,8 @@ gate step is tagged anything else.
 - `references/design-handoff.md`: Figma/design/client handoff proof checklist.
 - `references/creative-brief.md`: Pillar 1 — the required, blocking creative brief for any creative-production run.
 - `references/options-and-refine.md`: Pillar 2 — 2–3 distinct lock-compliant concepts, and the keep/kill/change reject-refine loop.
-- `references/design-system-lock.md`: Pillar 3 (scaffolding) — the machine-checkable color/type/Hard-NO lock format.
-- `references/output-audit.md`: Pillar 3 (scaffolding) — auditing a finished deliverable against the lock before `ship`.
+- `references/design-system-lock.md`: Pillar 3 — the machine-checkable color/type/Hard-NO/claims lock format.
+- `references/output-audit.md`: Pillar 3 — the evasion-resistant, fail-closed audit of a finished deliverable against the lock before `ship`.
 - `references/model-routing.md`: Pillar 4 — fast/standard/deep/deep-coding model tiers and which steps run at each.
 - `assets/intake-template.md`: reusable intake form; now doubles as the required creative brief for creative-production work.
 - `assets/run-state-template.json`: lightweight blackboard/run-state artifact.
@@ -238,8 +238,12 @@ gate step is tagged anything else.
 - `examples/worked-implementation-review.md`: a full worked code/QA review to imitate.
 - `examples/worked-creative-production.json`: a full worked creative-production run (brief → options → output audit → ship) to imitate.
 - `examples/lock-fixture.json`, `examples/deliverable-pass.html`, `examples/deliverable-fail.html`: fixtures for `scripts/validate-output.py`.
+- `examples/redteam-*.html`: red-team fixtures — deliverables that actively try to sneak past the output audit; the eval suite proves each is rejected. `examples/redteam-original-failure.html` is the exact failure class v1.0 exists to prevent.
+- `examples/dogfood/`: a real end-to-end v1.0 pipeline run on revüe's own brand — brief gate blocked then completed, three concepts, audit-rejected draft, audited winner, `ship with changes` run artifact.
 - `scripts/render-handoff.py`: create a Markdown handoff skeleton (`--design` for the design scorecard).
 - `scripts/render-stakeholder-summary.py`: create a stakeholder-ready summary.
 - `scripts/validate-evidence.py`: check required handoff sections and evidence markers.
 - `scripts/validate-run.py`: validate a `revue.review.v1` run artifact against the schema and gate rules, including the brief/options/output-audit gates for creative-production runs.
-- `scripts/validate-output.py`: check an HTML/CSS/SVG deliverable's colors and text against a design-system lock; exits non-zero on a violation.
+- `scripts/validate-output.py`: evasion-resistant, fail-closed audit of an HTML/CSS/SVG deliverable against a design-system lock — colors in any syntax, fonts, obfuscated Hard NOs, fabricated-metric claims, and unverifiable content; exits non-zero on a violation.
+- `scripts/make-installer.py`: generate the self-contained `apply-revue-v<version>.sh` installer, which recreates the tree and refuses to finish unless the full eval suite passes inside it.
+- `docs/v1.0-acceptance-report.md`: the six v1.0 acceptance criteria, each mapped to the eval case that proves it.

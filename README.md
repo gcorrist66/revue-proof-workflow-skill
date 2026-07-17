@@ -46,6 +46,14 @@ mkdir -p ~/.claude/skills
 cp -R revue-proof-workflow ~/.claude/skills/revue-proof-workflow
 ```
 
+Or use the self-contained installer, which recreates the full tree and refuses to finish unless the
+complete eval suite passes inside it:
+
+```bash
+python3 scripts/make-installer.py            # writes dist/apply-revue-v1.0.0.sh
+bash dist/apply-revue-v1.0.0.sh ~/.claude/skills/revue-proof-workflow
+```
+
 Restart Claude / Claude Code if the skill does not appear immediately.
 
 ## Install in Codex
@@ -68,15 +76,19 @@ python3 scripts/validate-run.py path/to/run.json --strict
 python3 scripts/run-evals.py
 ```
 
-The eval suite asserts that golden reviews across modes validate and reach the expected verdict, that
-every failure mode is rejected (dead-end verdict, false ship, thin evidence, missing source, missing
-freshness marker, bad path owner), and that fixed bugs stay fixed. CI runs it via
-`.github/workflows/evals.yml`.
+The eval suite (58 cases) asserts that golden reviews across modes validate and reach the expected
+verdict, that every failure mode is rejected (dead-end verdict, false ship, thin evidence, missing
+source, missing freshness marker, bad path owner), that fixed bugs stay fixed — and, as of v1.0.0,
+that the output audit resists active evasion: nine red-team fixtures (`examples/redteam-*.html`) that
+try to sneak off-palette colors, obfuscated Hard NOs, and fabricated metrics past the audit are each
+proven REJECTED, including a faithful reproduction of the generic-clone-with-fabricated-metric failure
+v1.0 exists to prevent. CI runs it via `.github/workflows/evals.yml`.
 
 ## Current status
 
-Early and actively iterating (v0.6.0). Opinionated by design. The eval suite is the trust anchor —
-if it is green, the guarantees hold.
+v1.0.0. Opinionated by design. The eval suite is the trust anchor — if it is green, the guarantees
+hold. See `docs/v1.0-acceptance-report.md` for the acceptance criteria mapped to their proving evals,
+and `examples/dogfood/` for the pipeline run end to end on revüe's own brand.
 
 ## Brand
 

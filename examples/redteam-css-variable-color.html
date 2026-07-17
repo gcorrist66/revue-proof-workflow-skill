@@ -1,0 +1,19 @@
+<!doctype html>
+<!-- RED-TEAM FIXTURE: hides an off-palette color behind a CSS custom property holding a named CSS
+     color, so no literal hex or rgb() ever appears. The audit must resolve the named color and
+     REJECT. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VIP Marina — Weekdays on the Water</title>
+<style>
+  :root { --brand-accent: rebeccapurple; }
+  body { background: #062456; color: #FFFFFF; font-family: Quicksand, Arial, sans-serif; }
+  .cta { background: var(--brand-accent); color: #FFFFFF; }
+</style>
+</head>
+<body>
+  <h1>Reserve Your Boat</h1>
+  <button class="cta">See weekday rates</button>
+</body>
+</html>

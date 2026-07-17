@@ -1,0 +1,26 @@
+<!doctype html>
+<!-- RED-TEAM FIXTURE: four Hard-NO obfuscations in one page. The lock forbids "lorem ipsum" and
+     "click here"; this file smuggles both past a naive substring scan using
+     (1) a Cyrillic homoglyph swap (the 'o' and 'c' below are U+043E and U+0441),
+     (2) a zero-width space inside the phrase (U+200B),
+     (3) HTML numeric entities, and
+     (4) a split across inline tags and an HTML comment.
+     The audit must fold/normalize all four forms and REJECT. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VIP Marina — Weekdays on the Water</title>
+<style>
+  body { background: #062456; color: #FFFFFF; font-family: Quicksand, Arial, sans-serif; }
+  .cta { background: #FF5747; color: #FFFFFF; }
+</style>
+</head>
+<body>
+  <h1>Reserve Your Boat</h1>
+  <p>lоrem ipsum dolor sit amet.</p>
+  <a href="#rates">сli​ck here</a>
+  <p>&#108;orem &#105;psum placeholder block.</p>
+  <p>lore<!-- keep -->m <b>ip</b>sum again.</p>
+  <button class="cta">See weekday rates</button>
+</body>
+</html>

@@ -1,24 +1,31 @@
-# Design System Lock (Pillar 3 — scaffolding)
+# Design System Lock (Pillar 3 — hardened)
 
 Use this to define the fixed visual rules a creative-production deliverable must not violate. This is
 what `references/creative-brief.md` asks the user to supply and what `references/output-audit.md`
 checks the finished deliverable against.
 
-**v1.0 note:** this is the first working lock, not the hardened version. It does exact matching —
-literal hex values and literal Hard-NO strings. It does not yet catch near-miss colors, obfuscated or
-encoded Hard-NO text, or CSS variables/computed colors. See `HANDOFF-TO-FABLE.md` for what evasion
-resistance still needs to be built.
+The lock is enforced by an evasion-resistant audit (`scripts/validate-output.py`): colors in any CSS
+form (hex, rgb, hsl, named, custom properties, gradients, SVG attributes, data-URI payloads) are
+normalized and matched exactly against the palette; Hard NOs are caught even when split across tags,
+entity-encoded, zero-width-joined, or respelled with homoglyphs; fonts are checked against the
+typography list; and quantitative marketing claims must be allowlisted or they fail.
 
 ## Lock fields
 
-- **Colors** — exact hex values that are in-lock. Anything else found in the deliverable is a
-  violation. Include neutrals (white, black) explicitly if they are allowed — they are not assumed.
+- **Colors** — exact hex values that are in-lock. Anything else the deliverable can express is a
+  violation, including near-miss shades (reported with the closest lock color — still failures).
+  Include neutrals (white, black) explicitly if they are allowed — they are not assumed.
 - **Typography** — allowed font-family names (the CSS `font-family` value, not just the display name).
+  Generic families (`serif`, `sans-serif`, `system-ui`, ...) are always allowed as fallbacks.
+- **Claims** — quantitative marketing claims that are approved to ship, each backed by a real source
+  named in the brief. Any detected metric-like claim ("4.9 / 5", "200+ clients", "trusted by 500+")
+  not matching this list fails the audit. Omit the field (or leave it empty) to forbid all
+  quantitative claims.
 - **Spacing/grid** — described in the brief; not machine-checked in v1.0 (no reliable stdlib way to
   parse computed layout from static HTML/CSS/SVG alone).
 - **Logo usage** — notes on allowed logo files/marks; not machine-checked in v1.0.
-- **Hard NOs** — literal forbidden strings, each with why. Checked as a case-insensitive substring match
-  against the deliverable's raw text.
+- **Hard NOs** — forbidden strings, each with why. Matched against every recoverable text form of the
+  deliverable (raw, entity-decoded, tag-stripped, separator-squashed, homoglyph-folded).
 
 ## Machine-checkable format
 
@@ -31,9 +38,12 @@ resistance still needs to be built.
   "hardNos": [
     { "pattern": "lorem ipsum", "why": "placeholder text must never ship" },
     { "pattern": "click here", "why": "brand voice: never generic link text" }
-  ]
+  ],
+  "claims": ["4.8 / 5 rating from 132 reviews"]
 }
 ```
+
+`claims` is optional — leave it out to forbid all quantitative marketing claims.
 
 Save it alongside the run (for example `examples/<project>-lock.json`) and reference its path from the
 brief's Design System Lock field and the run's top-level `designSystemLock` object.
@@ -61,10 +71,16 @@ does not parse the Markdown authoring format directly in v1.0.
 
 ## What "in lock" means
 
-- A color is in-lock only if its hex value (case-insensitive, 3-digit hex expanded to 6) exactly
-  matches an entry in `colors`. No tolerance band.
-- A Hard NO is hit if its `pattern` string appears anywhere in the deliverable's raw text, case-
-  insensitive substring match. No regex, no fuzzy matching, no encoding-awareness in v1.0.
+- A color is in-lock only if, after normalization from whatever syntax it was written in (hex of any
+  length, rgb/rgba, hsl/hsla, named color, attribute hex, data-URI payload), its `#rrggbb` value
+  exactly matches an entry in `colors`. No tolerance band — a near-miss shade is reported with the
+  closest lock color and still fails.
+- A Hard NO is hit if its `pattern` appears in any recoverable text form of the deliverable: raw,
+  entity-decoded, tag/comment-stripped, whitespace/separator-squashed, casefolded, zero-width-stripped,
+  and homoglyph-folded. Splitting, encoding, or respelling the phrase does not evade the match.
+- A quantitative claim is in-lock only if it matches an entry in `claims`. No `claims` list means no
+  quantitative claims ship.
+- A font is in-lock if it is in `typography` or is a CSS generic family.
 
 ## Relationship to the rest of revüe
 

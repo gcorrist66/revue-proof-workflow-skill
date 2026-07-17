@@ -1,0 +1,10 @@
+{
+  "colors": ["#062456", "#FF5747", "#25C7C3", "#F2A64D", "#E5484D", "#FFFFFF"],
+  "typography": ["Quicksand", "Arial"],
+  "hardNos": [
+    { "pattern": "lorem ipsum", "why": "placeholder text must never ship" },
+    { "pattern": "click here", "why": "brand voice: never generic link text" },
+    { "pattern": "revue proof", "why": "the name is revüe (u-umlaut) — never flatten it to 'revue' in display copy" }
+  ],
+  "claims": []
+}

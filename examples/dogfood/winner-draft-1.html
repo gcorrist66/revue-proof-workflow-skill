@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- DOGFOOD DRAFT 1 (audit-rejected, kept as evidence): concept A revised per keep/kill/change.
+     Contains a realistic drift: the CTA hover color was "just darkened coral" (#e64435), a shade
+     that is NOT in the lock. scripts/validate-output.py rejects this file — see
+     examples/dogfood/README.md for the audit output. The fix ships in winner.html. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>revüe — the review board that has to prove it</title>
+<style>
+  body { margin: 0; background: #FFFFFF; color: #062456; font-family: Quicksand, Arial, sans-serif; }
+  .hero { background: #062456; color: #FFFFFF; padding: 72px 24px; text-align: center; }
+  .hero .u { color: #FF5747; }
+  .cta { display: inline-block; background: #FF5747; color: #FFFFFF; padding: 14px 32px;
+         border-radius: 999px; font-weight: 700; text-decoration: none; }
+  .cta:hover { background: #e64435; }
+  .verdicts { display: flex; gap: 16px; justify-content: center; padding: 48px 24px; flex-wrap: wrap; }
+  .verdict { border-radius: 16px; padding: 20px; min-width: 180px; color: #FFFFFF; }
+  .ship { background: #25C7C3; }
+  .changes { background: #062456; }
+  .caution { background: #F2A64D; }
+  .block { background: #E5484D; }
+</style>
+</head>
+<body>
+  <div class="hero">
+    <h1>rev<span class="u">ü</span>e</h1>
+    <p>A review board that must show its evidence before anything ships.</p>
+    <a class="cta" href="#install">Install the skill</a>
+  </div>
+  <div class="verdicts">
+    <div class="verdict ship"><strong>ship</strong><br>Proven, gated, done.</div>
+    <div class="verdict changes"><strong>ship with changes</strong><br>Bounded fixes, named owners.</div>
+    <div class="verdict caution"><strong>caution</strong><br>Open risks, path to ship attached.</div>
+    <div class="verdict block"><strong>block</strong><br>Stops here, with the reason.</div>
+  </div>
+</body>
+</html>

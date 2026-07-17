@@ -1,0 +1,21 @@
+<!doctype html>
+<!-- RED-TEAM FIXTURE: three color channels the scaffolding audit never looked at —
+     (1) legacy hash-less attribute hex (bgcolor/text), (2) an off-palette fill inside a
+     base64-encoded SVG data URI, (3) a Hard-NO phrase delivered via atob() in an inline script.
+     The audit must decode all three and REJECT. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VIP Marina — Weekdays on the Water</title>
+<style>
+  h1 { color: #062456; font-family: Quicksand, Arial, sans-serif; }
+</style>
+</head>
+<body bgcolor="112233" text="445566">
+  <h1>Reserve Your Boat</h1>
+  <!-- decodes to: <svg><rect fill="#e91e63"/></svg> -->
+  <img alt="badge" src="data:image/svg+xml;base64,PHN2Zz48cmVjdCBmaWxsPSIjZTkxZTYzIi8+PC9zdmc+">
+  <!-- decodes to: click here -->
+  <script>document.querySelector("h1").insertAdjacentText("afterend", atob("Y2xpY2sgaGVyZQ=="));</script>
+</body>
+</html>

@@ -1,5 +1,15 @@
 # Handoff to Fable — revüe v1.0
 
+> **Resolved (Fable pass, v1.0.0).** Every open item below was completed: Pillar 3 was hardened into
+> the evasion-resistant, fail-closed audit (`scripts/validate-output.py`), nine red-team fixtures plus
+> four red-team run artifacts were added and proven rejected (58/58 evals), the six acceptance
+> criteria were verified against the finishing task's own enumeration (the referenced
+> `revue-v1.0-build-handoff.md` never surfaced — see `docs/v1.0-acceptance-report.md` for the
+> provenance note and the criterion→eval map), the pipeline was dogfooded end to end on revüe's own
+> brand (`examples/dogfood/`), and the installer was rebuilt (`scripts/make-installer.py`) and tested
+> against a fresh clone with the eval suite gating the install. This file is kept as history of the
+> Sonnet pass.
+
 This is the Sonnet 5 pass on v1.0. Scope was Pillars 1, 2, and 4, plus shared scaffolding for Pillar 3,
 plus the schema/validator/SKILL.md wiring and eval suite. Read this before touching anything —
 particularly the "spec input gap" section, since it affects how much you can trust the acceptance
