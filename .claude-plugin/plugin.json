@@ -1,0 +1,20 @@
+{
+  "name": "revue-proof-workflow",
+  "version": "1.2.0",
+  "description": "Evidence-first review, on-brand creative production, and ship/caution/block verdicts",
+  "author": {
+    "name": "Gary Corriston"
+  },
+  "homepage": "https://github.com/gcorrist66/revue-proof-workflow-skill",
+  "repository": "https://github.com/gcorrist66/revue-proof-workflow-skill",
+  "license": "MIT",
+  "icon": "assets/logo-mark.png",
+  "keywords": [
+    "review",
+    "design-review",
+    "brand",
+    "proof",
+    "verdict",
+    "marketing"
+  ]
+}

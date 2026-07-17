@@ -1,0 +1,15 @@
+{
+  "name": "revue-proof-workflow",
+  "owner": {
+    "name": "Gary Corriston"
+  },
+  "description": "Evidence-first review and creative-production plugins from revüe",
+  "plugins": [
+    {
+      "name": "revue-proof-workflow",
+      "source": "./",
+      "description": "Evidence-first review, on-brand creative production, and ship/caution/block verdicts",
+      "category": "productivity"
+    }
+  ]
+}

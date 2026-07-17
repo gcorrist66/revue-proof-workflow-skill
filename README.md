@@ -58,6 +58,19 @@ Start a new Codex task if the updated skill does not appear immediately.
 
 ## Install in Claude / Claude Code
 
+### Install as a plugin
+
+In Claude Code, add the GitHub marketplace and install revüe:
+
+```text
+/plugin marketplace add gcorrist66/revue-proof-workflow-skill
+/plugin install revue-proof-workflow@revue-proof-workflow
+```
+
+The first command registers the marketplace. The second command installs and enables the plugin.
+
+### Install manually
+
 ```bash
 mkdir -p ~/.claude/skills
 cp -R revue-proof-workflow ~/.claude/skills/revue-proof-workflow
